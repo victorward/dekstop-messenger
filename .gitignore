@@ -12,3 +12,6 @@
 hs_err_pid*
 .idea/
 *.iml
+client/target/
+commons/target/
+server/target/

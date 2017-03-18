@@ -25,7 +25,7 @@ import java.net.Socket;
 
 public class Server {
     private static final Logger log = LoggerFactory.getLogger(Server.class);
-    private static final int PORT = 2222;
+    private static final int PORT = 8080;
 
     public void run() {
         log.info("Server running on port: " + PORT);

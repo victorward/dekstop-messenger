@@ -25,7 +25,7 @@ public class LoginController {
     private static final Logger log = LoggerFactory.getLogger(LoginController.class);
 
     static final String HOST = "localhost";
-    static final int PORT = 2222;
+    static final int PORT = 8080;
 
     private Channel channel;
     private EventLoopGroup group;

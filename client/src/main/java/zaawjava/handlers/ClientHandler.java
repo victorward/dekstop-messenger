@@ -4,22 +4,37 @@ import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import utils.Message;
+import utils.MessageService;
 
 public class ClientHandler extends ChannelInboundHandlerAdapter {
     private static final Logger log = LoggerFactory.getLogger(ClientHandler.class);
+    private final MessageService messageService;
+
+    public ClientHandler(MessageService messageService) {
+        this.messageService = messageService;
+    }
 
     @Override
     public void channelActive(ChannelHandlerContext ctx) {
         // Send the first message if this handler is a client-side handler.
-        log.debug("Channel Active ; Writing message...");
+        log.debug("Channel Active");
 
-        ctx.writeAndFlush("Hello!");
+
+//        ctx.writeAndFlush("Hello!");
     }
 
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) {
         // Echo back the received object to the server.
-        ctx.write(msg);
+//        ctx.write(msg);
+        log.debug("message recived: " + msg);
+        try {
+            messageService.handleMessage((Message) msg);
+
+        } catch (ClassCastException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override

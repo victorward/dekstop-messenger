@@ -2,10 +2,6 @@ package model;
 
 import java.io.Serializable;
 
-/**
- * Created by Wiktor on 18.03.2017.
- */
-
 public class User implements Serializable{
 
     private String login;

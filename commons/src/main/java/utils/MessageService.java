@@ -1,10 +1,15 @@
 package utils;
 
 import io.netty.channel.Channel;
+import io.netty.channel.ChannelFuture;
+import io.netty.util.concurrent.GenericFutureListener;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.HashMap;
 
 public class MessageService {
+
     private Channel channel;
     private HashMap<String, MessageHandler> handlers = new HashMap<>();
 
@@ -20,32 +25,32 @@ public class MessageService {
             throw new RuntimeException("Channel not set");
         }
         handlers.put(kind, handler);
-        channel.writeAndFlush(new Message(kind, content));
+        channel.writeAndFlush(new Message(kind, content)).addListener((GenericFutureListener<ChannelFuture>) handler::setFuture);
     }
 
-    public void sendMessage(String kind, Object content ) {
+    public void sendMessage(String kind, Object content) {
         try {
             channel.writeAndFlush(new Message(kind, content)).sync();
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
     }
+
     public void sendMessage(String kind, Object content, MessageHandler handler, Channel channel) {
         handlers.put(kind, handler);
-        try {
-            channel.writeAndFlush(new Message(kind, content)).sync();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+        handlers.put(kind, handler);
+        channel.writeAndFlush(new Message(kind, content)).addListener((GenericFutureListener<ChannelFuture>) handler::setFuture);
+
     }
 
     public void handleMessage(Message msg) {
         if (handlers.containsKey(msg.getKind())) {
-            handlers.get(msg.getKind()).handle(msg.getContent());
+            MessageHandler h =  handlers.get(msg.getKind());
+            h.handle(msg.getContent(), h.getFuture());
         }
     }
 
-    public void registerHandler(String kind, MessageHandler handler){
+    public void registerHandler(String kind, MessageHandler handler) {
         handlers.put(kind, handler);
     }
 

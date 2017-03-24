@@ -20,6 +20,8 @@ import javafx.stage.Stage;
 import model.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import utils.Message;
+import utils.MessageHandler;
 import utils.MessageService;
 import zaawjava.handlers.ClientHandler;
 
@@ -112,27 +114,21 @@ public class LoginController {
     private void login() {
         User user = new User(loginField.getText(), passwordField.getText());
 
-        messageService.sendMessage("onLogin", user, (resp) -> {
-            log.debug("response recived" + resp);
-            try {
-                if ("loggedIn".equals((String) resp))
-                    setMainView();
-            } catch (IOException e) {
-                log.debug(e.getMessage());
-                Platform.runLater(() -> messageLabel.setText("Cannot load main view"));
+        messageService.sendMessage("onLogin", user, new MessageHandler() {
+            @Override
+            public void handle(Object msg, ChannelFuture future) {
+                //TODO error handling
+                log.debug("response recived: " + msg);
+                try {
+                    if ("loggedIn".equals((String) msg))
+                        setMainView();
+                } catch (IOException e) {
+                    log.debug(e.getMessage());
+                    Platform.runLater(() -> messageLabel.setText("Cannot load main view"));
+                }
             }
         });
-        //TODO error handling
 
-
-//        channel.writeAndFlush(user).addListener((ChannelFuture future) -> {
-//            if (future.isSuccess()) {
-//                log.debug(future.get().toString());
-//                setMainView();
-//            }else {
-//                Platform.runLater(()-> messageLabel.setText("Login error"));
-//            }
-//        });
     }
 
     @FXML
@@ -155,8 +151,12 @@ public class LoginController {
     @FXML
     private void onButton(ActionEvent event) {
         log.debug("button");
-        messageService.sendMessage("event", "param", (resp) -> {
-            log.debug("response recived" + resp);
+        messageService.sendMessage("event", "param", new MessageHandler() {
+            @Override
+            public void handle(Object resp, ChannelFuture future) {
+                log.debug("response recived " + resp);
+
+            }
         });
     }
 }

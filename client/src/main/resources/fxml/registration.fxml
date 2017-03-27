@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import com.jfoenix.controls.JFXButton?>
+<?import com.jfoenix.controls.JFXDatePicker?>
+<?import com.jfoenix.controls.JFXPasswordField?>
+<?import com.jfoenix.controls.JFXProgressBar?>
+<?import com.jfoenix.controls.JFXTextField?>
+<?import com.jfoenix.controls.JFXToggleButton?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.text.Font?>
+
+
+<AnchorPane prefHeight="470.0" prefWidth="320.0" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="fxml.Registration">
+   <children>
+      <Label layoutX="34.0" layoutY="14.0" text="For the first time on WAMY?" AnchorPane.topAnchor="10.0">
+         <font>
+            <Font name="Verdana Bold" size="16.0" />
+         </font>
+      </Label>
+      <Label layoutX="97.0" layoutY="34.0" text="Sign up for WAMY" AnchorPane.topAnchor="33.0">
+         <font>
+            <Font name="Verdana" size="14.0" />
+         </font>
+      </Label>
+      <GridPane layoutX="13.0" layoutY="59.0" prefHeight="309.0" prefWidth="302.0" AnchorPane.bottomAnchor="50.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="59.0">
+        <columnConstraints>
+          <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+        </columnConstraints>
+        <rowConstraints>
+            <RowConstraints maxHeight="1.7976931348623157E308" minHeight="25.0" vgrow="SOMETIMES" />
+            <RowConstraints maxHeight="1.7976931348623157E308" minHeight="25.0" vgrow="SOMETIMES" />
+          <RowConstraints maxHeight="1.7976931348623157E308" minHeight="25.0" vgrow="SOMETIMES" />
+          <RowConstraints maxHeight="1.7976931348623157E308" minHeight="25.0" vgrow="SOMETIMES" />
+          <RowConstraints maxHeight="1.7976931348623157E308" minHeight="25.0" vgrow="SOMETIMES" />
+            <RowConstraints maxHeight="1.7976931348623157E308" minHeight="25.0" vgrow="SOMETIMES" />
+            <RowConstraints maxHeight="1.7976931348623157E308" minHeight="25.0" vgrow="SOMETIMES" />
+            <RowConstraints maxHeight="1.7976931348623157E308" minHeight="25.0" vgrow="SOMETIMES" />
+            <RowConstraints maxHeight="1.7976931348623157E308" minHeight="25.0" vgrow="SOMETIMES" />
+        </rowConstraints>
+         <children>
+            <JFXTextField promptText="Your first name" GridPane.columnSpan="3" GridPane.rowIndex="2" />
+            <JFXTextField promptText="Your last name" GridPane.columnSpan="3" GridPane.rowIndex="3" />
+            <Label text="Date of birth" GridPane.rowIndex="4" />
+            <JFXDatePicker GridPane.columnSpan="3" GridPane.rowIndex="5" />
+            <JFXButton buttonType="RAISED" defaultButton="true" prefHeight="25.0" prefWidth="300.0" ripplerFill="#32cd64" text="Sign up" GridPane.columnSpan="3" GridPane.rowIndex="8" />
+            <Label text="Yout gender" GridPane.rowIndex="6" />
+            <JFXToggleButton text="Female" GridPane.columnSpan="2" GridPane.rowIndex="7" />
+            <JFXToggleButton text="Male" GridPane.columnIndex="2" GridPane.columnSpan="2" GridPane.rowIndex="7" />
+            <JFXTextField promptText="Email" GridPane.columnSpan="3" />
+            <JFXPasswordField promptText="Password" GridPane.columnSpan="3" GridPane.rowIndex="1" />
+         </children>
+      </GridPane>
+      <JFXProgressBar layoutX="60.0" layoutY="381.0" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="435.0" />
+   </children>
+</AnchorPane>

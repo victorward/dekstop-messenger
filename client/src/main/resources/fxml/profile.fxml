@@ -18,7 +18,7 @@
    <children>
       <ImageView fitHeight="160.0" fitWidth="140.0" layoutX="486.0" layoutY="29.0" pickOnBounds="true" preserveRatio="true" AnchorPane.rightAnchor="15.0" AnchorPane.topAnchor="30.0">
          <image>
-            <Image url="@../../../../../default_avatar.jpg" />
+            <Image url="@../images/default_avatar.jpg" />
          </image>
       </ImageView>
       <Label layoutX="488.0" layoutY="6.0" text="Your avatar" AnchorPane.rightAnchor="51.0" AnchorPane.topAnchor="10.0" />

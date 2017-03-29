@@ -12,23 +12,16 @@ import io.netty.handler.codec.serialization.ObjectDecoder;
 import io.netty.handler.codec.serialization.ObjectEncoder;
 import io.netty.handler.logging.LogLevel;
 import io.netty.handler.logging.LoggingHandler;
-import io.netty.handler.ssl.SslContext;
-import io.netty.handler.ssl.SslContextBuilder;
-import io.netty.handler.ssl.util.SelfSignedCertificate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.IOException;
-import java.net.ServerSocket;
-import java.net.Socket;
 
-
-public class Server {
-    private static final Logger log = LoggerFactory.getLogger(Server.class);
+public class BadName {
+    private static final Logger log = LoggerFactory.getLogger(BadName.class);
     private static final int PORT = 8080;
 
     public void run() {
-        log.info("Server running on port: " + PORT);
+        log.info("BadName running on port: " + PORT);
 
         EventLoopGroup bossGroup = new NioEventLoopGroup(1);
         EventLoopGroup workerGroup = new NioEventLoopGroup();

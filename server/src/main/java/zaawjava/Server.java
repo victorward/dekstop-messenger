@@ -16,12 +16,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 
-public class BadName {
-    private static final Logger log = LoggerFactory.getLogger(BadName.class);
+public class Server {
+    private static final Logger log = LoggerFactory.getLogger(Server.class);
     private static final int PORT = 8080;
 
     public void run() {
-        log.info("BadName running on port: " + PORT);
+        log.info("Server running on port: " + PORT);
 
         EventLoopGroup bossGroup = new NioEventLoopGroup(1);
         EventLoopGroup workerGroup = new NioEventLoopGroup();

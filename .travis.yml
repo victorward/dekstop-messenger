@@ -2,3 +2,11 @@ language: java
 
 jdk:
   - oraclejdk8
+
+  notifications:
+    email:
+      recipients:
+        - 195703@edu.p.lodz.pl
+        - 195568@edu.p.lodz.pl
+        - 199184@edu.p.lodz.pl
+        - 195662@edu.p.lodz.pl

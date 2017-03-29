@@ -29,15 +29,11 @@ public class MessageService {
     }
 
     public void sendMessage(String kind, Object content) {
-        try {
-            channel.writeAndFlush(new Message(kind, content)).sync();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+        channel.writeAndFlush(new Message(kind, content));
+
     }
 
     public void sendMessage(String kind, Object content, MessageHandler handler, Channel channel) {
-        handlers.put(kind, handler);
         handlers.put(kind, handler);
         channel.writeAndFlush(new Message(kind, content)).addListener((GenericFutureListener<ChannelFuture>) handler::setFuture);
 
@@ -45,7 +41,7 @@ public class MessageService {
 
     public void handleMessage(Message msg) {
         if (handlers.containsKey(msg.getKind())) {
-            MessageHandler h =  handlers.get(msg.getKind());
+            MessageHandler h = handlers.get(msg.getKind());
             h.handle(msg.getContent(), h.getFuture());
         }
     }

@@ -13,8 +13,7 @@
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.text.Font?>
 
-
-<AnchorPane prefHeight="470.0" prefWidth="320.0" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="fxml.Registration">
+<AnchorPane prefHeight="470.0" prefWidth="320.0" xmlns="http://javafx.com/javafx/8.0.60" xmlns:fx="http://javafx.com/fxml/1" fx:controller="zaawjava.controllers.RegistrationController">
    <children>
       <Label layoutX="34.0" layoutY="14.0" text="For the first time on WAMY?" AnchorPane.topAnchor="10.0">
          <font>
@@ -31,6 +30,7 @@
           <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
             <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
             <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+            <ColumnConstraints />
         </columnConstraints>
         <rowConstraints>
             <RowConstraints maxHeight="1.7976931348623157E308" minHeight="25.0" vgrow="SOMETIMES" />

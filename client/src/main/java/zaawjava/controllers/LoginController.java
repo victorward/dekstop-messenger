@@ -148,7 +148,6 @@ public class LoginController {
         this.stage = stage;
     }
 
-    @FXML
     private void onButton(ActionEvent event) {
         log.debug("button");
         messageService.sendMessage("event", "param", new MessageHandler() {
@@ -158,5 +157,20 @@ public class LoginController {
 
             }
         });
+    }
+
+    @FXML
+    private void onRegisterButton(ActionEvent event) throws IOException {
+        FXMLLoader loader = new FXMLLoader();
+
+        Parent rootNode = (Parent) loader.load(getClass().getResourceAsStream("/fxml/registration.fxml"));
+        RegistrationController c = (RegistrationController) loader.getController();
+        c.setParameters(channel, group);
+        Scene scene = new Scene(rootNode);
+
+        Stage stage = new Stage();
+        stage.setScene(scene);
+        stage.show();
+
     }
 }

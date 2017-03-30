@@ -12,8 +12,9 @@ import static org.assertj.core.api.Assertions.*;
 public class UserTest {
     @Test
     public void exampleTest() throws Exception {
-        User user = new User("Andrzej");
-        assertThat(user.getName()).isEqualTo("Andrzej");
+        User user = new User();
+        user.setFirstName("Andrzej");
+        assertThat(user.getFirstName()).isEqualTo("Andrzej");
     }
 
     @Before

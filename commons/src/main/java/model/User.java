@@ -9,7 +9,7 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 
 @Entity
-@Table(name="User")
+@Table(name="user")
 public class User implements Serializable
 {
 
@@ -32,7 +32,7 @@ public class User implements Serializable
 	@Column(name="email")
 	private String email;
 
-	@Column(name="password")
+	@Column(name="user_password")
     private String password;
 
 	@Column(name="address")

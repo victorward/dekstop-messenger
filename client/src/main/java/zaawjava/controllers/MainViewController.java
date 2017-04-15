@@ -9,10 +9,12 @@ import io.netty.channel.Channel;
 import io.netty.channel.EventLoopGroup;
 import javafx.fxml.Initializable;
 import javafx.stage.Stage;
+import org.springframework.stereotype.Component;
 
 import java.net.URL;
 import java.util.ResourceBundle;
 
+@Component
 public class MainViewController implements Initializable {
 
     private Stage stage;

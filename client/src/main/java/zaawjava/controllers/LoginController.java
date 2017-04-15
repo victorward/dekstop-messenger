@@ -1,13 +1,6 @@
 package zaawjava.controllers;
 
-import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.*;
-import io.netty.channel.nio.NioEventLoopGroup;
-import io.netty.channel.socket.SocketChannel;
-import io.netty.channel.socket.nio.NioSocketChannel;
-import io.netty.handler.codec.serialization.ClassResolvers;
-import io.netty.handler.codec.serialization.ObjectDecoder;
-import io.netty.handler.codec.serialization.ObjectEncoder;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -20,19 +13,23 @@ import javafx.stage.Stage;
 import model.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import utils.Message;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
+import org.springframework.stereotype.Component;
 import utils.MessageHandler;
 import utils.MessageService;
-import zaawjava.handlers.ClientHandler;
+import zaawjava.ScreensManager;
+import zaawjava.services.SocketService;
 
 import java.io.IOException;
 
-
+@Component
 public class LoginController {
     private static final Logger log = LoggerFactory.getLogger(LoginController.class);
 
     static final String HOST = "localhost";
     static final int PORT = 8080;
+    private ScreensManager screensManager;
 
     private Stage stage;
 
@@ -42,6 +39,7 @@ public class LoginController {
 
     private MessageService messageService = new MessageService();
 
+    private final SocketService socketService;
 
     @FXML
     private Label messageLabel;
@@ -49,6 +47,15 @@ public class LoginController {
     private TextField loginField;
     @FXML
     private TextField passwordField;
+
+    @Autowired
+    public LoginController(SocketService socketService) {
+        this.socketService = socketService;
+    }
+
+    public void setScreensManager(ScreensManager screensManager) {
+        this.screensManager = screensManager;
+    }
 
     private void setMainView() throws IOException {
         FXMLLoader loader = new FXMLLoader();
@@ -64,32 +71,33 @@ public class LoginController {
         if (connecting) {
             return;
         }
-        if (channel != null && channel.isOpen()) {
-            return;
-        }
+//        if (channel != null && channel.isOpen()) {
+//            return;
+//        }
         connecting = true;
         log.debug("Trying to connect...");
         messageLabel.setText("Connecting...");
-        group = new NioEventLoopGroup();
+//        group = new NioEventLoopGroup();
 
-        Bootstrap b = new Bootstrap();
-        b.group(group)
-                .channel(NioSocketChannel.class)
-                .handler(new ChannelInitializer<SocketChannel>() {
-                    @Override
-                    public void initChannel(SocketChannel ch) throws Exception {
-                        ChannelPipeline p = ch.pipeline();
+//        Bootstrap b = new Bootstrap();
+//        b.group(group)
+//                .channel(NioSocketChannel.class)
+//                .handler(new ChannelInitializer<SocketChannel>() {
+//                    @Override
+//                    public void initChannel(SocketChannel ch) throws Exception {
+//                        ChannelPipeline p = ch.pipeline();
+//
+//                        p.addLast(
+//                                new ObjectEncoder(),
+//                                new ObjectDecoder(ClassResolvers.cacheDisabled(null)),
+//                                new ClientHandler(messageService));
+//                    }
+//                });
+//
+//
+//        b.connect(HOST, PORT).addListener((ChannelFuture future) -> {
 
-                        p.addLast(
-                                new ObjectEncoder(),
-                                new ObjectDecoder(ClassResolvers.cacheDisabled(null)),
-                                new ClientHandler(messageService));
-                    }
-                });
-
-
-        b.connect(HOST, PORT).addListener((ChannelFuture future) -> {
-
+        socketService.connect().addListener((ChannelFuture future) -> {
             if (future.isSuccess()) {
                 channel = future.channel();
                 messageService.setChannel(channel);
@@ -108,7 +116,10 @@ public class LoginController {
                 Platform.runLater(() -> messageLabel.setText("Connection error"));
                 connecting = false;
             }
+
         });
+
+//        });
     }
 
     private void login() {

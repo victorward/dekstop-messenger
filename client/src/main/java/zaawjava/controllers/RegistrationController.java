@@ -12,12 +12,9 @@ import io.netty.channel.Channel;
 import io.netty.channel.EventLoopGroup;
 import javafx.fxml.Initializable;
 import javafx.stage.Stage;
+import org.springframework.stereotype.Component;
 
-/**
- * FXML Controller class
- *
- * @author Wiktor
- */
+@Component
 public class RegistrationController implements Initializable {
 
     /**

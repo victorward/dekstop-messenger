@@ -8,12 +8,9 @@ package zaawjava.controllers;
 import java.net.URL;
 import java.util.ResourceBundle;
 import javafx.fxml.Initializable;
+import org.springframework.stereotype.Component;
 
-/**
- * FXML Controller class
- *
- * @author Wiktor
- */
+@Component
 public class ProfileController implements Initializable {
 
     /**

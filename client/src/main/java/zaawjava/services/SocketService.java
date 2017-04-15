@@ -8,10 +8,16 @@ import io.netty.channel.socket.nio.NioSocketChannel;
 import io.netty.handler.codec.serialization.ClassResolvers;
 import io.netty.handler.codec.serialization.ObjectDecoder;
 import io.netty.handler.codec.serialization.ObjectEncoder;
+import io.netty.util.concurrent.DefaultPromise;
+import io.netty.util.concurrent.Future;
 import io.netty.util.concurrent.Promise;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import utils.MessageHandler;
+import utils.MessageService;
 import zaawjava.handlers.ClientHandler;
+
+import java.util.concurrent.CompletableFuture;
 
 @Service
 public class SocketService {
@@ -22,17 +28,17 @@ public class SocketService {
     private Channel channel;
 
     private final ClientHandler clientHandler;
+    private final MessageService messageService;
 
     @Autowired
-    public SocketService(ClientHandler clientHandler) {
+    public SocketService(ClientHandler clientHandler, MessageService messageService) {
         this.clientHandler = clientHandler;
+        this.messageService = messageService;
     }
 
 
     public ChannelFuture connect() {
         group = new NioEventLoopGroup();
-
-        Promise promise = null;
 
         Bootstrap b = new Bootstrap();
         b.group(group)
@@ -61,6 +67,30 @@ public class SocketService {
 
         return future;
 
+    }
 
+    public void disconnect() {
+        if (channel != null && group != null) {
+            channel.close();
+            group.shutdownGracefully();
+        }
+    }
+
+    public CompletableFuture emit(String event, Object message) {
+
+        CompletableFuture<Object> completableFuture = new CompletableFuture<Object>();
+
+
+        messageService.sendMessage(event, message, new MessageHandler() {
+            @Override
+            public void handle(Object msg, ChannelFuture future) {
+                if (future.isSuccess()) {
+                    completableFuture.complete(msg);
+                } else {
+                    completableFuture.cancel(true);
+                }
+            }
+        });
+        return completableFuture;
     }
 }

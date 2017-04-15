@@ -9,7 +9,9 @@ import io.netty.channel.Channel;
 import io.netty.channel.EventLoopGroup;
 import javafx.fxml.Initializable;
 import javafx.stage.Stage;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import zaawjava.ScreensManager;
 
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -20,6 +22,12 @@ public class MainViewController implements Initializable {
     private Stage stage;
     private Channel channel;
     private EventLoopGroup group;
+    private ScreensManager screensManager;
+
+    @Autowired
+    public void setScreensManager(ScreensManager screensManager) {
+        this.screensManager = screensManager;
+    }
 
     /**
      * Initializes the controller class.
@@ -30,10 +38,4 @@ public class MainViewController implements Initializable {
     }
 
 
-    public void setParameters(Stage stage, Channel channel, EventLoopGroup group) {
-        this.stage = stage;
-        this.channel = channel;
-        this.group = group;
-
-    }
 }

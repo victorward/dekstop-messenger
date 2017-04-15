@@ -1,5 +1,6 @@
 package zaawjava.handlers;
 
+import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 import org.slf4j.Logger;
@@ -10,6 +11,7 @@ import utils.Message;
 import utils.MessageService;
 
 @Component
+//@ChannelHandler.Sharable
 public class ClientHandler extends ChannelInboundHandlerAdapter {
     private static final Logger log = LoggerFactory.getLogger(ClientHandler.class);
     private MessageService messageService;

@@ -26,6 +26,7 @@ public class SocketService {
 
     private EventLoopGroup group;
     private Channel channel;
+    private boolean connected = false;
 
     private final ClientHandler clientHandler;
     private final MessageService messageService;
@@ -38,6 +39,7 @@ public class SocketService {
 
 
     public ChannelFuture connect() {
+        if (connected) throw new RuntimeException("Already connected");
         group = new NioEventLoopGroup();
 
         Bootstrap b = new Bootstrap();
@@ -57,9 +59,11 @@ public class SocketService {
 
         ChannelFuture future = b.connect(HOST, PORT).addListener((ChannelFuture cf) -> {
             if (cf.isSuccess()) {
+                connected = true;
                 channel = cf.channel();
                 clientHandler.getMessageService().setChannel(channel);
             } else {
+                connected = false;
                 cf.channel().close();
                 group.shutdownGracefully();
             }
@@ -92,5 +96,21 @@ public class SocketService {
             }
         });
         return completableFuture;
+    }
+
+    public CompletableFuture<Object> on(String event) {
+        CompletableFuture<Object> completableFuture = new CompletableFuture<Object>();
+        messageService.registerHandler(event, new MessageHandler() {
+            @Override
+            public void handle(Object msg, ChannelFuture future) {
+                if (future.isSuccess()) {
+                    completableFuture.complete(msg);
+                } else {
+                    completableFuture.cancel(true);
+                }
+            }
+        });
+        return completableFuture;
+
     }
 }

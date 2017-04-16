@@ -14,11 +14,20 @@ import io.netty.handler.logging.LogLevel;
 import io.netty.handler.logging.LoggingHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
-
+@Component
 public class Server {
     private static final Logger log = LoggerFactory.getLogger(Server.class);
     private static final int PORT = 8080;
+
+    private final ServerConnectionsHandler serverConnectionsHandler;
+
+    @Autowired
+    public Server(ServerConnectionsHandler serverConnectionsHandler) {
+        this.serverConnectionsHandler = serverConnectionsHandler;
+    }
 
     public void run() {
         log.info("Server running on port: " + PORT);
@@ -38,9 +47,10 @@ public class Server {
                             p.addLast(
                                     new ObjectEncoder(),
                                     new ObjectDecoder(ClassResolvers.cacheDisabled(null)),
-                                    new ServerConnectionsHandler());
+                                    serverConnectionsHandler);
                         }
                     });
+
 
             // Bind and start to accept incoming connections.
             b.bind(PORT).sync().channel().closeFuture().sync();

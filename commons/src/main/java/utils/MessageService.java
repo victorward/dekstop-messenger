@@ -2,6 +2,7 @@ package utils;
 
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
+import io.netty.channel.group.ChannelGroup;
 import io.netty.util.concurrent.GenericFutureListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,6 +32,10 @@ public class MessageService {
     public void sendMessage(String kind, Object content) {
         channel.writeAndFlush(new Message(kind, content));
 
+    }
+
+    public void sendMessageToGroup(ChannelGroup group, String kind, Object content) {
+        group.writeAndFlush(new Message(kind, content));
     }
 
     public void sendMessage(String kind, Object content, MessageHandler handler, Channel channel) {

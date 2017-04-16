@@ -11,7 +11,7 @@ import utils.Message;
 import utils.MessageService;
 
 @Component
-//@ChannelHandler.Sharable
+@ChannelHandler.Sharable
 public class ClientHandler extends ChannelInboundHandlerAdapter {
     private static final Logger log = LoggerFactory.getLogger(ClientHandler.class);
     private MessageService messageService;

@@ -13,7 +13,7 @@
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane prefHeight="470.0" prefWidth="320.0" xmlns="http://javafx.com/javafx/8.0.60" xmlns:fx="http://javafx.com/fxml/1" fx:controller="zaawjava.controllers.RegistrationController">
+<AnchorPane prefHeight="470.0" prefWidth="320.0" xmlns="http://javafx.com/javafx/8.0.102" xmlns:fx="http://javafx.com/fxml/1" fx:controller="zaawjava.controllers.RegistrationController">
    <children>
       <Label layoutX="34.0" layoutY="14.0" text="For the first time on WAMY?" AnchorPane.topAnchor="10.0">
          <font>
@@ -42,20 +42,22 @@
             <RowConstraints maxHeight="1.7976931348623157E308" minHeight="25.0" vgrow="SOMETIMES" />
             <RowConstraints maxHeight="1.7976931348623157E308" minHeight="25.0" vgrow="SOMETIMES" />
             <RowConstraints maxHeight="1.7976931348623157E308" minHeight="25.0" vgrow="SOMETIMES" />
+            <RowConstraints maxHeight="1.7976931348623157E308" minHeight="25.0" prefHeight="30.0" vgrow="SOMETIMES" />
         </rowConstraints>
          <children>
             <JFXTextField promptText="Your first name" GridPane.columnSpan="3" GridPane.rowIndex="2" />
             <JFXTextField promptText="Your last name" GridPane.columnSpan="3" GridPane.rowIndex="3" />
             <Label text="Date of birth" GridPane.rowIndex="4" />
             <JFXDatePicker GridPane.columnSpan="3" GridPane.rowIndex="5" />
-            <JFXButton buttonType="RAISED" defaultButton="true" prefHeight="25.0" prefWidth="300.0" ripplerFill="#32cd64" text="Sign up" GridPane.columnSpan="3" GridPane.rowIndex="8" />
+            <JFXButton buttonType="RAISED" defaultButton="true" prefHeight="31.0" prefWidth="165.0" ripplerFill="#32cd64" text="Sign up" GridPane.columnSpan="3" GridPane.rowIndex="8" />
             <Label text="Yout gender" GridPane.rowIndex="6" />
             <JFXToggleButton text="Female" GridPane.columnSpan="2" GridPane.rowIndex="7" />
             <JFXToggleButton text="Male" GridPane.columnIndex="2" GridPane.columnSpan="2" GridPane.rowIndex="7" />
             <JFXTextField promptText="Email" GridPane.columnSpan="3" />
             <JFXPasswordField promptText="Password" GridPane.columnSpan="3" GridPane.rowIndex="1" />
+            <JFXProgressBar prefHeight="4.0" prefWidth="292.0" GridPane.columnSpan="2147483647" GridPane.rowIndex="9" />
+            <JFXButton buttonType="RAISED" defaultButton="true" onAction="#onBackClick" prefHeight="31.0" prefWidth="147.0" ripplerFill="#32cd64" text="Back" GridPane.columnIndex="2" GridPane.columnSpan="2" GridPane.rowIndex="8" />
          </children>
       </GridPane>
-      <JFXProgressBar layoutX="60.0" layoutY="381.0" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="435.0" />
    </children>
 </AnchorPane>

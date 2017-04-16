@@ -1,16 +1,22 @@
 package zaawjava.handlers;
 
+import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import utils.Message;
 import utils.MessageService;
 
+@Component
+@ChannelHandler.Sharable
 public class ClientHandler extends ChannelInboundHandlerAdapter {
     private static final Logger log = LoggerFactory.getLogger(ClientHandler.class);
-    private final MessageService messageService;
+    private MessageService messageService;
 
+    @Autowired
     public ClientHandler(MessageService messageService) {
         this.messageService = messageService;
     }
@@ -46,5 +52,9 @@ public class ClientHandler extends ChannelInboundHandlerAdapter {
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
         cause.printStackTrace();
         ctx.close();
+    }
+
+    public MessageService getMessageService() {
+        return messageService;
     }
 }

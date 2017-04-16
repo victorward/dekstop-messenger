@@ -7,21 +7,32 @@ package zaawjava.controllers;
 
 import java.net.URL;
 import java.util.ResourceBundle;
-import javafx.fxml.Initializable;
 
-/**
- * FXML Controller class
- *
- * @author Wiktor
- */
+import javafx.event.ActionEvent;
+import javafx.fxml.FXML;
+import javafx.fxml.Initializable;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+import zaawjava.ScreensManager;
+
+@Component
 public class ProfileController implements Initializable {
 
-    /**
-     * Initializes the controller class.
-     */
+    private ScreensManager screensManager;
+
+    @Autowired
+    public void setScreensManager(ScreensManager screensManager) {
+        this.screensManager = screensManager;
+    }
+
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         // TODO
-    }    
-    
+    }
+
+    @FXML
+    void onCancelClick(ActionEvent event) {
+        screensManager.goToMainView();
+    }
+
 }

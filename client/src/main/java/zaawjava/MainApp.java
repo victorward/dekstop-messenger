@@ -1,13 +1,11 @@
 package zaawjava;
 
 import javafx.application.Application;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.stage.Stage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import zaawjava.controllers.LoginController;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
 public class MainApp extends Application {
 
@@ -19,25 +17,13 @@ public class MainApp extends Application {
 
     public void start(Stage stage) throws Exception {
 
-        String fxmlFile = "/fxml/login.fxml";
-        log.debug("Loading FXML for main view from: {}", fxmlFile);
-        FXMLLoader loader = new FXMLLoader();
+        ApplicationContext applicationContext = new AnnotationConfigApplicationContext(SpringApplicationConfig.class);
+        ScreensManager sm = applicationContext.getBean(ScreensManager.class);
+        sm.setPrimaryStage(stage);
 
-        Parent rootNode = (Parent) loader.load(getClass().getResourceAsStream(fxmlFile));
-        LoginController c = (LoginController)loader.getController();
-        c.setParameters(stage);
-        log.debug("Showing JFX scene");
-        Scene scene = new Scene(rootNode, 400, 200);
-        scene.getStylesheets().add("/styles/styles.css");
-
-        stage.setTitle("Login");
-        stage.setScene(scene);
-//        stage.setWidth(scene.getWidth());
-//        stage.setHeight(scene.getHeight());
-
-
+        sm.goToLoginView();
+        sm.init();
         stage.show();
-
 
     }
 }

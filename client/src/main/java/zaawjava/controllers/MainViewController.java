@@ -7,6 +7,8 @@ package zaawjava.controllers;
 
 import io.netty.channel.Channel;
 import io.netty.channel.EventLoopGroup;
+import javafx.event.ActionEvent;
+import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.stage.Stage;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,6 +37,13 @@ public class MainViewController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         // TODO
+    }
+
+
+    @FXML
+    void onProfileClick(ActionEvent event) {
+        screensManager.goToProfileView();
+
     }
 
 

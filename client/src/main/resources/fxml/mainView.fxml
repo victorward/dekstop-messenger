@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.control.Label?>
+<?import com.jfoenix.controls.JFXButton?>
 <?import javafx.scene.layout.AnchorPane?>
 
-<AnchorPane id="rootPane" prefHeight="668.0" prefWidth="886.0" xmlns="http://javafx.com/javafx/8.0.60" xmlns:fx="http://javafx.com/fxml/1" fx:controller="zaawjava.controllers.MainViewController">
+<AnchorPane id="rootPane" prefHeight="556.0" prefWidth="760.0" xmlns="http://javafx.com/javafx/8.0.102" xmlns:fx="http://javafx.com/fxml/1" fx:controller="zaawjava.controllers.MainViewController">
    <children>
-      <Label layoutX="378.0" layoutY="39.0" prefHeight="25.0" prefWidth="85.0" text="Hello" />
+      <JFXButton layoutX="648.0" layoutY="31.0" onAction="#onProfileClick" text="Profil" />
    </children>
 
 </AnchorPane>

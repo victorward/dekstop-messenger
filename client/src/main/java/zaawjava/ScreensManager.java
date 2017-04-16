@@ -49,11 +49,18 @@ public class ScreensManager {
         this.mainViewController = mainViewController;
     }
 
+    public void init() {
+        stage.setOnCloseRequest(event1 -> {
+            log.debug("closing window...");
+            socketService.disconnect();
+        });
+    }
+
     public void setPrimaryStage(Stage stage) {
         this.stage = stage;
     }
 
-    public void showLoginView() throws IOException {
+    public void goToLoginView() throws IOException {
         String fxmlFile = "/fxml/login.fxml";
         SpringFxmlLoader loader = new SpringFxmlLoader(ctx);
 
@@ -65,11 +72,6 @@ public class ScreensManager {
         stage.setTitle("Login");
         stage.setScene(scene);
 
-        stage.setOnCloseRequest(event1 -> {
-            log.debug("closing window...");
-            socketService.disconnect();
-        });
-
     }
 
     public void goToMainView() {
@@ -78,5 +80,21 @@ public class ScreensManager {
         Parent rootNode = (Parent) loader.load("/fxml/mainView.fxml");
         Scene scene = new Scene(rootNode);
         stage.setScene(scene);
+    }
+
+    public void goToRegistrationView() {
+        SpringFxmlLoader loader = new SpringFxmlLoader(ctx);
+        Parent rootNode = (Parent) loader.load("/fxml/registration.fxml");
+        Scene scene = new Scene(rootNode);
+
+        stage.setScene(scene);
+    }
+
+    public void goToProfileView() {
+        SpringFxmlLoader loader = new SpringFxmlLoader(ctx);
+        Parent rootNode = (Parent) loader.load("/fxml/profile.fxml");
+        Scene scene = new Scene(rootNode);
+        stage.setScene(scene);
+
     }
 }

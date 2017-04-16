@@ -105,15 +105,6 @@ public class LoginController {
 
     @FXML
     private void onRegisterButton(ActionEvent event) throws IOException {
-        FXMLLoader loader = new FXMLLoader();
-
-        Parent rootNode = (Parent) loader.load(getClass().getResourceAsStream("/fxml/registration.fxml"));
-        RegistrationController c = (RegistrationController) loader.getController();
-        Scene scene = new Scene(rootNode);
-
-        Stage stage = new Stage();
-        stage.setScene(scene);
-        stage.show();
-
+        screensManager.goToRegistrationView();
     }
 }

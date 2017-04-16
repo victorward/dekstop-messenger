@@ -76,7 +76,7 @@ public class SocketService {
         }
     }
 
-    public CompletableFuture emit(String event, Object message) {
+    public CompletableFuture<Object> emit(String event, Object message) {
 
         CompletableFuture<Object> completableFuture = new CompletableFuture<Object>();
 

@@ -24,8 +24,13 @@ public class Main {
 //        System.out.println(testCountry.toString());
 //        Language testLanguage = DatabaseConnector.getLanguage("");
 //        System.out.println(testLanguage.toString());
-//        User testUser2 = DatabaseConnector.getByEmail("Kamil@ggg.gg");
-//        System.out.println(testUser2.toString());
+//        User testUser2 = DatabaseConnector.getByEmail("Kamil@haggg.gg");
+//        if(testUser2 == null)
+//        {
+//        	System.out.println("jest ok");
+//        }
+//        User testUser3 = DatabaseConnector.getByEmail("Kamil@ggg.gg");
+//        System.out.println(testUser3.toString());
 //        User testInsertUser = new User("Insertowy@insert.gg", "nieSpodziewalbysSieTakiego");
 //        DatabaseConnector.insertUser(testInsertUser);
         server.run();

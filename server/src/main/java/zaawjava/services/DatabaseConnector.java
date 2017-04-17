@@ -4,6 +4,7 @@ import model.Country;
 import model.Language;
 import model.User;
 
+import javax.persistence.NoResultException;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
@@ -43,6 +44,7 @@ public class DatabaseConnector {
 
     public static User getByEmail(String email)
     {
+    	User currentUser;
 		session = Main.factory.getCurrentSession();
 		session.beginTransaction();
 		CriteriaBuilder criteriaBuilder = session.getCriteriaBuilder();
@@ -50,7 +52,15 @@ public class DatabaseConnector {
 		Root<User> root = criteriaQuery.from(User.class);
 		criteriaQuery.select(root);
 		criteriaQuery.where(criteriaBuilder.equal(root.get("email"), email));
-		User currentUser = session.createQuery(criteriaQuery).getSingleResult();
+		try
+		{
+			currentUser = session.createQuery(criteriaQuery).getSingleResult();
+		}
+		catch (NoResultException nre)
+		{
+			session.getTransaction().commit();
+			return null;
+		}
 		session.getTransaction().commit();
 		return currentUser;
     }

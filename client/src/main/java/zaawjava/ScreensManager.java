@@ -25,6 +25,9 @@ public class ScreensManager {
 
     private ApplicationContext ctx;
 
+    private final SpringFxmlLoader loader;
+
+
     private LoginController loginController;
     private MainViewController mainViewController;
     private SocketService socketService;
@@ -32,6 +35,7 @@ public class ScreensManager {
     @Autowired
     public ScreensManager(ApplicationContext ctx) {
         this.ctx = ctx;
+        loader = new SpringFxmlLoader(ctx);
     }
 
     @Autowired
@@ -62,7 +66,6 @@ public class ScreensManager {
 
     public void goToLoginView() throws IOException {
         String fxmlFile = "/fxml/login.fxml";
-        SpringFxmlLoader loader = new SpringFxmlLoader(ctx);
 
         Parent rootNode = (Parent) loader.load(fxmlFile);
 
@@ -75,7 +78,6 @@ public class ScreensManager {
     }
 
     public void goToMainView() {
-        SpringFxmlLoader loader = new SpringFxmlLoader(ctx);
 
         Parent rootNode = (Parent) loader.load("/fxml/mainView.fxml");
         Scene scene = new Scene(rootNode);
@@ -83,7 +85,6 @@ public class ScreensManager {
     }
 
     public void goToRegistrationView() {
-        SpringFxmlLoader loader = new SpringFxmlLoader(ctx);
         Parent rootNode = (Parent) loader.load("/fxml/registration.fxml");
         Scene scene = new Scene(rootNode);
 
@@ -91,7 +92,6 @@ public class ScreensManager {
     }
 
     public void goToProfileView() {
-        SpringFxmlLoader loader = new SpringFxmlLoader(ctx);
         Parent rootNode = (Parent) loader.load("/fxml/profile.fxml");
         Scene scene = new Scene(rootNode);
         stage.setScene(scene);

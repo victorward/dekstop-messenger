@@ -75,6 +75,8 @@ public class ScreensManager {
             } else {
                 log.debug("Connection error. Please check server configuration");
                 Platform.runLater(() -> loginController.getMessageLabel().setText("Connection error. Please check server configuration"));
+                Platform.runLater(() -> loginController.getLogin().setDisable(true));
+                Platform.runLater(() -> loginController.getRegistration().setDisable(true));
                 connecting = false;
             }
         });

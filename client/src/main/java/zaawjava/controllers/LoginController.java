@@ -8,6 +8,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
@@ -19,6 +20,7 @@ import org.springframework.stereotype.Component;
 import zaawjava.ScreensManager;
 import zaawjava.services.SocketService;
 import javafx.scene.control.Alert.AlertType;
+import zaawjava.utils.Utils;
 
 import java.io.IOException;
 import java.util.Optional;
@@ -40,6 +42,11 @@ public class LoginController {
     private TextField loginField;
     @FXML
     private TextField passwordField;
+
+    @FXML
+    private Button login;
+    @FXML
+    private Button registration;
 
     @Autowired
     public LoginController(SocketService socketService) {
@@ -84,7 +91,7 @@ public class LoginController {
         if (loginField.getText() == null || loginField.getText().length() == 0) {
             errorMessage += "Empty email!\n";
         } else {
-            if (!validateEmail(loginField.getText())) {
+            if (!Utils.validateEmail(loginField.getText())) {
                 errorMessage += "Not correct email!\n";
             }
         }
@@ -105,14 +112,6 @@ public class LoginController {
         }
     }
 
-    public static final Pattern VALID_EMAIL_ADDRESS_REGEX =
-            Pattern.compile("^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,6}$", Pattern.CASE_INSENSITIVE);
-
-    public static boolean validateEmail(String emailStr) {
-        Matcher matcher = VALID_EMAIL_ADDRESS_REGEX.matcher(emailStr);
-        return matcher.find();
-    }
-
     @FXML
     public void onLoginButton(ActionEvent event) throws IOException {
         login();
@@ -125,5 +124,13 @@ public class LoginController {
 
     public Label getMessageLabel() {
         return messageLabel;
+    }
+
+    public Button getLogin() {
+        return login;
+    }
+
+    public Button getRegistration() {
+        return registration;
     }
 }

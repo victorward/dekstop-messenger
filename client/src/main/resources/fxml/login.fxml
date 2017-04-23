@@ -44,8 +44,8 @@
              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
            </rowConstraints>
             <children>
-               <JFXButton defaultButton="true" onAction="#onLoginButton" prefHeight="40.0" prefWidth="120.0" text="login" />
-               <JFXButton onAction="#onRegisterButton" prefHeight="40.0" prefWidth="120.0" text="Register" GridPane.columnIndex="1" />
+               <JFXButton fx:id="login" defaultButton="true" onAction="#onLoginButton" prefHeight="40.0" prefWidth="120.0" text="login" />
+               <JFXButton fx:id="registration" onAction="#onRegisterButton" prefHeight="40.0" prefWidth="120.0" text="Register" GridPane.columnIndex="1" />
             </children>
          </GridPane>
          <JFXPasswordField fx:id="passwordField" promptText="Your password" GridPane.columnIndex="1" GridPane.rowIndex="1" />

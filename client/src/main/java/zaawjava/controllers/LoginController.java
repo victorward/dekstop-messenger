@@ -19,6 +19,7 @@ import zaawjava.ScreensManager;
 import zaawjava.services.SocketService;
 
 import java.io.IOException;
+import java.util.Optional;
 
 @Component
 public class LoginController {
@@ -52,30 +53,28 @@ public class LoginController {
     }
 
     private void connect() {
-        if (connecting) {
-            return;
-        }
-        connecting = true;
-        log.debug("Trying to connect...");
-        messageLabel.setText("Connecting...");
+//        if (connecting) {
+//            return;
+//        }
+//        connecting = true;
+//        log.debug("Trying to connect...");
+//        messageLabel.setText("Connecting...");
 
-        socketService.connect().addListener((ChannelFuture future) -> {
-            if (future.isSuccess()) {
-
-                log.debug("Connected");
-                Platform.runLater(() -> messageLabel.setText("Connected."));
-                connecting = false;
-                login();
-
-            } else {
-                log.debug("Connection error");
-
-                Platform.runLater(() -> messageLabel.setText("Connection error"));
-                connecting = false;
-            }
-
-        });
-
+//        socketService.connect().addListener((ChannelFuture future) -> {
+//            if (future.isSuccess()) {
+//
+//                log.debug("Connected");
+//                Platform.runLater(() -> messageLabel.setText("Connected."));
+//                connecting = false;
+//                login();
+//
+//            } else {
+//                log.debug("Connection error");
+//
+//                Platform.runLater(() -> messageLabel.setText("Connection error"));
+//                connecting = false;
+//            }
+//
 //        });
     }
 
@@ -85,8 +84,11 @@ public class LoginController {
         socketService.emit("onLogin", user).whenComplete((msg, ex) -> {
             if (ex == null) {
                 try {
-                    if ("loggedIn".equals(msg))
+                    if ("loggedIn".equals(msg)) {
                         setMainView();
+                    } else {
+                        Platform.runLater(() -> messageLabel.setText("Login failed"));
+                    }
                 } catch (IOException e) {
                     Platform.runLater(() -> messageLabel.setText("Cannot load main view"));
                 }
@@ -98,9 +100,10 @@ public class LoginController {
 
     }
 
+
     @FXML
     public void onLoginButton(ActionEvent event) throws IOException {
-        connect();
+        login();
     }
 
     @FXML

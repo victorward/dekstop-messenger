@@ -1,6 +1,8 @@
 package zaawjava;
 
 
+import io.netty.channel.ChannelFuture;
+import javafx.application.Platform;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
@@ -54,10 +56,21 @@ public class ScreensManager {
     }
 
     public void init() {
+        socketService.connect().addListener((ChannelFuture future) -> {
+            if (future.isSuccess()) {
+                log.debug("Connected");
+
+            } else {
+                log.debug("Connection error");
+
+            }
+
+        });
         stage.setOnCloseRequest(event1 -> {
             log.debug("closing window...");
             socketService.disconnect();
         });
+
     }
 
     public void setPrimaryStage(Stage stage) {

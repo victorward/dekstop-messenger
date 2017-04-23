@@ -59,7 +59,7 @@
             <JFXToggleButton fx:id="male" text="Male" toggleGroup="$group" GridPane.columnIndex="2" GridPane.columnSpan="2" GridPane.rowIndex="7" />
             <JFXTextField fx:id="email" promptText="Email" GridPane.columnSpan="3" />
             <JFXPasswordField fx:id="password" promptText="Password" GridPane.columnSpan="3" GridPane.rowIndex="1" />
-            <JFXProgressBar fx:id="progressBar" disable="true" prefHeight="4.0" prefWidth="292.0" GridPane.columnSpan="2147483647" GridPane.rowIndex="9" />
+            <JFXProgressBar fx:id="progressBar" prefHeight="4.0" prefWidth="292.0" progress="0.01" GridPane.columnSpan="2147483647" GridPane.rowIndex="9" />
              <JFXButton defaultButton="true" onAction="#onSign" prefHeight="31.0" prefWidth="160.0" text="Sign up" GridPane.columnSpan="2" GridPane.rowIndex="8" />
             <JFXButton buttonType="RAISED" cancelButton="true" onAction="#onBackClick" prefHeight="31.0" prefWidth="147.0" ripplerFill="#32cd64" text="Back" GridPane.columnIndex="2" GridPane.columnSpan="2" GridPane.rowIndex="8">
                <GridPane.margin>
@@ -68,5 +68,10 @@
 
          </children>
       </GridPane>
+      <Label fx:id="errorLabel" alignment="TOP_CENTER" layoutX="10.0" layoutY="439.0" AnchorPane.bottomAnchor="5.0" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="5.0">
+         <padding>
+            <Insets top="10.0" />
+         </padding>
+      </Label>
    </children>
 </AnchorPane>

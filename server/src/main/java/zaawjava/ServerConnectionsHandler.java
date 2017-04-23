@@ -52,7 +52,13 @@ public class ServerConnectionsHandler extends ChannelInboundHandlerAdapter {
         this.messageService.registerHandler("onRegistration", new MessageHandler() {
             @Override
             public void handle(Object msg, ChannelFuture future) {
-                //todo
+                log.debug("Registration" + msg);
+                User user = (User) msg;
+                if (addNewUser(user)) {
+                    ServerConnectionsHandler.this.messageService.sendMessage("onRegistration", "registered");
+                } else {
+                    ServerConnectionsHandler.this.messageService.sendMessage("onRegistration", "registrationError");
+                }
             }
         });
 
@@ -71,6 +77,19 @@ public class ServerConnectionsHandler extends ChannelInboundHandlerAdapter {
         User user = null;
         user = databaseConnector.getByEmail(email);
         return user;
+    }
+
+    public boolean addNewUser(User user) {
+        try {
+            user.setAddress("");
+            user.setPhoto("");
+            log.debug("Trying add to database" + user);
+            databaseConnector.insertUser(user);
+            return true;
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            return false;
+        }
     }
 
     @Override

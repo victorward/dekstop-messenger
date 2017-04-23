@@ -47,6 +47,8 @@ public class RegistrationController implements Initializable {
     @FXML
     ToggleGroup group;
     ToggleButton checkToogle = null;
+    @FXML
+    private Label errorLabel;
 
     @Autowired
     public RegistrationController(SocketService socketService) {
@@ -104,7 +106,7 @@ public class RegistrationController implements Initializable {
 
     private boolean isInputValid() {
         String errorMessage = "";
-
+        progressBar.setProgress(0.15);
         if (email.getText() == null || email.getText().length() == 0) {
             errorMessage += "Empty email!\n";
         } else {
@@ -144,8 +146,10 @@ public class RegistrationController implements Initializable {
         }
 
         if (errorMessage.length() == 0) {
+            progressBar.setProgress(0.25);
             return true;
         } else {
+            progressBar.setProgress(0.01);
             Alert alert = new Alert(Alert.AlertType.ERROR);
             alert.initOwner(screensManager.getStage());
             alert.setTitle("Invalid Fields");
@@ -165,32 +169,39 @@ public class RegistrationController implements Initializable {
     void onSign() throws IOException {
         if (isInputValid()) {
             User user = new User(email.getText(), password.getText(), firstName.getText(), lastName.getText(), dataPicker.getValue(), checkToogle.getText());
+            progressBar.setProgress(0.45);
             insertNewUser(user);
-            Alert alert = new Alert(Alert.AlertType.INFORMATION);
-            alert.initOwner(screensManager.getStage());
-            alert.setTitle("Success");
-            alert.setHeaderText("Congratulations you've successfully registered");
-            alert.setContentText("Now you can log in your account");
-            alert.showAndWait();
-            screensManager.goToLoginView();
         }
     }
 
     private void insertNewUser(User user) {
-//        socketService.emit("onRegistration", user).whenComplete((msg, ex) -> {
-//            if (ex == null) {
-//                try {
-//                    if ("loggedIn".equals(msg)) {
-//                        setMainView();
-//                    } else {
-//                        Platform.runLater(() -> messageLabel.setText("Login failed"));
-//                    }
-//                } catch (IOException e) {
-//                    Platform.runLater(() -> messageLabel.setText("Cannot load main view"));
-//                }
-//            } else {
-//                Platform.runLater(() -> messageLabel.setText("Login failed during checking data"));
-//            }
-//        });
+        socketService.emit("onRegistration", user).whenComplete((msg, ex) -> {
+            if (ex == null) {
+                progressBar.setProgress(0.7);
+                try {
+                    if ("registered".equals(msg)) {
+                        progressBar.setProgress(0.90);
+                        showSuccess();
+                        screensManager.goToLoginView();
+                    } else {
+                        Platform.runLater(() -> errorLabel.setText("Registration failed during writing data to database"));
+                    }
+                } catch (IOException e) {
+                    Platform.runLater(() -> errorLabel.setText("Cannot load login view"));
+                }
+            } else {
+                Platform.runLater(() -> errorLabel.setText("Registration failed during connection to database"));
+            }
+        });
+    }
+
+    private void showSuccess(){
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.initOwner(screensManager.getStage());
+        alert.setTitle("Success");
+        alert.setHeaderText("Congratulations you've successfully registered");
+        alert.setContentText("Now you can log in your account");
+        alert.showAndWait();
+        progressBar.setProgress(0.99);
     }
 }

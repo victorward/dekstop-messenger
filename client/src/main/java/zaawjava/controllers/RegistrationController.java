@@ -178,16 +178,23 @@ public class RegistrationController implements Initializable {
         socketService.emit("onRegistration", user).whenComplete((msg, ex) -> {
             if (ex == null) {
                 progressBar.setProgress(0.7);
-                try {
-                    if ("registered".equals(msg)) {
+                if ("registered".equals(msg)) {
+                    Platform.runLater(() -> {
                         progressBar.setProgress(0.90);
+
                         showSuccess();
-                        screensManager.goToLoginView();
-                    } else {
-                        Platform.runLater(() -> errorLabel.setText("Registration failed during writing data to database"));
-                    }
-                } catch (IOException e) {
-                    Platform.runLater(() -> errorLabel.setText("Cannot load login view"));
+                        try {
+                            screensManager.goToLoginView();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                            Platform.runLater(() -> errorLabel.setText("Cannot load login view"));
+
+                        }
+
+                    });
+//                        screensManager.goToMainView();
+                } else {
+                    Platform.runLater(() -> errorLabel.setText("Registration failed during writing data to database"));
                 }
             } else {
                 Platform.runLater(() -> errorLabel.setText("Registration failed during connection to database"));
@@ -195,9 +202,9 @@ public class RegistrationController implements Initializable {
         });
     }
 
-    private void showSuccess(){
+    private void showSuccess() {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.initOwner(screensManager.getStage());
+//        alert.initOwner(screensManager.getStage());
         alert.setTitle("Success");
         alert.setHeaderText("Congratulations you've successfully registered");
         alert.setContentText("Now you can log in your account");

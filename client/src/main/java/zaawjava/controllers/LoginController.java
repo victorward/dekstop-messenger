@@ -7,6 +7,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
@@ -17,9 +18,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import zaawjava.ScreensManager;
 import zaawjava.services.SocketService;
+import javafx.scene.control.Alert.AlertType;
 
 import java.io.IOException;
 import java.util.Optional;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @Component
 public class LoginController {
@@ -29,7 +33,6 @@ public class LoginController {
 
     private final SocketService socketService;
     private ScreensManager screensManager;
-
 
     @FXML
     private Label messageLabel;
@@ -52,54 +55,63 @@ public class LoginController {
         Platform.runLater(() -> screensManager.goToMainView());
     }
 
-    private void connect() {
-//        if (connecting) {
-//            return;
-//        }
-//        connecting = true;
-//        log.debug("Trying to connect...");
-//        messageLabel.setText("Connecting...");
-
-//        socketService.connect().addListener((ChannelFuture future) -> {
-//            if (future.isSuccess()) {
-//
-//                log.debug("Connected");
-//                Platform.runLater(() -> messageLabel.setText("Connected."));
-//                connecting = false;
-//                login();
-//
-//            } else {
-//                log.debug("Connection error");
-//
-//                Platform.runLater(() -> messageLabel.setText("Connection error"));
-//                connecting = false;
-//            }
-//
-//        });
-    }
-
     private void login() {
         User user = new User(loginField.getText(), passwordField.getText());
-
-        socketService.emit("onLogin", user).whenComplete((msg, ex) -> {
-            if (ex == null) {
-                try {
-                    if ("loggedIn".equals(msg)) {
-                        setMainView();
-                    } else {
-                        Platform.runLater(() -> messageLabel.setText("Login failed"));
+        if (isInputValid()) {
+            socketService.emit("onLogin", user).whenComplete((msg, ex) -> {
+                if (ex == null) {
+                    try {
+                        if ("loggedIn".equals(msg)) {
+                            setMainView();
+                        } else {
+                            Platform.runLater(() -> messageLabel.setText("Login failed"));
+                        }
+                    } catch (IOException e) {
+                        Platform.runLater(() -> messageLabel.setText("Cannot load main view"));
                     }
-                } catch (IOException e) {
-                    Platform.runLater(() -> messageLabel.setText("Cannot load main view"));
+                } else {
+                    Platform.runLater(() -> messageLabel.setText("Login failed during checking data"));
                 }
-            } else {
-                Platform.runLater(() -> messageLabel.setText("Login failed"));
-
-            }
-        });
-
+            });
+        } else {
+            Platform.runLater(() -> messageLabel.setText("Login failed. Please write correct values"));
+        }
     }
 
+    private boolean isInputValid() {
+        String errorMessage = "";
+
+        if (loginField.getText() == null || loginField.getText().length() == 0) {
+            errorMessage += "Empty email!\n";
+        } else {
+            if (!validateEmail(loginField.getText())) {
+                errorMessage += "Not correct email!\n";
+            }
+        }
+        if (passwordField.getText() == null || passwordField.getText().length() == 0) {
+            errorMessage += "Empty password!\n";
+        }
+
+        if (errorMessage.length() == 0) {
+            return true;
+        } else {
+            Alert alert = new Alert(AlertType.ERROR);
+            alert.initOwner(screensManager.getStage());
+            alert.setTitle("Invalid Fields");
+            alert.setHeaderText("Please correct invalid fields");
+            alert.setContentText(errorMessage);
+            alert.showAndWait();
+            return false;
+        }
+    }
+
+    public static final Pattern VALID_EMAIL_ADDRESS_REGEX =
+            Pattern.compile("^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,6}$", Pattern.CASE_INSENSITIVE);
+
+    public static boolean validateEmail(String emailStr) {
+        Matcher matcher = VALID_EMAIL_ADDRESS_REGEX.matcher(emailStr);
+        return matcher.find();
+    }
 
     @FXML
     public void onLoginButton(ActionEvent event) throws IOException {
@@ -109,5 +121,9 @@ public class LoginController {
     @FXML
     private void onRegisterButton(ActionEvent event) throws IOException {
         screensManager.goToRegistrationView();
+    }
+
+    public Label getMessageLabel() {
+        return messageLabel;
     }
 }

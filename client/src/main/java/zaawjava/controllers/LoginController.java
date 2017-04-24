@@ -71,7 +71,7 @@ public class LoginController {
                         if ("loggedIn".equals(msg)) {
                             setMainView();
                         } else {
-                            Platform.runLater(() -> messageLabel.setText("Login failed"));
+                            Platform.runLater(() -> messageLabel.setText("Login failed. " + msg));
                         }
                     } catch (IOException e) {
                         Platform.runLater(() -> messageLabel.setText("Cannot load main view"));

@@ -5,6 +5,7 @@
 <?import com.jfoenix.controls.JFXPasswordField?>
 <?import com.jfoenix.controls.JFXTextField?>
 <?import com.jfoenix.controls.JFXToggleButton?>
+<?import javafx.geometry.Insets?>
 <?import javafx.scene.control.ButtonBar?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.image.Image?>
@@ -14,7 +15,7 @@
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.RowConstraints?>
 
-<AnchorPane prefHeight="420.0" prefWidth="400.0" xmlns="http://javafx.com/javafx/8.0.102" xmlns:fx="http://javafx.com/fxml/1" fx:controller="zaawjava.controllers.ProfileController">
+<AnchorPane prefHeight="420.0" prefWidth="400.0" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="zaawjava.controllers.ProfileController">
    <children>
       <ImageView fitHeight="160.0" fitWidth="140.0" layoutX="486.0" layoutY="29.0" pickOnBounds="true" preserveRatio="true" AnchorPane.rightAnchor="15.0" AnchorPane.topAnchor="30.0">
          <image>
@@ -22,7 +23,7 @@
          </image>
       </ImageView>
       <Label layoutX="488.0" layoutY="6.0" text="Your avatar" AnchorPane.rightAnchor="51.0" AnchorPane.topAnchor="10.0" />
-      <GridPane layoutX="14.0" layoutY="27.0" AnchorPane.bottomAnchor="40.0" AnchorPane.leftAnchor="10.0" AnchorPane.topAnchor="10.0">
+      <GridPane layoutX="14.0" layoutY="27.0" AnchorPane.bottomAnchor="40.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="170.0" AnchorPane.topAnchor="10.0">
         <columnConstraints>
           <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
           <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
@@ -42,7 +43,10 @@
         </rowConstraints>
          <children>
             <Label text="Password:" GridPane.rowIndex="2" />
-            <Label text="Your gender" GridPane.rowIndex="3" />
+            <Label text="Female" GridPane.rowIndex="3">
+               <GridPane.margin>
+                  <Insets left="69.0" />
+               </GridPane.margin></Label>
             <Label text="Date of birth" GridPane.rowIndex="4" />
             <Label text="Country*" GridPane.rowIndex="6" />
             <Label text="Mobile number*" GridPane.rowIndex="8" />
@@ -53,10 +57,16 @@
             <JFXTextField promptText="First name" />
             <JFXTextField promptText="Email" GridPane.columnSpan="2" GridPane.rowIndex="1" />
             <JFXPasswordField promptText="**********" GridPane.columnIndex="1" GridPane.rowIndex="2" />
-            <JFXToggleButton text="Male" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+            <JFXToggleButton text="Male" GridPane.columnIndex="1" GridPane.rowIndex="3">
+               <GridPane.margin>
+                  <Insets />
+               </GridPane.margin>
+               <padding>
+                  <Insets right="10.0" />
+               </padding></JFXToggleButton>
             <JFXDatePicker promptText="Date" GridPane.columnIndex="1" GridPane.rowIndex="4" />
             <JFXTextField GridPane.columnIndex="1" GridPane.rowIndex="6" />
-            <JFXTextField GridPane.columnIndex="1" GridPane.rowIndex="7" />
+            <JFXTextField prefWidth="120.0" GridPane.columnIndex="1" GridPane.rowIndex="7" />
             <JFXTextField GridPane.columnIndex="1" GridPane.rowIndex="8" />
             <JFXTextField GridPane.columnIndex="1" GridPane.rowIndex="9" />
          </children>

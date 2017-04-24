@@ -1,11 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import com.jfoenix.controls.JFXButton?>
+<?import com.jfoenix.controls.JFXToolbar?>
+<?import javafx.scene.control.ButtonBar?>
 <?import javafx.scene.layout.AnchorPane?>
 
-<AnchorPane id="rootPane" prefHeight="556.0" prefWidth="760.0" xmlns="http://javafx.com/javafx/8.0.102" xmlns:fx="http://javafx.com/fxml/1" fx:controller="zaawjava.controllers.MainViewController">
+<AnchorPane id="rootPane" prefHeight="556.0" prefWidth="760.0" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="zaawjava.controllers.MainViewController">
    <children>
-      <JFXButton layoutX="648.0" layoutY="31.0" onAction="#onProfileClick" text="Profil" />
+      <JFXToolbar layoutX="114.0" layoutY="87.0" />
+      <ButtonBar buttonMinWidth="120.0" layoutX="114.0" layoutY="40.0" prefHeight="40.0" prefWidth="200.0" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="5.0">
+        <buttons>
+            <JFXButton minWidth="120.0" onAction="#onProfileClick" text="Profil" />
+            <JFXButton onAction="#onLogoutClick" text="Logout" />
+        </buttons>
+      </ButtonBar>
    </children>
 
 </AnchorPane>

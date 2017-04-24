@@ -69,6 +69,8 @@ public class RegistrationController implements Initializable {
     public void init() {
         screensManager.getStage().setTitle("Registration");
 
+        dataPicker.setValue(LocalDate.now().minusDays(3650));
+        
         group.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
             @Override
             public void changed(ObservableValue<? extends Toggle> ov, Toggle t, Toggle t1) {
@@ -193,7 +195,7 @@ public class RegistrationController implements Initializable {
                     });
 //                        screensManager.goToMainView();
                 } else {
-                    Platform.runLater(() -> errorLabel.setText("Registration failed during writing data to database"));
+                    Platform.runLater(() -> errorLabel.setText("Registration failed during writing data to database. " + msg));
                 }
             } else {
                 Platform.runLater(() -> errorLabel.setText("Registration failed during connection to database"));

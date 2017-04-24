@@ -53,22 +53,22 @@
             <Label text="Hometown*" GridPane.rowIndex="7" />
             <Label text="Languages*" GridPane.rowIndex="9" />
             <Label text="* - this field is not required" GridPane.columnSpan="2" GridPane.rowIndex="10" />
-            <JFXTextField promptText="Last name" GridPane.columnIndex="1" />
-            <JFXTextField promptText="First name" />
-            <JFXTextField promptText="Email" GridPane.columnSpan="2" GridPane.rowIndex="1" />
-            <JFXPasswordField promptText="**********" GridPane.columnIndex="1" GridPane.rowIndex="2" />
-            <JFXToggleButton text="Male" GridPane.columnIndex="1" GridPane.rowIndex="3">
+            <JFXTextField fx:id="lastName" promptText="Last name" GridPane.columnIndex="1" />
+            <JFXTextField fx:id="firstName" promptText="First name" />
+            <JFXTextField fx:id="email" promptText="Email" GridPane.columnSpan="2" GridPane.rowIndex="1" />
+            <JFXPasswordField fx:id="password" promptText="**********" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+            <JFXToggleButton fx:id="sex" text="Male" GridPane.columnIndex="1" GridPane.rowIndex="3">
                <GridPane.margin>
                   <Insets />
                </GridPane.margin>
                <padding>
                   <Insets right="10.0" />
                </padding></JFXToggleButton>
-            <JFXDatePicker promptText="Date" GridPane.columnIndex="1" GridPane.rowIndex="4" />
-            <JFXTextField GridPane.columnIndex="1" GridPane.rowIndex="6" />
-            <JFXTextField prefWidth="120.0" GridPane.columnIndex="1" GridPane.rowIndex="7" />
-            <JFXTextField GridPane.columnIndex="1" GridPane.rowIndex="8" />
-            <JFXTextField GridPane.columnIndex="1" GridPane.rowIndex="9" />
+            <JFXDatePicker fx:id="date" promptText="Date" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+            <JFXTextField fx:id="country" GridPane.columnIndex="1" GridPane.rowIndex="6" />
+            <JFXTextField fx:id="hometown" prefWidth="120.0" GridPane.columnIndex="1" GridPane.rowIndex="7" />
+            <JFXTextField fx:id="number" GridPane.columnIndex="1" GridPane.rowIndex="8" />
+            <JFXTextField fx:id="languages" GridPane.columnIndex="1" GridPane.rowIndex="9" />
          </children>
       </GridPane>
       <JFXButton layoutX="269.0" layoutY="200.0" text="Change avatar..." AnchorPane.rightAnchor="30.0" AnchorPane.topAnchor="200.0" />

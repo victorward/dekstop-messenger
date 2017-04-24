@@ -5,12 +5,17 @@
  */
 package zaawjava.controllers;
 
+import java.awt.*;
 import java.net.URL;
 import java.util.ResourceBundle;
 
+import com.jfoenix.controls.JFXPasswordField;
+import com.jfoenix.controls.JFXTextField;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.DatePicker;
+import javafx.scene.control.ToggleButton;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import zaawjava.ScreensManager;
@@ -25,9 +30,35 @@ public class ProfileController implements Initializable {
         this.screensManager = screensManager;
     }
 
+    @FXML
+    private JFXTextField firstName;
+    @FXML
+    private JFXTextField lastName;
+    @FXML
+    private JFXTextField email;
+    @FXML
+    private JFXPasswordField password;
+    @FXML
+    private ToggleButton sex;
+    @FXML
+    private DatePicker date;
+    @FXML
+    private JFXTextField country;
+    @FXML
+    private JFXTextField hometown;
+    @FXML
+    private JFXTextField number;
+    @FXML
+    private JFXTextField languages;
+
+
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        // TODO
+        init();
+    }
+
+    void init(){
+
     }
 
     @FXML

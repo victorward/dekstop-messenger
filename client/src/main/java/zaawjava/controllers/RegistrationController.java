@@ -181,7 +181,6 @@ public class RegistrationController implements Initializable {
                 if ("registered".equals(msg)) {
                     Platform.runLater(() -> {
                         progressBar.setProgress(0.90);
-
                         showSuccess();
                         try {
                             screensManager.goToLoginView();

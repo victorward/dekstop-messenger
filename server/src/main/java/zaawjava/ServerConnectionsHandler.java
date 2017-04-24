@@ -14,6 +14,7 @@ import org.springframework.stereotype.Component;
 import utils.Message;
 import utils.MessageHandler;
 import utils.MessageService;
+import zaawjava.Utils.Utils;
 import zaawjava.services.DatabaseConnector;
 
 import java.util.Optional;
@@ -39,8 +40,8 @@ public class ServerConnectionsHandler extends ChannelInboundHandlerAdapter {
         this.messageService.registerHandler("onLogin", new MessageHandler() {
             @Override
             public void handle(Object msg, ChannelFuture future) {
-                log.debug("login!" + msg);
                 User user = (User) msg;
+                log.debug("Trying to log in! " + user);
                 if (checkPassword(user)) {
                     ServerConnectionsHandler.this.messageService.sendMessage("onLogin", "loggedIn");
                 } else {
@@ -67,6 +68,9 @@ public class ServerConnectionsHandler extends ChannelInboundHandlerAdapter {
     public boolean checkPassword(User user) {
         if (Optional.ofNullable(checkUserInDatabase(user.getEmail())).isPresent()) {
             User chceckedUser = databaseConnector.getByEmail(user.getEmail());
+            chceckedUser.setPassword(Utils.decryptPassword(chceckedUser.getPassword()));
+            System.out.println(chceckedUser.getPassword());
+            log.debug("logining! " + chceckedUser);
             if (chceckedUser.getPassword().equals(user.getPassword())) {
                 return true;
             } else return false;
@@ -83,6 +87,7 @@ public class ServerConnectionsHandler extends ChannelInboundHandlerAdapter {
         try {
             user.setAddress("");
             user.setPhoto("");
+            user.setPassword(Utils.encryptPassword(user.getPassword()));
             log.debug("Trying add to database" + user);
             databaseConnector.insertUser(user);
             return true;

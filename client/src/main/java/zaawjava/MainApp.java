@@ -21,8 +21,9 @@ public class MainApp extends Application {
         ScreensManager sm = applicationContext.getBean(ScreensManager.class);
         sm.setPrimaryStage(stage);
 
-        sm.goToLoginView();
         sm.init();
+
+        sm.goToLoginView();
         stage.show();
 
     }

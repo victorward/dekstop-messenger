@@ -2,6 +2,7 @@ package model;
 
 import java.io.Serializable;
 import java.sql.Date;
+import java.time.LocalDate;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -11,173 +12,156 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 
 @Entity
-@Table(name="user")
-public class User implements Serializable
-{
+@Table(name = "user")
+public class User implements Serializable {
 
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name="id")
-	private int id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
+    private int id;
 
-	@Column(name="first_name")
+    @Column(name = "first_name")
     private String firstName;
 
-	@Column(name="last_name")
+    @Column(name = "last_name")
     private String lastName;
 
-	@Column(name="phone")
-	private int phone;
+    @Column(name = "phone")
+    private int phone;
 
-	@Column(name="gender")
-	private String gender;
+    @Column(name = "gender")
+    private String gender;
 
-	@Column(name="email")
-	private String email;
+    @Column(name = "email")
+    private String email;
 
-	@Column(name="user_password")
+    @Column(name = "user_password")
     private String password;
 
-	@Column(name="address")
-	private String address;
+    @Column(name = "address")
+    private String address;
 
-	@Column(name="country_id")
-	private int countryId;
+    @Column(name = "country_id")
+    private int countryId;
 
-	@Column(name="birth_date")
-	private Date birthDate;
+    @Column(name = "birth_date")
+    private LocalDate birthDate;
 
-	@Column(name="photo")
-	private String photo;
+    @Column(name = "photo")
+    private String photo;
 
-	public int getId()
-	{
-		return id;
-	}
+    public int getId() {
+        return id;
+    }
 
-	public void setId(int id)
-	{
-		this.id = id;
-	}
+    public void setId(int id) {
+        this.id = id;
+    }
 
-	public String getFirstName()
-	{
-		return firstName;
-	}
+    public String getFirstName() {
+        return firstName;
+    }
 
-	public void setFirstName(String firstName)
-	{
-		this.firstName = firstName;
-	}
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
 
-	public String getLastName()
-	{
-		return lastName;
-	}
+    public String getLastName() {
+        return lastName;
+    }
 
-	public void setLastName(String lastName)
-	{
-		this.lastName = lastName;
-	}
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
+    }
 
-	public int getPhone()
-	{
-		return phone;
-	}
+    public int getPhone() {
+        return phone;
+    }
 
-	public void setPhone(int phone)
-	{
-		this.phone = phone;
-	}
+    public void setPhone(int phone) {
+        this.phone = phone;
+    }
 
-	public String getGender()
-	{
-		return gender;
-	}
+    public String getGender() {
+        return gender;
+    }
 
-	public void setGender(String gender)
-	{
-		this.gender = gender;
-	}
+    public void setGender(String gender) {
+        this.gender = gender;
+    }
 
-	public String getEmail()
-	{
-		return email;
-	}
+    public String getEmail() {
+        return email;
+    }
 
-	public void setEmail(String email)
-	{
-		this.email = email;
-	}
+    public void setEmail(String email) {
+        this.email = email;
+    }
 
-	public String getPassword()
-	{
-		return password;
-	}
+    public String getPassword() {
+        return password;
+    }
 
-	public void setPassword(String password)
-	{
-		this.password = password;
-	}
+    public void setPassword(String password) {
+        this.password = password;
+    }
 
-	public String getAddress()
-	{
-		return address;
-	}
+    public String getAddress() {
+        return address;
+    }
 
-	public void setAddress(String address)
-	{
-		this.address = address;
-	}
+    public void setAddress(String address) {
+        this.address = address;
+    }
 
-	public int getCountryId()
-	{
-		return countryId;
-	}
+    public int getCountryId() {
+        return countryId;
+    }
 
-	public void setCountryId(int countryId)
-	{
-		this.countryId = countryId;
-	}
+    public void setCountryId(int countryId) {
+        this.countryId = countryId;
+    }
 
-	public Date getBirthDate()
-	{
-		return birthDate;
-	}
+    public LocalDate getBirthDate() {
+        return birthDate;
+    }
 
-	public void setBirthDate(Date birthDate)
-	{
-		this.birthDate = birthDate;
-	}
+    public void setBirthDate(LocalDate birthDate) {
+        this.birthDate = birthDate;
+    }
 
-	public String getPhoto()
-	{
-		return photo;
-	}
+    public String getPhoto() {
+        return photo;
+    }
 
-	public void setPhoto(String photo)
-	{
-		this.photo = photo;
-	}
+    public void setPhoto(String photo) {
+        this.photo = photo;
+    }
 
-	public User()
-	{
-		super();
-	}
+    public User() {
+        super();
+    }
 
-	public User(String email, String password)
-	{
-		super();
-		this.email = email;
-		this.password = password;
-	}
+    public User(String email, String password) {
+        super();
+        this.email = email;
+        this.password = password;
+    }
 
-	@Override
-	public String toString()
-	{
-		return "User [id=" + id + ", firstName=" + firstName + ", lastName=" + lastName + ", phone=" + phone
-				+ ", gender=" + gender + ", email=" + email + ", password=" + password + ", address=" + address
-				+ ", countryId=" + countryId + ", birthDate=" + birthDate + ", photo=" + photo + "]";
-	}
+    public User(String email, String password, String firstName, String lastName, LocalDate birthDate, String gender) {
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.birthDate = birthDate;
+        this.gender = gender;
+        this.email = email;
+        this.password = password;
+    }
+
+    @Override
+    public String toString() {
+        return "User [id=" + id + ", firstName=" + firstName + ", lastName=" + lastName + ", phone=" + phone
+                + ", gender=" + gender + ", email=" + email + ", password=" + password + ", address=" + address
+                + ", countryId=" + countryId + ", birthDate=" + birthDate + ", photo=" + photo + "]";
+    }
 
 }

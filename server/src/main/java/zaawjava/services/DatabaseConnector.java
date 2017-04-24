@@ -16,24 +16,24 @@ import zaawjava.Main;
 
 @Service
 public class DatabaseConnector {
-    private static Session session;
+    private Session session;
 
     // TEST METHODS
-    public static User getUser(String narazieNieWazne) {
+    public User getUser(String narazieNieWazne) {
         session = Main.factory.getCurrentSession();
         session.beginTransaction();
         User currentUser = session.get(User.class, 1);
         session.getTransaction().commit();
         return currentUser;
     }
-    public static Language getLanguage(String narazieNieWazne) {
+    public Language getLanguage(String narazieNieWazne) {
         session = Main.factory.getCurrentSession();
         session.beginTransaction();
         Language currentLanguage = session.get(Language.class, 1);
         session.getTransaction().commit();
         return currentLanguage;
     }
-    public static Country getCountry(String narazieNieWazne) {
+    public Country getCountry(String narazieNieWazne) {
         session = Main.factory.getCurrentSession();
         session.beginTransaction();
         Country currentCountry = session.get(Country.class, 1);
@@ -42,7 +42,7 @@ public class DatabaseConnector {
     }
     // FINISH HERE
 
-    public static User getByEmail(String email)
+    public User getByEmail(String email)
     {
     	User currentUser;
 		session = Main.factory.getCurrentSession();
@@ -64,7 +64,7 @@ public class DatabaseConnector {
 		session.getTransaction().commit();
 		return currentUser;
     }
-    public static void insertUser(User user)
+    public void insertUser(User user)
     {
 		session = Main.factory.getCurrentSession();
 		session.beginTransaction();

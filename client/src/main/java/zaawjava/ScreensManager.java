@@ -1,6 +1,8 @@
 package zaawjava;
 
 
+import io.netty.channel.ChannelFuture;
+import javafx.application.Platform;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
@@ -20,6 +22,11 @@ import java.io.IOException;
 public class ScreensManager {
     private static final Logger log = LoggerFactory.getLogger(ScreensManager.class);
 
+    private Boolean connecting = false;
+
+    public Stage getStage() {
+        return stage;
+    }
 
     private Stage stage;
 
@@ -54,10 +61,30 @@ public class ScreensManager {
     }
 
     public void init() {
+        if (connecting) {
+            return;
+        }
+        connecting = true;
+        log.debug("Trying to connect...");
+        Platform.runLater(() ->loginController.getMessageLabel().setText("Connecting..."));
+        socketService.connect().addListener((ChannelFuture future) -> {
+            if (future.isSuccess()) {
+                log.debug("Connected with server");
+                Platform.runLater(() -> loginController.getMessageLabel().setText("Connected."));
+                connecting = false;
+            } else {
+                log.debug("Connection error. Please check server configuration");
+                Platform.runLater(() -> loginController.getMessageLabel().setText("Connection error. Please check server configuration"));
+                Platform.runLater(() -> loginController.getLogin().setDisable(true));
+                Platform.runLater(() -> loginController.getRegistration().setDisable(true));
+                connecting = false;
+            }
+        });
         stage.setOnCloseRequest(event1 -> {
             log.debug("closing window...");
             socketService.disconnect();
         });
+
     }
 
     public void setPrimaryStage(Stage stage) {

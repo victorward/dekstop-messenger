@@ -87,6 +87,17 @@ public class ServerConnectionsHandler extends ChannelInboundHandlerAdapter {
             public void handle(Object msg, ChannelFuture future) {
                 ServerConnectionsHandler.this.messageService.sendMessage("getLoggedUser", tmpUser);
                 userService.addUserToLoggedList(tmpUser);
+                userService.printUserList();
+            }
+        });
+
+        this.messageService.registerHandler("loggedOutUser", new MessageHandler() {
+            @Override
+            public void handle(Object msg, ChannelFuture future) {
+                User user = (User) msg;
+                ServerConnectionsHandler.this.messageService.sendMessage("loggedOutUser", "loggedOutUser");
+                userService.deleteUserFromLoggedList(user);
+                userService.printUserList();
             }
         });
 

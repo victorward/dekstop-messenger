@@ -3,13 +3,24 @@ package model;
 import java.io.Serializable;
 import java.sql.Date;
 import java.time.LocalDate;
+import java.util.HashSet;
+import java.util.Set;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.ForeignKey;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 @Entity
 @Table(name = "user")
@@ -41,8 +52,8 @@ public class User implements Serializable {
     @Column(name = "address")
     private String address;
 
-    @Column(name = "country_id")
-    private int countryId;
+    @ManyToOne
+    private Country country;
 
     @Column(name = "birth_date")
     private LocalDate birthDate;
@@ -50,7 +61,7 @@ public class User implements Serializable {
     @Column(name = "photo")
     private String photo;
 
-    public int getId() {
+	public int getId() {
         return id;
     }
 
@@ -114,14 +125,6 @@ public class User implements Serializable {
         this.address = address;
     }
 
-    public int getCountryId() {
-        return countryId;
-    }
-
-    public void setCountryId(int countryId) {
-        this.countryId = countryId;
-    }
-
     public LocalDate getBirthDate() {
         return birthDate;
     }
@@ -161,7 +164,17 @@ public class User implements Serializable {
     public String toString() {
         return "User [id=" + id + ", firstName=" + firstName + ", lastName=" + lastName + ", phone=" + phone
                 + ", gender=" + gender + ", email=" + email + ", password=" + password + ", address=" + address
-                + ", countryId=" + countryId + ", birthDate=" + birthDate + ", photo=" + photo + "]";
+                + ", birthDate=" + birthDate + ", photo=" + photo + "]";
     }
+
+	public Country getCountry()
+	{
+		return country;
+	}
+
+	public void setCountry(Country country)
+	{
+		this.country = country;
+	}
 
 }

@@ -3,7 +3,10 @@ package model;
 import java.io.Serializable;
 import java.sql.Date;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
@@ -16,6 +19,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
@@ -26,6 +30,21 @@ import javax.persistence.Transient;
 @Table(name = "user")
 public class User implements Serializable {
 
+
+	@ManyToMany(cascade = CascadeType.ALL)
+	@JoinTable(name = "user_language",
+    joinColumns = {@JoinColumn(name = "user_id")},
+    inverseJoinColumns = {@JoinColumn(name = "language_id")})
+	private Set<Language> languages = new HashSet<Language>(0);
+
+	public Set<Language> getLanguages()
+	{
+		return languages;
+	}
+	public void setLanguages(Set<Language> languages)
+	{
+		this.languages = languages;
+	}
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
@@ -171,7 +190,6 @@ public class User implements Serializable {
 	{
 		return country;
 	}
-
 	public void setCountry(Country country)
 	{
 		this.country = country;

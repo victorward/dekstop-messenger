@@ -73,7 +73,7 @@ public class ProfileController implements Initializable {
         password.setText(userService.getUser().getPassword());
         sex.setSelected(userService.getUser().getGender().equals("Male"));
         date.setValue(userService.getUser().getBirthDate());
-        country.setText(Integer.toString(userService.getUser().getCountryId()));
+        country.setText(userService.getUser().getCountry().getCountryName());
         number.setText(Integer.toString(userService.getUser().getPhone()));
     }
 

@@ -20,7 +20,12 @@ public class Main {
 
 //        User testUser = DatabaseConnector.getUser("");
 //        System.out.println(testUser.toString());
-//        Country testCountry = DatabaseConnector.getCountry("");
+//        System.out.println(testUser.getLanguages().toArray(new Language[testUser.getLanguages().size()])[0].getLanguageName());
+//        testUser.setEmail("JakiesTakie@Zmienione.pl");
+//        DatabaseConnector.updateUser(testUser);
+//        System.out.println(testUser.getCountry().getCountryName());
+//		System.out.println(DatabaseConnector.getCountry(testUser.getCountryId()).getCountryName());
+//        Country testCountry = DatabaseConnector.getCountry(1);
 //        System.out.println(testCountry.toString());
 //        Language testLanguage = DatabaseConnector.getLanguage("");
 //        System.out.println(testLanguage.toString());

@@ -10,6 +10,7 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
 
 import org.hibernate.Criteria;
+import org.hibernate.Hibernate;
 import org.hibernate.Session;
 import org.springframework.stereotype.Service;
 import zaawjava.Main;
@@ -23,6 +24,7 @@ public class DatabaseConnector {
         session = Main.factory.getCurrentSession();
         session.beginTransaction();
         User currentUser = session.get(User.class, 1);
+        Hibernate.initialize(currentUser.getLanguages());
         session.getTransaction().commit();
         return currentUser;
     }
@@ -61,6 +63,7 @@ public class DatabaseConnector {
 			session.getTransaction().commit();
 			return null;
 		}
+		Hibernate.initialize(currentUser.getLanguages());
 		session.getTransaction().commit();
 		return currentUser;
     }
@@ -70,5 +73,13 @@ public class DatabaseConnector {
 		session.beginTransaction();
 		session.save(user);
 		session.getTransaction().commit();
+    }
+    public static void updateUser(User user)
+    {
+    	session = Main.factory.getCurrentSession();
+		session.beginTransaction();
+		session.update(user);
+		session.getTransaction().commit();
+		session.close();
     }
 }

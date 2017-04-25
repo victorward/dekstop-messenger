@@ -1,17 +1,12 @@
 package zaawjava.controllers;
 
-import io.netty.channel.ChannelFuture;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
-import javafx.stage.Stage;
 import model.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,12 +15,10 @@ import org.springframework.stereotype.Component;
 import zaawjava.ScreensManager;
 import zaawjava.services.SocketService;
 import javafx.scene.control.Alert.AlertType;
+import zaawjava.services.UserService;
 import zaawjava.utils.Utils;
 
 import java.io.IOException;
-import java.util.Optional;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 @Component
 public class LoginController {
@@ -35,6 +28,12 @@ public class LoginController {
 
     private final SocketService socketService;
     private ScreensManager screensManager;
+    private UserService userService;
+
+    @Autowired
+    public void setUserService(UserService userService) {
+        this.userService = userService;
+    }
 
     @FXML
     private Label messageLabel;
@@ -62,6 +61,12 @@ public class LoginController {
         Platform.runLater(() -> screensManager.goToMainView());
     }
 
+    @FXML
+    public void initialize() {
+        loginField.setText("ii@i.ua");
+        passwordField.setText("pass");
+    }
+
     private void login() {
         User user = new User(loginField.getText(), passwordField.getText());
         if (isInputValid()) {
@@ -69,6 +74,7 @@ public class LoginController {
                 if (ex == null) {
                     try {
                         if ("loggedIn".equals(msg)) {
+                            Platform.runLater(() -> getLoggedUser());
                             setMainView();
                         } else {
                             Platform.runLater(() -> messageLabel.setText("Login failed. " + msg));
@@ -83,6 +89,16 @@ public class LoginController {
         } else {
             Platform.runLater(() -> messageLabel.setText("Login failed. Please write correct values"));
         }
+    }
+
+    private void getLoggedUser() {
+        socketService.emit("getLoggedUser", "").whenComplete((msg, ex) -> {
+            if (ex == null) {
+                userService.setUser((User) msg);
+            } else {
+                Platform.runLater(() -> messageLabel.setText("Failed during setting actual user"));
+            }
+        });
     }
 
     private boolean isInputValid() {

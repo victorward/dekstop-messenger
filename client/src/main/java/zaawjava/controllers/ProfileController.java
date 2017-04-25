@@ -5,7 +5,6 @@
  */
 package zaawjava.controllers;
 
-import java.awt.*;
 import java.net.URL;
 import java.util.ResourceBundle;
 
@@ -19,11 +18,18 @@ import javafx.scene.control.ToggleButton;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import zaawjava.ScreensManager;
+import zaawjava.services.UserService;
 
 @Component
 public class ProfileController implements Initializable {
 
     private ScreensManager screensManager;
+    private UserService userService;
+
+    @Autowired
+    public void setUserService(UserService userService) {
+        this.userService = userService;
+    }
 
     @Autowired
     public void setScreensManager(ScreensManager screensManager) {
@@ -45,8 +51,6 @@ public class ProfileController implements Initializable {
     @FXML
     private JFXTextField country;
     @FXML
-    private JFXTextField hometown;
-    @FXML
     private JFXTextField number;
     @FXML
     private JFXTextField languages;
@@ -57,8 +61,19 @@ public class ProfileController implements Initializable {
         init();
     }
 
-    void init(){
+    void init() {
+        fillUserData();
+    }
 
+    void fillUserData() {
+        firstName.setText(userService.getUser().getFirstName());
+        lastName.setText(userService.getUser().getLastName());
+        email.setText(userService.getUser().getEmail());
+        password.setText(userService.getUser().getPassword());
+        sex.setSelected(userService.getUser().getGender().equals("Male"));
+        date.setValue(userService.getUser().getBirthDate());
+        country.setText(Integer.toString(userService.getUser().getCountryId()));
+        number.setText(Integer.toString(userService.getUser().getPhone()));
     }
 
     @FXML

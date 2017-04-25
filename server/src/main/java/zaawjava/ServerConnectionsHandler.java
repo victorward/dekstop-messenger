@@ -16,6 +16,7 @@ import utils.MessageHandler;
 import utils.MessageService;
 import zaawjava.Utils.Utils;
 import zaawjava.services.DatabaseConnector;
+import zaawjava.services.UserService;
 
 import java.util.Optional;
 
@@ -32,9 +33,18 @@ public class ServerConnectionsHandler extends ChannelInboundHandlerAdapter {
 
     private String message;
 
+    private User tmpUser;
+
+    private UserService userService;
+
     @Autowired
     public void setDatabaseConnector(DatabaseConnector databaseConnector) {
         this.databaseConnector = databaseConnector;
+    }
+
+    @Autowired
+    public void setUserService(UserService userService) {
+        this.userService = userService;
     }
 
     public ServerConnectionsHandler(MessageService messageService) {
@@ -72,15 +82,35 @@ public class ServerConnectionsHandler extends ChannelInboundHandlerAdapter {
             }
         });
 
+        this.messageService.registerHandler("getLoggedUser", new MessageHandler() {
+            @Override
+            public void handle(Object msg, ChannelFuture future) {
+                ServerConnectionsHandler.this.messageService.sendMessage("getLoggedUser", tmpUser);
+                userService.addUserToLoggedList(tmpUser);
+                userService.printUserList();
+            }
+        });
+
+        this.messageService.registerHandler("loggedOutUser", new MessageHandler() {
+            @Override
+            public void handle(Object msg, ChannelFuture future) {
+                User user = (User) msg;
+                ServerConnectionsHandler.this.messageService.sendMessage("loggedOutUser", "loggedOutUser");
+                userService.deleteUserFromLoggedList(user);
+                userService.printUserList();
+            }
+        });
+
     }
 
     public boolean checkPassword(User user) {
         if (Optional.ofNullable(checkUserInDatabase(user.getEmail())).isPresent()) {
-            User chceckedUser = databaseConnector.getByEmail(user.getEmail());
-            chceckedUser.setPassword(Utils.decryptPassword(chceckedUser.getPassword()));
-            System.out.println(chceckedUser.getPassword());
-            log.debug("logining! " + chceckedUser);
-            if (chceckedUser.getPassword().equals(user.getPassword())) {
+            User checkedUser = databaseConnector.getByEmail(user.getEmail());
+            checkedUser.setPassword(Utils.decryptPassword(checkedUser.getPassword()));
+            System.out.println(checkedUser.getPassword());
+            log.debug("logining! " + checkedUser);
+            if (checkedUser.getPassword().equals(user.getPassword())) {
+                tmpUser = checkedUser;
                 return true;
             } else {
                 message += "Wrong password";
@@ -93,8 +123,7 @@ public class ServerConnectionsHandler extends ChannelInboundHandlerAdapter {
     }
 
     public User checkUserInDatabase(String email) {
-        User user = null;
-        user = databaseConnector.getByEmail(email);
+        User user = databaseConnector.getByEmail(email);
         return user;
     }
 
@@ -122,12 +151,12 @@ public class ServerConnectionsHandler extends ChannelInboundHandlerAdapter {
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) {
         try {
-            log.debug("message recived: " + msg);
+            log.debug("message received: " + msg);
             messageService.setChannel(ctx.channel());
             messageService.handleMessage((Message) msg);
 
         } catch (ClassCastException e) {
-            log.warn("Not message recived");
+            log.warn("Not message received");
         }
 
     }

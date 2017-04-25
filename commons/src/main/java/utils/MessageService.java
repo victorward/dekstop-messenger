@@ -4,15 +4,13 @@ import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.group.ChannelGroup;
 import io.netty.util.concurrent.GenericFutureListener;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.HashMap;
 
 public class MessageService {
 
     private Channel channel;
-    private HashMap<String, MessageHandler> handlers = new HashMap<>();
+    private final HashMap<String, MessageHandler> handlers = new HashMap<>();
 
     public MessageService(Channel channel) {
         this.channel = channel;

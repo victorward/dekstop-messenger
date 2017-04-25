@@ -8,9 +8,6 @@ import io.netty.channel.socket.nio.NioSocketChannel;
 import io.netty.handler.codec.serialization.ClassResolvers;
 import io.netty.handler.codec.serialization.ObjectDecoder;
 import io.netty.handler.codec.serialization.ObjectEncoder;
-import io.netty.util.concurrent.DefaultPromise;
-import io.netty.util.concurrent.Future;
-import io.netty.util.concurrent.Promise;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import utils.MessageHandler;
@@ -82,7 +79,7 @@ public class SocketService {
 
     public CompletableFuture<Object> emit(String event, Object message) {
 
-        CompletableFuture<Object> completableFuture = new CompletableFuture<Object>();
+        CompletableFuture<Object> completableFuture = new CompletableFuture<>();
 
 
         messageService.sendMessage(event, message, new MessageHandler() {
@@ -99,7 +96,7 @@ public class SocketService {
     }
 
     public CompletableFuture<Object> on(String event) {
-        CompletableFuture<Object> completableFuture = new CompletableFuture<Object>();
+        CompletableFuture<Object> completableFuture = new CompletableFuture<>();
         messageService.registerHandler(event, new MessageHandler() {
             @Override
             public void handle(Object msg, ChannelFuture future) {

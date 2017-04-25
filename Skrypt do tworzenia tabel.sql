@@ -38,11 +38,11 @@ use ZaawJava;
 insert into country (country_name) values ('Polska');
 insert into language (language_name) values ('Polski');
 insert into user (first_name, last_name, phone, gender, email, user_password, address, country_id, birth_date, photo)
-		values ('Kamil', 'Kamilowski', 333333333, 'male', 'Kamil@ggg.gg', 'haha', 'Uliczna 28', 1,  '1999-12-24', 'linkDoZdjeciaToKlamstwo');
+		values ('Kamil', 'Kamilowski', 333333333, 'male', 'Kamil@ggg.gg', 'uPU/Y5hjiwVNPwgeySE0kw==', 'Uliczna 28', 1,  '1999-12-24', 'linkDoZdjeciaToKlamstwo');
 insert into user_language values (1,1);
 
 insert into country (country_name) values ('Ukraine');
 insert into language (language_name) values ('Ukrainski');
 insert into user (first_name, last_name, phone, gender, email, user_password, address, country_id, birth_date, photo)
-values ('Yuriy', 'Yurok', 39933, 'male', 'ii@i.ua', 'pass', 'Dobra ulica', 2,  '1990-10-10', 'piekneZdjecie');
+values ('Yuriy', 'Yurok', 39933, 'male', 'ii@i.ua', 'uPU/Y5hjiwVNPwgeySE0kw==', 'Dobra ulica', 2,  '1990-10-10', 'piekneZdjecie');
 insert into user_language values (2,2);

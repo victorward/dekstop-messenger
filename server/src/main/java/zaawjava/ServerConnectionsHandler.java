@@ -14,6 +14,7 @@ import org.springframework.stereotype.Component;
 import utils.Message;
 import utils.MessageHandler;
 import utils.MessageService;
+import zaawjava.Utils.Utils;
 import zaawjava.services.DatabaseConnector;
 
 import java.util.Optional;
@@ -29,6 +30,8 @@ public class ServerConnectionsHandler extends ChannelInboundHandlerAdapter {
 
     private DatabaseConnector databaseConnector;
 
+    private String message;
+
     @Autowired
     public void setDatabaseConnector(DatabaseConnector databaseConnector) {
         this.databaseConnector = databaseConnector;
@@ -39,12 +42,13 @@ public class ServerConnectionsHandler extends ChannelInboundHandlerAdapter {
         this.messageService.registerHandler("onLogin", new MessageHandler() {
             @Override
             public void handle(Object msg, ChannelFuture future) {
-                log.debug("login!" + msg);
+                message = "";
                 User user = (User) msg;
+                log.debug("Trying to log in! " + user);
                 if (checkPassword(user)) {
                     ServerConnectionsHandler.this.messageService.sendMessage("onLogin", "loggedIn");
                 } else {
-                    ServerConnectionsHandler.this.messageService.sendMessage("onLogin", "loginError");
+                    ServerConnectionsHandler.this.messageService.sendMessage("onLogin", message);
                 }
             }
         });
@@ -52,12 +56,18 @@ public class ServerConnectionsHandler extends ChannelInboundHandlerAdapter {
         this.messageService.registerHandler("onRegistration", new MessageHandler() {
             @Override
             public void handle(Object msg, ChannelFuture future) {
+                message = "";
                 log.debug("Registration" + msg);
                 User user = (User) msg;
-                if (addNewUser(user)) {
-                    ServerConnectionsHandler.this.messageService.sendMessage("onRegistration", "registered");
+                if (!Optional.ofNullable(checkUserInDatabase(user.getEmail())).isPresent()) {
+                    if (addNewUser(user)) {
+                        ServerConnectionsHandler.this.messageService.sendMessage("onRegistration", "registered");
+                    } else {
+                        ServerConnectionsHandler.this.messageService.sendMessage("onRegistration", message);
+                    }
                 } else {
-                    ServerConnectionsHandler.this.messageService.sendMessage("onRegistration", "registrationError");
+                    message += "Already registered";
+                    ServerConnectionsHandler.this.messageService.sendMessage("onRegistration", message);
                 }
             }
         });
@@ -67,10 +77,19 @@ public class ServerConnectionsHandler extends ChannelInboundHandlerAdapter {
     public boolean checkPassword(User user) {
         if (Optional.ofNullable(checkUserInDatabase(user.getEmail())).isPresent()) {
             User chceckedUser = databaseConnector.getByEmail(user.getEmail());
+            chceckedUser.setPassword(Utils.decryptPassword(chceckedUser.getPassword()));
+            System.out.println(chceckedUser.getPassword());
+            log.debug("logining! " + chceckedUser);
             if (chceckedUser.getPassword().equals(user.getPassword())) {
                 return true;
-            } else return false;
-        } else return false;
+            } else {
+                message += "Wrong password";
+                return false;
+            }
+        } else {
+            message += "This email doesn't exist";
+            return false;
+        }
     }
 
     public User checkUserInDatabase(String email) {
@@ -83,6 +102,7 @@ public class ServerConnectionsHandler extends ChannelInboundHandlerAdapter {
         try {
             user.setAddress("");
             user.setPhoto("");
+            user.setPassword(Utils.encryptPassword(user.getPassword()));
             log.debug("Trying add to database" + user);
             databaseConnector.insertUser(user);
             return true;

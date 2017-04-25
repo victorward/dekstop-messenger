@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import zaawjava.ScreensManager;
 
+import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
 
@@ -43,7 +44,11 @@ public class MainViewController implements Initializable {
     @FXML
     void onProfileClick(ActionEvent event) {
         screensManager.goToProfileView();
+    }
 
+    @FXML
+    void onLogoutClick(ActionEvent event) throws IOException {
+        screensManager.goToLoginView();
     }
 
 

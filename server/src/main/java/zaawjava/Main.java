@@ -6,7 +6,6 @@ import org.hibernate.cfg.Configuration;
 import model.Country;
 import model.Language;
 import model.User;
-import zaawjava.services.DatabaseConnector;
 
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 

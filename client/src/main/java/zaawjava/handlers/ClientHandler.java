@@ -34,7 +34,7 @@ public class ClientHandler extends ChannelInboundHandlerAdapter {
     public void channelRead(ChannelHandlerContext ctx, Object msg) {
         // Echo back the received object to the server.
 //        ctx.write(msg);
-        log.debug("message recived: " + msg);
+        log.debug("message received: " + msg);
         try {
             messageService.handleMessage((Message) msg);
 

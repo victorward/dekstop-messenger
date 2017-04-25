@@ -1,7 +1,6 @@
 package model;
 
 import java.io.Serializable;
-import java.sql.Date;
 import java.time.LocalDate;
 
 import javax.persistence.Column;

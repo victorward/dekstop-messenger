@@ -20,6 +20,7 @@ import org.springframework.stereotype.Component;
 import zaawjava.ScreensManager;
 import zaawjava.services.SocketService;
 import javafx.scene.control.Alert.AlertType;
+import zaawjava.services.UserService;
 import zaawjava.utils.Utils;
 
 import java.io.IOException;
@@ -35,6 +36,12 @@ public class LoginController {
 
     private final SocketService socketService;
     private ScreensManager screensManager;
+    private UserService userService;
+
+    @Autowired
+    public void setUserService(UserService userService) {
+        this.userService = userService;
+    }
 
     @FXML
     private Label messageLabel;
@@ -69,6 +76,7 @@ public class LoginController {
                 if (ex == null) {
                     try {
                         if ("loggedIn".equals(msg)) {
+                            Platform.runLater(() -> getLoggedUser());
                             setMainView();
                         } else {
                             Platform.runLater(() -> messageLabel.setText("Login failed. " + msg));
@@ -83,6 +91,16 @@ public class LoginController {
         } else {
             Platform.runLater(() -> messageLabel.setText("Login failed. Please write correct values"));
         }
+    }
+
+    private void getLoggedUser() {
+        socketService.emit("getLoggedUser", "").whenComplete((msg, ex) -> {
+            if (ex == null) {
+                userService.setUser((User) msg);
+            } else {
+                Platform.runLater(() -> messageLabel.setText("Failed during setting actual user"));
+            }
+        });
     }
 
     private boolean isInputValid() {

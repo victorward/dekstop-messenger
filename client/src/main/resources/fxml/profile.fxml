@@ -39,7 +39,6 @@
             <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
             <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
             <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
         </rowConstraints>
          <children>
             <Label text="Password:" GridPane.rowIndex="2" />
@@ -49,10 +48,9 @@
                </GridPane.margin></Label>
             <Label text="Date of birth" GridPane.rowIndex="4" />
             <Label text="Country*" GridPane.rowIndex="6" />
-            <Label text="Mobile number*" GridPane.rowIndex="8" />
-            <Label text="Hometown*" GridPane.rowIndex="7" />
-            <Label text="Languages*" GridPane.rowIndex="9" />
-            <Label text="* - this field is not required" GridPane.columnSpan="2" GridPane.rowIndex="10" />
+            <Label text="Mobile number*" GridPane.rowIndex="7" />
+            <Label text="Languages*" GridPane.rowIndex="8" />
+            <Label text="* - this field is not required" GridPane.columnSpan="2" GridPane.rowIndex="9" />
             <JFXTextField fx:id="lastName" promptText="Last name" GridPane.columnIndex="1" />
             <JFXTextField fx:id="firstName" promptText="First name" />
             <JFXTextField fx:id="email" promptText="Email" GridPane.columnSpan="2" GridPane.rowIndex="1" />
@@ -66,9 +64,8 @@
                </padding></JFXToggleButton>
             <JFXDatePicker fx:id="date" promptText="Date" GridPane.columnIndex="1" GridPane.rowIndex="4" />
             <JFXTextField fx:id="country" GridPane.columnIndex="1" GridPane.rowIndex="6" />
-            <JFXTextField fx:id="hometown" prefWidth="120.0" GridPane.columnIndex="1" GridPane.rowIndex="7" />
-            <JFXTextField fx:id="number" GridPane.columnIndex="1" GridPane.rowIndex="8" />
-            <JFXTextField fx:id="languages" GridPane.columnIndex="1" GridPane.rowIndex="9" />
+            <JFXTextField fx:id="number" GridPane.columnIndex="1" GridPane.rowIndex="7" />
+            <JFXTextField fx:id="languages" GridPane.columnIndex="1" GridPane.rowIndex="8" />
          </children>
       </GridPane>
       <JFXButton layoutX="269.0" layoutY="200.0" text="Change avatar..." AnchorPane.rightAnchor="30.0" AnchorPane.topAnchor="200.0" />

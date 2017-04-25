@@ -32,6 +32,8 @@ public class ServerConnectionsHandler extends ChannelInboundHandlerAdapter {
 
     private String message;
 
+    private User tmpUser;
+
     @Autowired
     public void setDatabaseConnector(DatabaseConnector databaseConnector) {
         this.databaseConnector = databaseConnector;
@@ -72,6 +74,13 @@ public class ServerConnectionsHandler extends ChannelInboundHandlerAdapter {
             }
         });
 
+        this.messageService.registerHandler("getLoggedUser", new MessageHandler() {
+            @Override
+            public void handle(Object msg, ChannelFuture future) {
+                ServerConnectionsHandler.this.messageService.sendMessage("getLoggedUser", tmpUser);
+            }
+        });
+
     }
 
     public boolean checkPassword(User user) {
@@ -81,6 +90,7 @@ public class ServerConnectionsHandler extends ChannelInboundHandlerAdapter {
             System.out.println(chceckedUser.getPassword());
             log.debug("logining! " + chceckedUser);
             if (chceckedUser.getPassword().equals(user.getPassword())) {
+                tmpUser = chceckedUser;
                 return true;
             } else {
                 message += "Wrong password";

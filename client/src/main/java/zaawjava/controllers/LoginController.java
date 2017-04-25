@@ -69,6 +69,12 @@ public class LoginController {
         Platform.runLater(() -> screensManager.goToMainView());
     }
 
+    @FXML
+    public void initialize() {
+        loginField.setText("ii@i.ua");
+        passwordField.setText("pass");
+    }
+
     private void login() {
         User user = new User(loginField.getText(), passwordField.getText());
         if (isInputValid()) {

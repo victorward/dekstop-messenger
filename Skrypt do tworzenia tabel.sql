@@ -46,3 +46,4 @@ insert into language (language_name) values ('Ukrainski');
 insert into user (first_name, last_name, phone, gender, email, user_password, address, country_id, birth_date, photo)
 values ('Yuriy', 'Yurok', 39933, 'male', 'ii@i.ua', 'uPU/Y5hjiwVNPwgeySE0kw==', 'Dobra ulica', 2,  '1990-10-10', 'piekneZdjecie');
 insert into user_language values (2,2);
+COMMIT

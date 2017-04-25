@@ -94,12 +94,12 @@ public class ServerConnectionsHandler extends ChannelInboundHandlerAdapter {
 
     public boolean checkPassword(User user) {
         if (Optional.ofNullable(checkUserInDatabase(user.getEmail())).isPresent()) {
-            User chceckedUser = databaseConnector.getByEmail(user.getEmail());
-            chceckedUser.setPassword(Utils.decryptPassword(chceckedUser.getPassword()));
-            System.out.println(chceckedUser.getPassword());
-            log.debug("logining! " + chceckedUser);
-            if (chceckedUser.getPassword().equals(user.getPassword())) {
-                tmpUser = chceckedUser;
+            User checkedUser = databaseConnector.getByEmail(user.getEmail());
+            checkedUser.setPassword(Utils.decryptPassword(checkedUser.getPassword()));
+            System.out.println(checkedUser.getPassword());
+            log.debug("logining! " + checkedUser);
+            if (checkedUser.getPassword().equals(user.getPassword())) {
+                tmpUser = checkedUser;
                 return true;
             } else {
                 message += "Wrong password";

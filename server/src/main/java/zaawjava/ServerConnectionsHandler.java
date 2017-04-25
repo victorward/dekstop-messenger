@@ -16,6 +16,7 @@ import utils.MessageHandler;
 import utils.MessageService;
 import zaawjava.Utils.Utils;
 import zaawjava.services.DatabaseConnector;
+import zaawjava.services.UserService;
 
 import java.util.Optional;
 
@@ -32,9 +33,18 @@ public class ServerConnectionsHandler extends ChannelInboundHandlerAdapter {
 
     private String message;
 
+    private User tmpUser;
+
+    private UserService userService;
+
     @Autowired
     public void setDatabaseConnector(DatabaseConnector databaseConnector) {
         this.databaseConnector = databaseConnector;
+    }
+
+    @Autowired
+    public void setUserService(UserService userService) {
+        this.userService = userService;
     }
 
     public ServerConnectionsHandler(MessageService messageService) {
@@ -72,6 +82,14 @@ public class ServerConnectionsHandler extends ChannelInboundHandlerAdapter {
             }
         });
 
+        this.messageService.registerHandler("getLoggedUser", new MessageHandler() {
+            @Override
+            public void handle(Object msg, ChannelFuture future) {
+                ServerConnectionsHandler.this.messageService.sendMessage("getLoggedUser", tmpUser);
+                userService.addUserToLoggedList(tmpUser);
+            }
+        });
+
     }
 
     public boolean checkPassword(User user) {
@@ -81,6 +99,7 @@ public class ServerConnectionsHandler extends ChannelInboundHandlerAdapter {
             System.out.println(chceckedUser.getPassword());
             log.debug("logining! " + chceckedUser);
             if (chceckedUser.getPassword().equals(user.getPassword())) {
+                tmpUser = chceckedUser;
                 return true;
             } else {
                 message += "Wrong password";

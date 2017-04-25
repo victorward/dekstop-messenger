@@ -14,6 +14,7 @@ import javafx.stage.Stage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import zaawjava.ScreensManager;
+import zaawjava.services.UserService;
 
 import java.io.IOException;
 import java.net.URL;
@@ -26,6 +27,12 @@ public class MainViewController implements Initializable {
     private Channel channel;
     private EventLoopGroup group;
     private ScreensManager screensManager;
+    private UserService userService;
+
+    @Autowired
+    public void setUserService(UserService userService) {
+        this.userService = userService;
+    }
 
     @Autowired
     public void setScreensManager(ScreensManager screensManager) {

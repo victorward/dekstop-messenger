@@ -23,32 +23,32 @@ public class Main {
         AnnotationConfigApplicationContext applicationContext = new AnnotationConfigApplicationContext(AppConfig.class);
         Server server = applicationContext.getBean(Server.class);
 
-//        User testUser = DatabaseConnector.getUser("");
+//        DatabaseConnector databaseConnector = new DatabaseConnector();
+//        User testUser = databaseConnector.getUser("");
 //        System.out.println(testUser.toString());
 //        System.out.println(testUser.getLanguages().toArray(new Language[testUser.getLanguages().size()])[0].getLanguageName());
 //        System.out.println(testUser.getLanguages().toArray(new Language[testUser.getLanguages().size()])[1].getLanguageName());
 //        System.out.println(testUser.getLanguages().toArray(new Language[testUser.getLanguages().size()])[2].getLanguageName());
 //        Set<Language> languages = new HashSet<Language>(0);
 //        languages.add(testUser.getLanguages().toArray(new Language[testUser.getLanguages().size()])[2]);
-//        User dodawanyUser = new User(languages, "Adam", "Jakis", 56624456, "male", "dodawany3@dodany.dod", "1", "Dodawarska 25", new Country(1 ,"Polska"), LocalDate.now(), "Nie ma");
-//        DatabaseConnector.insertUser(dodawanyUser);
+//        User dodawanyUser = new User(languages, "Adam", "Jakis", 56624456, "male", "dodawany5@dodany.dod", "1", "Dodawarska 25", new Country(1 ,"Polska"), LocalDate.now(), "Nie ma");
+//        databaseConnector.insertUser(dodawanyUser);
 //        testUser.setEmail("JakiesTakie@Zmienione.pl");
-//        DatabaseConnector.updateUser(testUser);
+//        databaseConnector.updateUser(testUser);
 //        System.out.println(testUser.getCountry().getCountryName());
-//		System.out.println(DatabaseConnector.getCountry(testUser.getCountryId()).getCountryName());
-//        Country testCountry = DatabaseConnector.getCountry(1);
+//        Country testCountry = databaseConnector.getCountry(1);
 //        System.out.println(testCountry.toString());
-//        Language testLanguage = DatabaseConnector.getLanguage("");
+//        Language testLanguage = databaseConnector.getLanguage("");
 //        System.out.println(testLanguage.toString());
-//        User testUser2 = DatabaseConnector.getByEmail("Kamil@haggg.gg");
+//        User testUser2 = databaseConnector.getByEmail("Kamil@haggg.gg");
 //        if(testUser2 == null)
 //        {
 //        	System.out.println("jest ok");
 //        }
-//        User testUser3 = DatabaseConnector.getByEmail("Kamil@ggg.gg");
+//        User testUser3 = databaseConnector.getByEmail("Kamil@ggg.gg");
 //        System.out.println(testUser3.toString());
-//        User testInsertUser = new User("Insertowy@insert.gg", "nieSpodziewalbysSieTakiego");
-//        DatabaseConnector.insertUser(testInsertUser);
+//        User testInsertUser = new User("Insertowy1@insert.gg", "nieSpodziewalbysSieTakiego");
+//        databaseConnector.insertUser(testInsertUser);
         server.run();
 
 

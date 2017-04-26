@@ -71,7 +71,7 @@ public class User implements Serializable {
     @Column(name = "address")
     private String address;
 
-    @ManyToOne
+    @ManyToOne(cascade = {CascadeType.ALL})
     private Country country;
 
     @Column(name = "birth_date")
@@ -179,7 +179,23 @@ public class User implements Serializable {
         this.password = password;
     }
 
-    @Override
+    public User(Set<Language> languages, String firstName, String lastName, int phone, String gender,
+			String email, String password, String address, Country country, LocalDate birthDate, String photo)
+	{
+		super();
+		this.languages = languages;
+		this.firstName = firstName;
+		this.lastName = lastName;
+		this.phone = phone;
+		this.gender = gender;
+		this.email = email;
+		this.password = password;
+		this.address = address;
+		this.country = country;
+		this.birthDate = birthDate;
+		this.photo = photo;
+	}
+	@Override
     public String toString() {
         return "User [id=" + id + ", firstName=" + firstName + ", lastName=" + lastName + ", phone=" + phone
                 + ", gender=" + gender + ", email=" + email + ", password=" + password + ", address=" + address

@@ -1,5 +1,10 @@
 package zaawjava;
 
+import java.time.LocalDate;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Set;
+
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
 
@@ -21,6 +26,12 @@ public class Main {
 //        User testUser = DatabaseConnector.getUser("");
 //        System.out.println(testUser.toString());
 //        System.out.println(testUser.getLanguages().toArray(new Language[testUser.getLanguages().size()])[0].getLanguageName());
+//        System.out.println(testUser.getLanguages().toArray(new Language[testUser.getLanguages().size()])[1].getLanguageName());
+//        System.out.println(testUser.getLanguages().toArray(new Language[testUser.getLanguages().size()])[2].getLanguageName());
+//        Set<Language> languages = new HashSet<Language>(0);
+//        languages.add(testUser.getLanguages().toArray(new Language[testUser.getLanguages().size()])[2]);
+//        User dodawanyUser = new User(languages, "Adam", "Jakis", 56624456, "male", "dodawany3@dodany.dod", "1", "Dodawarska 25", new Country(1 ,"Polska"), LocalDate.now(), "Nie ma");
+//        DatabaseConnector.insertUser(dodawanyUser);
 //        testUser.setEmail("JakiesTakie@Zmienione.pl");
 //        DatabaseConnector.updateUser(testUser);
 //        System.out.println(testUser.getCountry().getCountryName());

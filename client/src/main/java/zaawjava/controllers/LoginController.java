@@ -1,5 +1,6 @@
 package zaawjava.controllers;
 
+import DTO.UserDTO;
 import io.netty.channel.ChannelFuture;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
@@ -76,7 +77,7 @@ public class LoginController {
     }
 
     private void login() {
-        User user = new User(loginField.getText(), passwordField.getText());
+        UserDTO user = new UserDTO(loginField.getText(), passwordField.getText());
         if (isInputValid()) {
             socketService.emit("onLogin", user).whenComplete((msg, ex) -> {
                 if (ex == null) {

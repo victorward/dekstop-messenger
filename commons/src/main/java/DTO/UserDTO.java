@@ -1,4 +1,4 @@
-package zaawjava.DTO;
+package DTO;
 
 import java.time.LocalDate;
 import java.util.HashSet;

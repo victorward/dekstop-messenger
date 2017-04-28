@@ -1,4 +1,4 @@
-package zaawjava.DTO;
+package DTO;
 
 import model.Country;
 import model.Language;

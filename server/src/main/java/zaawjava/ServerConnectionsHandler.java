@@ -14,8 +14,8 @@ import org.springframework.stereotype.Component;
 import utils.Message;
 import utils.MessageHandler;
 import utils.MessageService;
-import zaawjava.DTO.UserDTO;
-import zaawjava.DTO.UtilsDTO;
+import DTO.UserDTO;
+import DTO.UtilsDTO;
 import zaawjava.Utils.Utils;
 import zaawjava.services.DatabaseConnector;
 import zaawjava.services.UserService;
@@ -55,8 +55,8 @@ public class ServerConnectionsHandler extends ChannelInboundHandlerAdapter {
             @Override
             public void handle(Object msg, ChannelFuture future) {
                 message = "";
-                User user = (User) msg;
-                UserDTO userDTO = UtilsDTO.convertUserToDTO(user);
+                UserDTO userDTO = (UserDTO) msg;
+                User user = UtilsDTO.convertDTOtoUser(userDTO);
                 System.out.println(userDTO);
                 log.debug("Trying to log in! " + user);
                 if (checkPassword(user)) {

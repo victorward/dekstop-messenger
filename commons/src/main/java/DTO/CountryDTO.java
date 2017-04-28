@@ -1,4 +1,4 @@
-package zaawjava.DTO;
+package DTO;
 
 public class CountryDTO {
     private int id;

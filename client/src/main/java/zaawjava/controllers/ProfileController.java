@@ -10,8 +10,10 @@ import java.util.Locale;
 import java.util.ResourceBundle;
 
 import DTO.LanguageDTO;
+import DTO.UserDTO;
 import com.jfoenix.controls.JFXPasswordField;
 import com.jfoenix.controls.JFXTextField;
+import javafx.application.Platform;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -25,13 +27,16 @@ import javafx.util.Callback;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import zaawjava.ScreensManager;
+import zaawjava.services.SocketService;
 import zaawjava.services.UserService;
+import zaawjava.utils.Utils;
 
 @Component
 public class ProfileController implements Initializable {
 
     private ScreensManager screensManager;
     private UserService userService;
+    private final SocketService socketService;
 
     private String selectedLanguage;
 
@@ -43,6 +48,11 @@ public class ProfileController implements Initializable {
     @Autowired
     public void setScreensManager(ScreensManager screensManager) {
         this.screensManager = screensManager;
+    }
+
+    @Autowired
+    ProfileController(SocketService socketService) {
+        this.socketService = socketService;
     }
 
     @FXML
@@ -68,6 +78,8 @@ public class ProfileController implements Initializable {
     private ChoiceBox<String> country;
     @FXML
     private JFXTextField number;
+    @FXML
+    private JFXTextField street;
 
     private ObservableList<LanguageDTO> languagess;
 
@@ -89,7 +101,7 @@ public class ProfileController implements Initializable {
         fillUserData();
     }
 
-    void addLenguagesToSystem(){
+    void addLenguagesToSystem() {
         ObservableList<String> languagesObsList = FXCollections.observableArrayList();
         languagess.addAll(userService.getUser().getLanguages());
         Locale[] locales = Locale.getAvailableLocales();
@@ -100,7 +112,7 @@ public class ProfileController implements Initializable {
         languagesList.setItems(languagesObsList);
     }
 
-    void addCountryToSystem(){
+    void addCountryToSystem() {
         ObservableList<String> countryObsList = FXCollections.observableArrayList();
         Locale[] locales = Locale.getAvailableLocales();
         for (Locale obj : locales) {
@@ -116,8 +128,11 @@ public class ProfileController implements Initializable {
         password.setText(userService.getUser().getPassword());
         sex.setSelected(userService.getUser().getGender().equals("Male"));
         date.setValue(userService.getUser().getBirthDate());
-        country.setValue(userService.getUser().getCountry().getCountryName());
         number.setText(Integer.toString(userService.getUser().getPhone()));
+        if (userService.getUser().getAddress() != null)
+            street.setText(userService.getUser().getAddress());
+        if (userService.getUser().getCountry() != null)
+            country.setValue(userService.getUser().getCountry().getCountryName());
     }
 
     @FXML
@@ -142,6 +157,106 @@ public class ProfileController implements Initializable {
                 updateLanguages();
             }
         }
+    }
+
+    @FXML
+    public void okClicked() {
+        if (isInputValid()) {
+            UserDTO user = fillNewData();
+            socketService.emit("updateUser", user).whenComplete((msg, ex) -> {
+                if (ex == null) {
+                    if ("updated".equals(msg)) {
+                        Platform.runLater(() -> showSuccess());
+                        screensManager.goToMainView();
+                    } else {
+                        Platform.runLater(() -> showError("Read server output. " + msg));
+                    }
+                } else {
+                    Platform.runLater(() -> showError("Failed during updating actual user"));
+                }
+            });
+        }
+    }
+
+    private UserDTO fillNewData() {
+        UserDTO user = userService.getUser();
+        user.setAddress(street.getText());
+        user.setBirthDate(date.getValue());
+        user.setEmail(email.getText());
+        user.setGender(sex.getText());
+        user.setFirstName(firstName.getText());
+        user.setLastName(lastName.getText());
+        user.setPassword(password.getText());
+        user.setPhone(Integer.parseInt(number.getText()));
+        return user;
+    }
+
+    private boolean isInputValid() {
+        String errorMessage = "";
+        if (email.getText() == null || email.getText().length() == 0) {
+            errorMessage += "Empty email!\n";
+        } else {
+            if (!Utils.validateEmail(email.getText())) {
+                errorMessage += "Not correct email!\n";
+            }
+        }
+        if (password.getText() == null || password.getText().length() == 0) {
+            errorMessage += "Empty password!\n";
+        }
+        if (firstName.getText() == null || firstName.getText().length() == 0) {
+            errorMessage += "Empty first name!\n";
+        } else {
+            if (firstName.getText().length() > 20) {
+                errorMessage += "Too large first name!\n";
+            }
+        }
+        if (lastName.getText() == null || lastName.getText().length() == 0) {
+            errorMessage += "Empty last name!\n";
+        } else {
+            if (lastName.getText().length() > 20) {
+                errorMessage += "Too large last name!\n";
+            }
+        }
+        if (date.getValue() == null || date.getValue() == null) {
+            errorMessage += "No valid date!\n";
+        } else {
+            if (!Utils.validDate(date.getValue())) {
+                errorMessage += "No valid date. Use the format yyyy-dd-mm!\n";
+            }
+            if (!Utils.validDate(date.getValue())) {
+                errorMessage += "No valid date. Use the format yyyy-dd-mm!\n";
+            }
+        }
+        if (sex == null) {
+            errorMessage += "Please select your gender!\n";
+        }
+        if (errorMessage.length() == 0) {
+            return true;
+        } else {
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.initOwner(screensManager.getStage());
+            alert.setTitle("Invalid Fields");
+            alert.setHeaderText("Please correct invalid fields");
+            alert.setContentText(errorMessage);
+            alert.showAndWait();
+            return false;
+        }
+    }
+
+    private void showSuccess() {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle("Success");
+        alert.setHeaderText("Congratulations your data have successfully updated");
+        alert.setContentText("Now you check new data in your profile");
+        alert.showAndWait();
+    }
+
+    private void showError(String text) {
+        Alert alert = new Alert(Alert.AlertType.ERROR);
+        alert.setTitle("Error");
+        alert.setHeaderText("Something gone wrong");
+        alert.setContentText(text);
+        alert.showAndWait();
     }
 
     private void updateLanguages() {

@@ -72,7 +72,8 @@ public class ServerConnectionsHandler extends ChannelInboundHandlerAdapter {
             public void handle(Object msg, ChannelFuture future) {
                 message = "";
                 log.debug("Registration" + msg);
-                User user = (User) msg;
+                UserDTO userDTO = (UserDTO) msg;
+                User user = UtilsDTO.convertDTOtoUser(userDTO);
                 if (!Optional.ofNullable(checkUserInDatabase(user.getEmail())).isPresent()) {
                     if (addNewUser(user)) {
                         ServerConnectionsHandler.this.messageService.sendMessage("onRegistration", "registered");
@@ -105,6 +106,31 @@ public class ServerConnectionsHandler extends ChannelInboundHandlerAdapter {
             }
         });
 
+        this.messageService.registerHandler("updateUser", new MessageHandler() {
+            @Override
+            public void handle(Object msg, ChannelFuture future) {
+                UserDTO userDTO = (UserDTO) msg;
+                User user = UtilsDTO.convertDTOtoUser(userDTO);
+                if (user != null) {
+                    if (updateUser(user)) {
+                        ServerConnectionsHandler.this.messageService.sendMessage("updateUser", "updated");
+                    } else {
+                        message += "Ups. Updating failed";
+                        ServerConnectionsHandler.this.messageService.sendMessage("updateUser", message);
+                    }
+                }
+            }
+        });
+    }
+
+    private boolean updateUser(User user) {
+        try {
+            databaseConnector.updateUser(user);
+            return true;
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            return false;
+        }
     }
 
     public boolean checkPassword(User user) {

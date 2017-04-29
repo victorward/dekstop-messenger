@@ -41,6 +41,7 @@
             <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
             <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
             <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
         </rowConstraints>
          <children>
             <Label text="Password:" GridPane.rowIndex="2" />
@@ -49,8 +50,8 @@
                   <Insets left="69.0" />
                </GridPane.margin></Label>
             <Label text="Date of birth" GridPane.rowIndex="4" />
-            <Label text="Country*" GridPane.rowIndex="6" />
-            <Label text="Mobile number*" GridPane.rowIndex="7" />
+            <Label text="Country*" GridPane.rowIndex="7" />
+            <Label text="Mobile number*" GridPane.rowIndex="8" />
             <JFXTextField fx:id="lastName" promptText="Last name" GridPane.columnIndex="1" />
             <JFXTextField fx:id="firstName" promptText="First name" />
             <JFXTextField fx:id="email" promptText="Email" GridPane.columnSpan="2" GridPane.rowIndex="1" />
@@ -63,15 +64,17 @@
                   <Insets right="10.0" />
                </padding></JFXToggleButton>
             <JFXDatePicker fx:id="date" promptText="Date" GridPane.columnIndex="1" GridPane.rowIndex="4" />
-            <JFXTextField fx:id="number" GridPane.columnIndex="1" GridPane.rowIndex="7" />
-            <ChoiceBox fx:id="country" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="6" />
+            <JFXTextField fx:id="number" GridPane.columnIndex="1" GridPane.rowIndex="8" />
+            <ChoiceBox fx:id="country" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="7" />
+            <Label text="Street" GridPane.rowIndex="5" />
+            <JFXTextField fx:id="street" GridPane.columnSpan="2" GridPane.rowIndex="6" />
          </children>
       </GridPane>
       <JFXButton layoutX="269.0" layoutY="200.0" text="Change avatar..." AnchorPane.rightAnchor="30.0" AnchorPane.topAnchor="200.0" />
       <ButtonBar layoutX="188.0" layoutY="340.0" prefHeight="40.0" prefWidth="200.0" AnchorPane.bottomAnchor="15.0" AnchorPane.rightAnchor="15.0">
         <buttons>
             <JFXButton onAction="#onCancelClick" text="Cancel" />
-            <JFXButton defaultButton="true" text="OK" />
+            <JFXButton defaultButton="true" onAction="#okClicked" text="OK" />
         </buttons>
       </ButtonBar>
       <JFXTextField layoutX="-350.0" layoutY="40.0" />

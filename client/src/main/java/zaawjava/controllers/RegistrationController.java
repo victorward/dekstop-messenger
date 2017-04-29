@@ -5,12 +5,7 @@
  */
 package zaawjava.controllers;
 
-import java.io.IOException;
-import java.net.URL;
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
-import java.util.ResourceBundle;
-
+import DTO.UserDTO;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -19,12 +14,17 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.util.StringConverter;
-import model.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import zaawjava.ScreensManager;
 import zaawjava.services.SocketService;
 import zaawjava.utils.Utils;
+
+import java.io.IOException;
+import java.net.URL;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.ResourceBundle;
 
 @Component
 public class RegistrationController implements Initializable {
@@ -170,13 +170,13 @@ public class RegistrationController implements Initializable {
     @FXML
     void onSign() throws IOException {
         if (isInputValid()) {
-            User user = new User(email.getText(), password.getText(), firstName.getText(), lastName.getText(), dataPicker.getValue(), checkToogle.getText());
+            UserDTO user = new UserDTO(email.getText(), password.getText(), firstName.getText(), lastName.getText(), dataPicker.getValue(), checkToogle.getText());
             progressBar.setProgress(0.45);
             insertNewUser(user);
         }
     }
 
-    private void insertNewUser(User user) {
+    private void insertNewUser(UserDTO user) {
         socketService.emit("onRegistration", user).whenComplete((msg, ex) -> {
             if (ex == null) {
                 progressBar.setProgress(0.7);

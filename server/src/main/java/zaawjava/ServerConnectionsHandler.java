@@ -1,12 +1,12 @@
 package zaawjava;
 
+import DTO.UserDTO;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 import io.netty.channel.group.DefaultChannelGroup;
 import io.netty.util.concurrent.GlobalEventExecutor;
-import model.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,9 +14,9 @@ import org.springframework.stereotype.Component;
 import utils.Message;
 import utils.MessageHandler;
 import utils.MessageService;
-import DTO.UserDTO;
-import DTO.UtilsDTO;
 import zaawjava.Utils.Utils;
+import zaawjava.Utils.UtilsDTO;
+import zaawjava.model.User;
 import zaawjava.services.DatabaseConnector;
 import zaawjava.services.UserService;
 
@@ -89,7 +89,7 @@ public class ServerConnectionsHandler extends ChannelInboundHandlerAdapter {
         this.messageService.registerHandler("getLoggedUser", new MessageHandler() {
             @Override
             public void handle(Object msg, ChannelFuture future) {
-                ServerConnectionsHandler.this.messageService.sendMessage("getLoggedUser", tmpUser);
+                ServerConnectionsHandler.this.messageService.sendMessage("getLoggedUser", UtilsDTO.convertUserToDTO(tmpUser));
                 userService.addUserToLoggedList(tmpUser);
                 userService.printUserList();
             }

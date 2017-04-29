@@ -1,9 +1,12 @@
-package DTO;
+package zaawjava.Utils;
 
-import model.Country;
-import model.Language;
-import model.User;
+import DTO.CountryDTO;
+import DTO.LanguageDTO;
+import DTO.UserDTO;
 import org.springframework.beans.BeanUtils;
+import zaawjava.model.Country;
+import zaawjava.model.Language;
+import zaawjava.model.User;
 
 import java.io.Serializable;
 import java.util.HashSet;
@@ -26,7 +29,9 @@ public class UtilsDTO implements Serializable {
         if (user != null) {
             userDTO = new UserDTO(convertLanguageSETtoDTO(user.getLanguages()), user.getFirstName(), user.getLastName(), user.getPhone(), user.getGender(), user.getEmail(), user.getPassword(), user.getAddress(), convertCountryToDTO(user.getCountry()), user.getBirthDate(), user.getPhoto());
         }
-        BeanUtils.copyProperties(user, userDTO);
+        //tego nie może tu być! copyProperties kopiuje płytko tzn nie mapuje zagnieżdżonych obiektów.
+        // Po wykonaniu tego polecenia languages będzie typu Language a nie LanguageDTO
+//        BeanUtils.copyProperties(user, userDTO);
         return userDTO;
     }
 

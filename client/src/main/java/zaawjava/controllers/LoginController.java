@@ -1,6 +1,5 @@
 package zaawjava.controllers;
 
-import DTO.CountryDTO;
 import DTO.UserDTO;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
@@ -10,7 +9,6 @@ import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
-import model.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -96,7 +94,7 @@ public class LoginController {
     private void getLoggedUser() {
         socketService.emit("getLoggedUser", "").whenComplete((msg, ex) -> {
             if (ex == null) {
-                userService.setUser((User) msg);
+                userService.setUser((UserDTO) msg);
             } else {
                 Platform.runLater(() -> messageLabel.setText("Failed during setting actual user"));
             }

@@ -29,9 +29,6 @@ public class UtilsDTO implements Serializable {
         if (user != null) {
             userDTO = new UserDTO(convertLanguageSETtoDTO(user.getLanguages()), user.getFirstName(), user.getLastName(), user.getPhone(), user.getGender(), user.getEmail(), user.getPassword(), user.getAddress(), convertCountryToDTO(user.getCountry()), user.getBirthDate(), user.getPhoto());
         }
-        //tego nie może tu być! copyProperties kopiuje płytko tzn nie mapuje zagnieżdżonych obiektów.
-        // Po wykonaniu tego polecenia languages będzie typu Language a nie LanguageDTO
-//        BeanUtils.copyProperties(user, userDTO);
         return userDTO;
     }
 

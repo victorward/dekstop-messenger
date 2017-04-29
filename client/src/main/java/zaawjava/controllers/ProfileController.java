@@ -6,22 +6,21 @@
 package zaawjava.controllers;
 
 import java.net.URL;
+import java.util.Locale;
 import java.util.ResourceBundle;
 
 import DTO.LanguageDTO;
 import com.jfoenix.controls.JFXPasswordField;
 import com.jfoenix.controls.JFXTextField;
 import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.DatePicker;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
-import javafx.scene.control.ToggleButton;
+import javafx.scene.control.*;
 import javafx.util.Callback;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -33,6 +32,8 @@ public class ProfileController implements Initializable {
 
     private ScreensManager screensManager;
     private UserService userService;
+
+    private String selectedLanguage;
 
     @Autowired
     public void setUserService(UserService userService) {
@@ -48,6 +49,9 @@ public class ProfileController implements Initializable {
     private TableView<LanguageDTO> Languages;
     @FXML
     private TableColumn<LanguageDTO, String> language;
+    @FXML
+    private ChoiceBox<String> languagesList;
+
     @FXML
     private JFXTextField firstName;
     @FXML
@@ -65,20 +69,28 @@ public class ProfileController implements Initializable {
     @FXML
     private JFXTextField number;
 
+    private ObservableList<LanguageDTO> languagess;
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        init();
-        ObservableList<LanguageDTO> languagess = FXCollections.observableArrayList();
+        languagess = FXCollections.observableArrayList();
+        ObservableList<String> languagesObsList = FXCollections.observableArrayList();
+
         languagess.addAll(userService.getUser().getLanguages());
+        Locale[] locales = Locale.getAvailableLocales();
+        for (Locale obj : locales) {
+            languagesObsList.add(obj.getDisplayLanguage());
+        }
         Languages.setItems(languagess);
+        languagesList.setItems(languagesObsList);
+
         language.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<LanguageDTO, String>, ObservableValue<String>>() {
             @Override
             public ObservableValue<String> call(TableColumn.CellDataFeatures<LanguageDTO, String> p) {
                 return new SimpleStringProperty(p.getValue().getLanguageName());
             }
         });
-
+        init();
     }
 
     void init() {
@@ -103,12 +115,35 @@ public class ProfileController implements Initializable {
 
     @FXML
     void delLanguage() {
-
+        if (Languages.getSelectionModel().getSelectedItem() != null) {
+            userService.getUser().getLanguages().remove(Languages.getSelectionModel().getSelectedItem());
+            updateLanguages();
+        }
     }
 
     @FXML
     void addLanguage() {
+        if (languagesList.getValue() != null) {
+//            if (!userService.getUser().getLanguages().contains(languagesList.getValue())) {
+            if (!checkAllLeng()) {
+                userService.getUser().getLanguages().add(new LanguageDTO(languagesList.getValue()));
+                updateLanguages();
+            }
+        }
+    }
 
+    private void updateLanguages() {
+        languagess.removeAll(languagess);
+        languagess.addAll(userService.getUser().getLanguages());
+    }
+
+    private boolean checkAllLeng() {
+        for (LanguageDTO lang : languagess) {
+            if (lang.getLanguageName().equals(languagesList.getValue())) {
+                return true;
+            }
+        }
+        return false;
     }
 
 }

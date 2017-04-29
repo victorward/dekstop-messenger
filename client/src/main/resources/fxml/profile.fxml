@@ -8,6 +8,7 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.ButtonBar?>
+<?import javafx.scene.control.ChoiceBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
@@ -75,12 +76,13 @@
       </ButtonBar>
       <JFXTextField layoutX="-350.0" layoutY="40.0" />
       <Label layoutX="-11.0" layoutY="462.0" text="* - this field is not required" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="10.0" />
-      <TableView fx:id="Languages" layoutX="10.0" layoutY="303.0" prefHeight="145.0" prefWidth="220.0" AnchorPane.bottomAnchor="50.0" AnchorPane.leftAnchor="10.0">
+      <TableView fx:id="Languages" layoutX="10.0" layoutY="303.0" prefHeight="145.0" prefWidth="220.0" AnchorPane.bottomAnchor="50.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="170.0">
         <columns>
           <TableColumn fx:id="language" minWidth="218.0" prefWidth="218.0" resizable="false" text="Languages*" />
         </columns>
       </TableView>
-      <Button fx:id="addLanguage" layoutX="244.0" layoutY="305.0" mnemonicParsing="false" text="Add" AnchorPane.bottomAnchor="130.0" AnchorPane.leftAnchor="240.0" AnchorPane.rightAnchor="104.0" />
-      <Button fx:id="delLanguage" layoutX="240.0" layoutY="353.0" mnemonicParsing="false" text="Delete" AnchorPane.bottomAnchor="100.0" AnchorPane.leftAnchor="240.0" AnchorPane.rightAnchor="104.0" />
+      <Button layoutX="235.0" layoutY="305.0" mnemonicParsing="false" onAction="#addLanguage" text="Add language" AnchorPane.bottomAnchor="170.0" AnchorPane.leftAnchor="235.0" />
+      <Button layoutX="235.0" layoutY="365.0" mnemonicParsing="false" onAction="#delLanguage" text="Delete language" AnchorPane.bottomAnchor="110.0" AnchorPane.leftAnchor="235.0" />
+      <ChoiceBox fx:id="languagesList" layoutX="235.0" layoutY="334.0" prefWidth="150.0" AnchorPane.bottomAnchor="140.0" AnchorPane.leftAnchor="235.0" AnchorPane.rightAnchor="15.0" />
    </children>
 </AnchorPane>

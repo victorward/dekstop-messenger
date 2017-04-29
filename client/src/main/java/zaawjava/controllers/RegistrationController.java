@@ -74,7 +74,11 @@ public class RegistrationController implements Initializable {
         group.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
             @Override
             public void changed(ObservableValue<? extends Toggle> ov, Toggle t, Toggle t1) {
-                checkToggle = (ToggleButton) t1.getToggleGroup().getSelectedToggle();
+                try {
+                    checkToggle = (ToggleButton) t1.getToggleGroup().getSelectedToggle();
+                } catch (Exception ex) {
+                    System.out.println("Odznaczyl na null");
+                }
             }
         });
 

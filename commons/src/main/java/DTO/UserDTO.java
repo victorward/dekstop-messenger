@@ -5,7 +5,7 @@ import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.Set;
 
-public class UserDTO implements Serializable{
+public class UserDTO implements Serializable {
     private Set<LanguageDTO> languages = new HashSet<LanguageDTO>(0);
 
     public Set<LanguageDTO> getLanguages() {

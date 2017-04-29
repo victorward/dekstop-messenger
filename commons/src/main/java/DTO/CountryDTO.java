@@ -1,6 +1,8 @@
 package DTO;
 
-public class CountryDTO {
+import java.io.Serializable;
+
+public class CountryDTO implements Serializable {
     private int id;
     private String countryName;
 

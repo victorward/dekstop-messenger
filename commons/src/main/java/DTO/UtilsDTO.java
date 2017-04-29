@@ -5,13 +5,14 @@ import model.Language;
 import model.User;
 import org.springframework.beans.BeanUtils;
 
+import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
 
 /**
  * Created by Yuriy
  */
-public class UtilsDTO {
+public class UtilsDTO implements Serializable {
     public static User convertDTOtoUser(UserDTO userDTO) {
         User user = null;
         if (userDTO != null) {

@@ -1,6 +1,8 @@
 package DTO;
 
-public class LanguageDTO {
+import java.io.Serializable;
+
+public class LanguageDTO implements Serializable {
     private int id;
     private String languageName;
 

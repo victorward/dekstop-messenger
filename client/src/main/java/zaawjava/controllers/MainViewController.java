@@ -5,6 +5,7 @@
  */
 package zaawjava.controllers;
 
+import DTO.UserDTO;
 import io.netty.channel.Channel;
 import io.netty.channel.EventLoopGroup;
 import javafx.application.Platform;
@@ -12,7 +13,6 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.stage.Stage;
-import model.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import zaawjava.ScreensManager;
@@ -68,7 +68,7 @@ public class MainViewController implements Initializable {
         screensManager.goToLoginView();
     }
 
-    private void logOutUser(User user) {
+    private void logOutUser(UserDTO user) {
         socketService.emit("loggedOutUser", user).whenComplete((msg, ex) -> {
             if (ex == null) {
                 if ("loggedOutUser".equals(msg)) {

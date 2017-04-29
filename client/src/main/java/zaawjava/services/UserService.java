@@ -1,6 +1,6 @@
 package zaawjava.services;
 
-import model.User;
+import DTO.UserDTO;
 import org.springframework.stereotype.Service;
 
 /**
@@ -9,22 +9,22 @@ import org.springframework.stereotype.Service;
 @Service
 public class UserService {
 
-    public User getUser() {
+    public UserDTO getUser() {
         return user;
     }
 
-    private User user;
+    private UserDTO user;
     private Integer userid;
 
     public UserService() {
     }
 
-    public UserService(User user) {
+    public UserService(UserDTO user) {
         this.user = user;
 //        this.userid = user.getId();
     }
 
-    public void setUser(User user) {
+    public void setUser(UserDTO user) {
         this.user = user;
         this.userid = user.getId();
     }

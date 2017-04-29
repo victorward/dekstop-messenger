@@ -30,7 +30,7 @@ public class ScreensManager {
 
     private Stage stage;
 
-    private ApplicationContext ctx;
+    private final ApplicationContext ctx;
 
     private final SpringFxmlLoader loader;
 

@@ -45,8 +45,8 @@ public class RegistrationController implements Initializable {
     @FXML
     private ProgressBar progressBar;
     @FXML
-    ToggleGroup group;
-    ToggleButton checkToogle = null;
+    private ToggleGroup group;
+    private ToggleButton checkToggle = null;
     @FXML
     private Label errorLabel;
 
@@ -70,11 +70,11 @@ public class RegistrationController implements Initializable {
         screensManager.getStage().setTitle("Registration");
 
         dataPicker.setValue(LocalDate.now().minusDays(3650));
-        
+
         group.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
             @Override
             public void changed(ObservableValue<? extends Toggle> ov, Toggle t, Toggle t1) {
-                checkToogle = (ToggleButton) t1.getToggleGroup().getSelectedToggle();
+                checkToggle = (ToggleButton) t1.getToggleGroup().getSelectedToggle();
             }
         });
 
@@ -143,7 +143,7 @@ public class RegistrationController implements Initializable {
                 errorMessage += "No valid date. Use the format yyyy-dd-mm!\n";
             }
         }
-        if (checkToogle == null) {
+        if (checkToggle == null) {
             errorMessage += "Please select your gender!\n";
         }
 
@@ -170,7 +170,8 @@ public class RegistrationController implements Initializable {
     @FXML
     void onSign() throws IOException {
         if (isInputValid()) {
-            UserDTO user = new UserDTO(email.getText(), password.getText(), firstName.getText(), lastName.getText(), dataPicker.getValue(), checkToogle.getText());
+            UserDTO user = new UserDTO(email.getText(), password.getText(), firstName.getText(), lastName.getText(), dataPicker.getValue(), checkToggle.getText());
+
             progressBar.setProgress(0.45);
             insertNewUser(user);
         }

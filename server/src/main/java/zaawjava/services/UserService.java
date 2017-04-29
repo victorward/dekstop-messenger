@@ -20,18 +20,18 @@ public class UserService {
         return databaseConnector;
     }
 
-    private HashMap<Integer, User> listOfLogedUsers = new HashMap<>();
+    private HashMap<Integer, User> listOfLoggedUsers = new HashMap<>();
 
     public void addUserToLoggedList(User user) {
-        listOfLogedUsers.put(user.getId(), user);
+        listOfLoggedUsers.put(user.getId(), user);
     }
 
     public void deleteUserFromLoggedList(User user) {
-        listOfLogedUsers.remove(user.getId());
+        listOfLoggedUsers.remove(user.getId());
     }
 
     public void printUserList() {
-        for (Map.Entry<Integer, User> entry : listOfLogedUsers.entrySet()) {
+        for (Map.Entry<Integer, User> entry : listOfLoggedUsers.entrySet()) {
             System.out.println(entry.getKey() + " : " + entry.getValue());
         }
     }

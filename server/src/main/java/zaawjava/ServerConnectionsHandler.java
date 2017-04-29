@@ -127,8 +127,7 @@ public class ServerConnectionsHandler extends ChannelInboundHandlerAdapter {
     }
 
     public User checkUserInDatabase(String email) {
-        User user = null;
-        user = databaseConnector.getByEmail(email);
+        User user = databaseConnector.getByEmail(email);
         return user;
     }
 
@@ -156,12 +155,12 @@ public class ServerConnectionsHandler extends ChannelInboundHandlerAdapter {
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) {
         try {
-            log.debug("message recived: " + msg);
+            log.debug("message received: " + msg);
             messageService.setChannel(ctx.channel());
             messageService.handleMessage((Message) msg);
 
         } catch (ClassCastException e) {
-            log.warn("Not message recived");
+            log.warn("Not message received");
         }
 
     }

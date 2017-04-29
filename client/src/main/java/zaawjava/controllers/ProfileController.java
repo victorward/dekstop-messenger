@@ -65,7 +65,7 @@ public class ProfileController implements Initializable {
     @FXML
     private DatePicker date;
     @FXML
-    private JFXTextField country;
+    private ChoiceBox<String> country;
     @FXML
     private JFXTextField number;
 
@@ -74,16 +74,6 @@ public class ProfileController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         languagess = FXCollections.observableArrayList();
-        ObservableList<String> languagesObsList = FXCollections.observableArrayList();
-
-        languagess.addAll(userService.getUser().getLanguages());
-        Locale[] locales = Locale.getAvailableLocales();
-        for (Locale obj : locales) {
-            languagesObsList.add(obj.getDisplayLanguage());
-        }
-        Languages.setItems(languagess);
-        languagesList.setItems(languagesObsList);
-
         language.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<LanguageDTO, String>, ObservableValue<String>>() {
             @Override
             public ObservableValue<String> call(TableColumn.CellDataFeatures<LanguageDTO, String> p) {
@@ -94,7 +84,29 @@ public class ProfileController implements Initializable {
     }
 
     void init() {
+        addLenguagesToSystem();
+        addCountryToSystem();
         fillUserData();
+    }
+
+    void addLenguagesToSystem(){
+        ObservableList<String> languagesObsList = FXCollections.observableArrayList();
+        languagess.addAll(userService.getUser().getLanguages());
+        Locale[] locales = Locale.getAvailableLocales();
+        for (Locale obj : locales) {
+            languagesObsList.add(obj.getDisplayLanguage());
+        }
+        Languages.setItems(languagess);
+        languagesList.setItems(languagesObsList);
+    }
+
+    void addCountryToSystem(){
+        ObservableList<String> countryObsList = FXCollections.observableArrayList();
+        Locale[] locales = Locale.getAvailableLocales();
+        for (Locale obj : locales) {
+            countryObsList.add(obj.getDisplayCountry());
+        }
+        country.setItems(countryObsList);
     }
 
     void fillUserData() {
@@ -104,7 +116,7 @@ public class ProfileController implements Initializable {
         password.setText(userService.getUser().getPassword());
         sex.setSelected(userService.getUser().getGender().equals("Male"));
         date.setValue(userService.getUser().getBirthDate());
-        country.setText(userService.getUser().getCountry().getCountryName());
+        country.setValue(userService.getUser().getCountry().getCountryName());
         number.setText(Integer.toString(userService.getUser().getPhone()));
     }
 

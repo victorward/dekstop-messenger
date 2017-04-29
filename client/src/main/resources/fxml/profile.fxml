@@ -63,8 +63,8 @@
                   <Insets right="10.0" />
                </padding></JFXToggleButton>
             <JFXDatePicker fx:id="date" promptText="Date" GridPane.columnIndex="1" GridPane.rowIndex="4" />
-            <JFXTextField fx:id="country" GridPane.columnIndex="1" GridPane.rowIndex="6" />
             <JFXTextField fx:id="number" GridPane.columnIndex="1" GridPane.rowIndex="7" />
+            <ChoiceBox fx:id="country" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="6" />
          </children>
       </GridPane>
       <JFXButton layoutX="269.0" layoutY="200.0" text="Change avatar..." AnchorPane.rightAnchor="30.0" AnchorPane.topAnchor="200.0" />

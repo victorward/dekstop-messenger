@@ -8,13 +8,21 @@ package zaawjava.controllers;
 import java.net.URL;
 import java.util.ResourceBundle;
 
+import DTO.LanguageDTO;
 import com.jfoenix.controls.JFXPasswordField;
 import com.jfoenix.controls.JFXTextField;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.value.ObservableValue;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.DatePicker;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
 import javafx.scene.control.ToggleButton;
+import javafx.util.Callback;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import zaawjava.ScreensManager;
@@ -37,6 +45,10 @@ public class ProfileController implements Initializable {
     }
 
     @FXML
+    private TableView<LanguageDTO> Languages;
+    @FXML
+    private TableColumn<LanguageDTO, String> language;
+    @FXML
     private JFXTextField firstName;
     @FXML
     private JFXTextField lastName;
@@ -52,13 +64,21 @@ public class ProfileController implements Initializable {
     private JFXTextField country;
     @FXML
     private JFXTextField number;
-    @FXML
-    private JFXTextField languages;
 
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         init();
+        ObservableList<LanguageDTO> languagess = FXCollections.observableArrayList();
+        languagess.addAll(userService.getUser().getLanguages());
+        Languages.setItems(languagess);
+        language.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<LanguageDTO, String>, ObservableValue<String>>() {
+            @Override
+            public ObservableValue<String> call(TableColumn.CellDataFeatures<LanguageDTO, String> p) {
+                return new SimpleStringProperty(p.getValue().getLanguageName());
+            }
+        });
+
     }
 
     void init() {
@@ -79,6 +99,16 @@ public class ProfileController implements Initializable {
     @FXML
     void onCancelClick(ActionEvent event) {
         screensManager.goToMainView();
+    }
+
+    @FXML
+    void delLanguage() {
+
+    }
+
+    @FXML
+    void addLanguage() {
+
     }
 
 }

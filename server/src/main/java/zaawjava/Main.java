@@ -1,11 +1,15 @@
 package zaawjava;
 
+import java.util.List;
+
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+
 import zaawjava.model.Country;
 import zaawjava.model.Language;
 import zaawjava.model.User;
+import zaawjava.services.DatabaseConnector;
 
 public class Main {
     public static SessionFactory factory = new Configuration().configure("hibernate.cfg.xml").addAnnotatedClass(User.class).addAnnotatedClass(Country.class).addAnnotatedClass(Language.class).buildSessionFactory();
@@ -16,6 +20,16 @@ public class Main {
         Server server = applicationContext.getBean(Server.class);
 
 //        DatabaseConnector databaseConnector = new DatabaseConnector();
+//        List<Country> allCountries = databaseConnector.getCountries();
+//        for (Country c : allCountries)
+//        {
+//        	System.out.println(c.getCountryName());
+//        }
+//        List<Language> allLanguages = databaseConnector.getLanguages();
+//        for (Language c : allLanguages)
+//        {
+//        	System.out.println(c.getLanguageName());
+//        }
 //        User testUser = databaseConnector.getUser("");
 //        System.out.println(testUser.toString());
 //        System.out.println(testUser.getLanguages().toArray(new Language[testUser.getLanguages().size()])[0].getLanguageName());

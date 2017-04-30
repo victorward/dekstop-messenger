@@ -3,10 +3,15 @@ package zaawjava.services;
 import org.hibernate.Hibernate;
 import org.hibernate.Session;
 import org.springframework.stereotype.Service;
+
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import zaawjava.Main;
 import zaawjava.model.Country;
 import zaawjava.model.Language;
 import zaawjava.model.User;
+
+import java.util.List;
 
 import javax.persistence.NoResultException;
 import javax.persistence.criteria.CriteriaBuilder;
@@ -78,4 +83,24 @@ public class DatabaseConnector {
         session.getTransaction().commit();
         session.close();
     }
+	public List<Language> getLanguages()
+	{
+		session = Main.factory.getCurrentSession();
+		session.beginTransaction();
+		CriteriaQuery<Language> criteriaQuery = session.getCriteriaBuilder().createQuery(Language.class);
+		criteriaQuery.from(Language.class);
+		List<Language> listOfLanguages = session.createQuery(criteriaQuery).getResultList();
+		session.getTransaction().commit();
+		return listOfLanguages;
+	}
+	public List<Country> getCountries()
+	{
+		session = Main.factory.getCurrentSession();
+		session.beginTransaction();
+		CriteriaQuery<Country> criteriaQuery = session.getCriteriaBuilder().createQuery(Country.class);
+		criteriaQuery.from(Country.class);
+		List<Country> listOfCountries = session.createQuery(criteriaQuery).getResultList();
+		session.getTransaction().commit();
+		return listOfCountries;
+	}
 }

@@ -1,6 +1,7 @@
 package zaawjava;
 
 import DTO.CountryDTO;
+import DTO.LanguageDTO;
 import DTO.UserDTO;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelHandler;
@@ -18,6 +19,7 @@ import utils.MessageService;
 import zaawjava.Utils.Utils;
 import zaawjava.Utils.UtilsDTO;
 import zaawjava.model.Country;
+import zaawjava.model.Language;
 import zaawjava.model.User;
 import zaawjava.services.DatabaseConnector;
 import zaawjava.services.UserService;
@@ -126,6 +128,7 @@ public class ServerConnectionsHandler extends ChannelInboundHandlerAdapter {
                 }
             }
         });
+
         this.messageService.registerHandler("getCountryList", new MessageHandler() {
             @Override
             public void handle(Object msg, ChannelFuture future) {
@@ -135,6 +138,18 @@ public class ServerConnectionsHandler extends ChannelInboundHandlerAdapter {
                     listDto.add(UtilsDTO.convertCountryToDTO(country));
                 }
                 ServerConnectionsHandler.this.messageService.sendMessage("getCountryList", listDto);
+            }
+        });
+
+        this.messageService.registerHandler("getLanguagesList", new MessageHandler() {
+            @Override
+            public void handle(Object msg, ChannelFuture future) {
+                List<Language> list = databaseConnector.getLanguages();
+                List<LanguageDTO> languageDTO = new ArrayList<>();
+                for (Language lang : list) {
+                    languageDTO.add(UtilsDTO.convertLanguageToDTO(lang));
+                }
+                ServerConnectionsHandler.this.messageService.sendMessage("getLanguagesList", languageDTO);
             }
         });
     }

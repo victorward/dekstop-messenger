@@ -43,6 +43,14 @@ public class DatabaseConnector {
         session.getTransaction().commit();
         return currentCountry;
     }
+
+    public Country getCountryObjectByID(String countryName) {
+        session = Main.factory.getCurrentSession();
+        session.beginTransaction();
+        Country currentCountry = session.get(Country.class, countryName);
+        session.getTransaction().commit();
+        return currentCountry;
+    }
     // FINISH HERE
 
     public User getByEmail(String email) {

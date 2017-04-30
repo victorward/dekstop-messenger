@@ -76,4 +76,22 @@ public class UtilsDTO implements Serializable {
         return languageSet;
     }
 
+    public static Language convertDTOtoLanguage(LanguageDTO languageDTO) {
+        Language language = null;
+        if (languageDTO != null) {
+            language = new Language();
+            BeanUtils.copyProperties(languageDTO, language);
+        }
+        return language;
+    }
+
+    public static LanguageDTO convertLanguageToDTO(Language language) {
+        LanguageDTO languageDTO = null;
+        if (language != null) {
+            languageDTO = new LanguageDTO();
+            BeanUtils.copyProperties(language, languageDTO);
+        }
+        return languageDTO;
+    }
+
 }

@@ -108,12 +108,20 @@ public class ProfileController implements Initializable {
     void addLenguagesToSystem() {
         ObservableList<String> languagesObsList = FXCollections.observableArrayList();
         languagess.addAll(userService.getUser().getLanguages());
-        Locale[] locales = Locale.getAvailableLocales();
-        for (Locale obj : locales) {
-            languagesObsList.add(obj.getDisplayLanguage());
-        }
         Languages.setItems(languagess);
-        languagesList.setItems(languagesObsList);
+        socketService.emit("getLanguagesList", "").whenComplete((msg, ex) -> {
+            if (ex == null) {
+                List<LanguageDTO> allLanguages = (List<LanguageDTO>) msg;
+                List<String> languagesss = new ArrayList<>();
+                for (LanguageDTO l : allLanguages) {
+                    languagesss.add(l.getLanguageName());
+                }
+                languagesObsList.setAll(languagesss);
+                Platform.runLater(() -> languagesList.setItems(languagesObsList));
+            } else {
+                Platform.runLater(() -> showError("Failed during getting languages list"));
+            }
+        });
     }
 
     void addCountryToSystem() {
@@ -125,7 +133,6 @@ public class ProfileController implements Initializable {
                 for (CountryDTO c : allCountriesss) {
                     countries.add(c.getCountryName());
                 }
-                System.out.print(countries.size());
                 countryObsList.setAll(countries);
                 Platform.runLater(() -> country.setItems(countryObsList));
             } else {
@@ -203,6 +210,8 @@ public class ProfileController implements Initializable {
         user.setLastName(lastName.getText());
         user.setPassword(password.getText());
         user.setPhone(Integer.parseInt(number.getText()));
+        //Nie mogę zapisac bo nie mam id
+//        user.setCountry(country.getValue());
         return user;
     }
 

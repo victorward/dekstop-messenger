@@ -161,6 +161,23 @@ public class UserDTO implements Serializable {
         this.photo = photo;
     }
 
+    public UserDTO(int id, Set<LanguageDTO> languages, String firstName, String lastName, int phone, String gender,
+                   String email, String password, String address, CountryDTO country, LocalDate birthDate, String photo) {
+        super();
+        this.id = id;
+        this.languages = languages;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.phone = phone;
+        this.gender = gender;
+        this.email = email;
+        this.password = password;
+        this.address = address;
+        this.country = country;
+        this.birthDate = birthDate;
+        this.photo = photo;
+    }
+
     @Override
     public String toString() {
         return "User [id=" + id + ", firstName=" + firstName + ", lastName=" + lastName + ", phone=" + phone

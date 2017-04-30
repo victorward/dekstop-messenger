@@ -32,7 +32,7 @@ public class UserService {
 
     public void printUserList() {
         for (Map.Entry<Integer, User> entry : listOfLoggedUsers.entrySet()) {
-            System.out.println(entry.getKey() + " : " + entry.getValue());
+            System.out.println("|User list: " + entry.getKey() + " : " + entry.getValue());
         }
     }
 }

@@ -57,8 +57,7 @@ public class ServerConnectionsHandler extends ChannelInboundHandlerAdapter {
                 message = "";
                 UserDTO userDTO = (UserDTO) msg;
                 User user = UtilsDTO.convertDTOtoUser(userDTO);
-                System.out.println(userDTO);
-                log.debug("Trying to log in! " + user);
+                log.debug("Trying to log in! For " + user);
                 if (checkPassword(user)) {
                     ServerConnectionsHandler.this.messageService.sendMessage("onLogin", "loggedIn");
                 } else {
@@ -111,6 +110,7 @@ public class ServerConnectionsHandler extends ChannelInboundHandlerAdapter {
             public void handle(Object msg, ChannelFuture future) {
                 UserDTO userDTO = (UserDTO) msg;
                 User user = UtilsDTO.convertDTOtoUser(userDTO);
+                log.debug("|Przy update " + user);
                 if (user != null) {
                     if (updateUser(user)) {
                         ServerConnectionsHandler.this.messageService.sendMessage("updateUser", "updated");
@@ -137,10 +137,9 @@ public class ServerConnectionsHandler extends ChannelInboundHandlerAdapter {
         if (Optional.ofNullable(checkUserInDatabase(user.getEmail())).isPresent()) {
             User checkedUser = databaseConnector.getByEmail(user.getEmail());
             checkedUser.setPassword(Utils.decryptPassword(checkedUser.getPassword()));
-            System.out.println(checkedUser.getPassword());
-            log.debug("logining! " + checkedUser);
             if (checkedUser.getPassword().equals(user.getPassword())) {
                 tmpUser = checkedUser;
+                log.debug("Logged! Actual system " + tmpUser);
                 return true;
             } else {
                 message += "Wrong password";

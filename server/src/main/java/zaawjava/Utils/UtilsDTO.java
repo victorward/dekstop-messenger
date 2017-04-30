@@ -19,7 +19,7 @@ public class UtilsDTO implements Serializable {
     public static User convertDTOtoUser(UserDTO userDTO) {
         User user = null;
         if (userDTO != null) {
-            user = new User(convertDTOtoLanguageSET(userDTO.getLanguages()), userDTO.getFirstName(), userDTO.getLastName(), userDTO.getPhone(), userDTO.getGender(), userDTO.getEmail(), userDTO.getPassword(), userDTO.getAddress(), convertDTOtoCountry(userDTO.getCountry()), userDTO.getBirthDate(), userDTO.getPhoto());
+            user = new User(userDTO.getId(), convertDTOtoLanguageSET(userDTO.getLanguages()), userDTO.getFirstName(), userDTO.getLastName(), userDTO.getPhone(), userDTO.getGender(), userDTO.getEmail(), userDTO.getPassword(), userDTO.getAddress(), convertDTOtoCountry(userDTO.getCountry()), userDTO.getBirthDate(), userDTO.getPhoto());
         }
         return user;
     }
@@ -27,7 +27,7 @@ public class UtilsDTO implements Serializable {
     public static UserDTO convertUserToDTO(User user) {
         UserDTO userDTO = null;
         if (user != null) {
-            userDTO = new UserDTO(convertLanguageSETtoDTO(user.getLanguages()), user.getFirstName(), user.getLastName(), user.getPhone(), user.getGender(), user.getEmail(), user.getPassword(), user.getAddress(), convertCountryToDTO(user.getCountry()), user.getBirthDate(), user.getPhoto());
+            userDTO = new UserDTO(user.getId(), convertLanguageSETtoDTO(user.getLanguages()), user.getFirstName(), user.getLastName(), user.getPhone(), user.getGender(), user.getEmail(), user.getPassword(), user.getAddress(), convertCountryToDTO(user.getCountry()), user.getBirthDate(), user.getPhoto());
         }
         return userDTO;
     }

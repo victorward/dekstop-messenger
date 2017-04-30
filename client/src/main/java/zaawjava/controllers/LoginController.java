@@ -95,6 +95,7 @@ public class LoginController {
         socketService.emit("getLoggedUser", "").whenComplete((msg, ex) -> {
             if (ex == null) {
                 userService.setUser((UserDTO) msg);
+                log.debug("|Ustawil sie taki user: " + userService.getUser());
             } else {
                 Platform.runLater(() -> messageLabel.setText("Failed during setting actual user"));
             }

@@ -179,6 +179,7 @@ public class ProfileController implements Initializable {
     }
 
     private UserDTO fillNewData() {
+        System.out.println("|W profilu " + userService.getUser());
         UserDTO user = userService.getUser();
         user.setAddress(street.getText());
         user.setBirthDate(date.getValue());

@@ -110,6 +110,7 @@ public class ServerConnectionsHandler extends ChannelInboundHandlerAdapter {
             public void handle(Object msg, ChannelFuture future) {
                 UserDTO userDTO = (UserDTO) msg;
                 User user = UtilsDTO.convertDTOtoUser(userDTO);
+                user.setPassword(Utils.encryptPassword(user.getPassword()));
                 log.debug("|Przy update " + user);
                 if (user != null) {
                     if (updateUser(user)) {

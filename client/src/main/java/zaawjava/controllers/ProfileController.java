@@ -87,6 +87,8 @@ public class ProfileController implements Initializable {
 
     private ObservableList<LanguageDTO> languagess;
 
+    List<CountryDTO> allCountries;
+
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         languagess = FXCollections.observableArrayList();
@@ -103,6 +105,7 @@ public class ProfileController implements Initializable {
         addLenguagesToSystem();
         addCountryToSystem();
         fillUserData();
+        System.out.println("kraje " + allCountries);
     }
 
     void addLenguagesToSystem() {
@@ -129,6 +132,7 @@ public class ProfileController implements Initializable {
         socketService.emit("getCountryList", "").whenComplete((msg, ex) -> {
             if (ex == null) {
                 List<CountryDTO> allCountriesss = (List<CountryDTO>) msg;
+                Platform.runLater(() -> setAllCountries(allCountriesss));
                 List<String> countries = new ArrayList<>();
                 for (CountryDTO c : allCountriesss) {
                     countries.add(c.getCountryName());
@@ -210,9 +214,17 @@ public class ProfileController implements Initializable {
         user.setLastName(lastName.getText());
         user.setPassword(password.getText());
         user.setPhone(Integer.parseInt(number.getText()));
-        //Nie mogę zapisac bo nie mam id
-//        user.setCountry(country.getValue());
+        //Jesli za pierwszym razem nie zadziala to za drugim za dziala, nie jestem jescze w stanie wyjasnic dalczego tak, na pewno nie pzez platform bo przed tym ja nie bylo
+        user.setCountry(new CountryDTO(getCountryID(country.getValue()), country.getValue()));
         return user;
+    }
+
+    private int getCountryID(String name) {
+        int id = 0;
+        for (CountryDTO country : allCountries) {
+            if (country.getCountryName().equals(name)) id = country.getId();
+        }
+        return id;
     }
 
     private boolean isInputValid() {
@@ -296,4 +308,9 @@ public class ProfileController implements Initializable {
         }
         return false;
     }
+
+    public void setAllCountries(List<CountryDTO> allCountries) {
+        this.allCountries = allCountries;
+    }
+
 }

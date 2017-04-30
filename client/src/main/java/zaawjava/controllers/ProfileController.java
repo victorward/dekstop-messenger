@@ -5,10 +5,14 @@
  */
 package zaawjava.controllers;
 
+import java.lang.reflect.Array;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 import java.util.ResourceBundle;
 
+import DTO.CountryDTO;
 import DTO.LanguageDTO;
 import DTO.UserDTO;
 import com.jfoenix.controls.JFXPasswordField;
@@ -114,11 +118,21 @@ public class ProfileController implements Initializable {
 
     void addCountryToSystem() {
         ObservableList<String> countryObsList = FXCollections.observableArrayList();
-        Locale[] locales = Locale.getAvailableLocales();
-        for (Locale obj : locales) {
-            countryObsList.add(obj.getDisplayCountry());
-        }
-        country.setItems(countryObsList);
+        socketService.emit("getCountryList", "").whenComplete((msg, ex) -> {
+            if (ex == null) {
+                List<CountryDTO> allCountriesss = (List<CountryDTO>) msg;
+                List<String> countries = new ArrayList<>();
+                for (CountryDTO c : allCountriesss) {
+                    countries.add(c.getCountryName());
+                }
+                System.out.print(countries.size());
+                countryObsList.setAll(countries);
+                Platform.runLater(() -> country.setItems(countryObsList));
+            } else {
+                Platform.runLater(() -> showError("Failed during getting country list"));
+            }
+        });
+
     }
 
     void fillUserData() {
@@ -273,5 +287,4 @@ public class ProfileController implements Initializable {
         }
         return false;
     }
-
 }

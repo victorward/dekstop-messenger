@@ -1,5 +1,6 @@
 package zaawjava;
 
+import DTO.CountryDTO;
 import DTO.UserDTO;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelHandler;
@@ -16,10 +17,13 @@ import utils.MessageHandler;
 import utils.MessageService;
 import zaawjava.Utils.Utils;
 import zaawjava.Utils.UtilsDTO;
+import zaawjava.model.Country;
 import zaawjava.model.User;
 import zaawjava.services.DatabaseConnector;
 import zaawjava.services.UserService;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 @Component
@@ -120,6 +124,17 @@ public class ServerConnectionsHandler extends ChannelInboundHandlerAdapter {
                         ServerConnectionsHandler.this.messageService.sendMessage("updateUser", message);
                     }
                 }
+            }
+        });
+        this.messageService.registerHandler("getCountryList", new MessageHandler() {
+            @Override
+            public void handle(Object msg, ChannelFuture future) {
+                List<Country> list = databaseConnector.getCountries();
+                List<CountryDTO> listDto = new ArrayList<>();
+                for (Country country : list) {
+                    listDto.add(UtilsDTO.convertCountryToDTO(country));
+                }
+                ServerConnectionsHandler.this.messageService.sendMessage("getCountryList", listDto);
             }
         });
     }

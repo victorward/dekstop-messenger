@@ -12,6 +12,7 @@ import javax.persistence.NoResultException;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
+import java.util.List;
 
 @Service
 public class DatabaseConnector {
@@ -77,5 +78,25 @@ public class DatabaseConnector {
         session.update(user);
         session.getTransaction().commit();
         session.close();
+    }
+
+    public List<Language> getLanguages() {
+        session = Main.factory.getCurrentSession();
+        session.beginTransaction();
+        CriteriaQuery<Language> criteriaQuery = session.getCriteriaBuilder().createQuery(Language.class);
+        criteriaQuery.from(Language.class);
+        List<Language> listOfLanguages = session.createQuery(criteriaQuery).getResultList();
+        session.getTransaction().commit();
+        return listOfLanguages;
+    }
+
+    public List<Country> getCountries() {
+        session = Main.factory.getCurrentSession();
+        session.beginTransaction();
+        CriteriaQuery<Country> criteriaQuery = session.getCriteriaBuilder().createQuery(Country.class);
+        criteriaQuery.from(Country.class);
+        List<Country> listOfCountries = session.createQuery(criteriaQuery).getResultList();
+        session.getTransaction().commit();
+        return listOfCountries;
     }
 }

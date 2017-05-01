@@ -1,13 +1,13 @@
 create table ZaawJava.country
 (
 id int auto_increment primary key,
-country_name varchar(30)
+country_name varchar(45)
 );
 
 create table ZaawJava.language
 (
 id int auto_increment primary key,
-language_name varchar(20)
+language_name varchar(45)
 );
 
 create table ZaawJava.user

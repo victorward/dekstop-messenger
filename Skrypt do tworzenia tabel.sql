@@ -1,16 +1,16 @@
-create table ZaawJava.country
+create table ZaawJava.countries
 (
 id int auto_increment primary key,
 country_name varchar(45)
 );
 
-create table ZaawJava.language
+create table ZaawJava.languages
 (
 id int auto_increment primary key,
 language_name varchar(45)
 );
 
-create table ZaawJava.user
+create table ZaawJava.users
 (
 id int auto_increment primary key,
 first_name varchar(20),
@@ -26,7 +26,7 @@ photo varchar(255),
 foreign key (country_id) references ZaawJava.country(id)
 );
 
-create table ZaawJava.user_language
+create table ZaawJava.users_languages
 (
 user_id int,
 language_id int,

@@ -1,22 +1,20 @@
 package zaawjava.services;
 
-import org.hibernate.Hibernate;
-import org.hibernate.Session;
-import org.springframework.stereotype.Service;
-
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
-import zaawjava.Main;
-import zaawjava.model.Country;
-import zaawjava.model.Language;
-import zaawjava.model.User;
-
 import java.util.List;
 
 import javax.persistence.NoResultException;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
+
+import org.hibernate.Hibernate;
+import org.hibernate.Session;
+import org.springframework.stereotype.Service;
+
+import zaawjava.Main;
+import zaawjava.model.Country;
+import zaawjava.model.Language;
+import zaawjava.model.User;
 
 @Service
 public class DatabaseConnector {

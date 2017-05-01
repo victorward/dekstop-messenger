@@ -33,17 +33,11 @@ language_id int,
 foreign key (user_id) references ZaawJava.user(id),
 foreign key (language_id) references ZaawJava.language(id)
 );
-
+# Najpierw wstawic kraje i jezyki
 use ZaawJava;
-insert into country (country_name) values ('Polska');
-insert into language (language_name) values ('Polski');
 insert into user (first_name, last_name, phone, gender, email, user_password, address, country_id, birth_date, photo)
-		values ('Kamil', 'Kamilowski', 333333333, 'male', 'Kamil@ggg.gg', 'uPU/Y5hjiwVNPwgeySE0kw==', 'Uliczna 28', 1,  '1999-12-24', 'linkDoZdjeciaToKlamstwo');
-insert into user_language values (1,1);
+values ('Kamil', 'Kamilowski', 333333333, 'male', 'Kamil@ggg.gg', 'uPU/Y5hjiwVNPwgeySE0kw==', 'Uliczna 28', 144,  '1999-12-24', 'linkDoZdjeciaToKlamstwo');
 
-insert into country (country_name) values ('Ukraine');
-insert into language (language_name) values ('Ukrainski');
 insert into user (first_name, last_name, phone, gender, email, user_password, address, country_id, birth_date, photo)
-values ('Yuriy', 'Yurok', 39933, 'male', 'ii@i.ua', 'uPU/Y5hjiwVNPwgeySE0kw==', 'Dobra ulica', 2,  '1990-10-10', 'piekneZdjecie');
-insert into user_language values (2,2);
+values ('Yuriy', 'Yurok', 39933, 'male', 'ii@i.ua', 'uPU/Y5hjiwVNPwgeySE0kw==', 'Dobra ulica', 190,  '1990-10-10', 'piekneZdjecie');
 COMMIT

@@ -1,5 +1,7 @@
 package zaawjava;
 
+import DTO.CountryDTO;
+import DTO.LanguageDTO;
 import DTO.UserDTO;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelHandler;
@@ -16,10 +18,14 @@ import utils.MessageHandler;
 import utils.MessageService;
 import zaawjava.Utils.Utils;
 import zaawjava.Utils.UtilsDTO;
+import zaawjava.model.Country;
+import zaawjava.model.Language;
 import zaawjava.model.User;
 import zaawjava.services.DatabaseConnector;
 import zaawjava.services.UserService;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 @Component
@@ -57,8 +63,7 @@ public class ServerConnectionsHandler extends ChannelInboundHandlerAdapter {
                 message = "";
                 UserDTO userDTO = (UserDTO) msg;
                 User user = UtilsDTO.convertDTOtoUser(userDTO);
-                System.out.println(userDTO);
-                log.debug("Trying to log in! " + user);
+                log.debug("Trying to log in! For " + user);
                 if (checkPassword(user)) {
                     ServerConnectionsHandler.this.messageService.sendMessage("onLogin", "loggedIn");
                 } else {
@@ -72,7 +77,8 @@ public class ServerConnectionsHandler extends ChannelInboundHandlerAdapter {
             public void handle(Object msg, ChannelFuture future) {
                 message = "";
                 log.debug("Registration" + msg);
-                User user = (User) msg;
+                UserDTO userDTO = (UserDTO) msg;
+                User user = UtilsDTO.convertDTOtoUser(userDTO);
                 if (!Optional.ofNullable(checkUserInDatabase(user.getEmail())).isPresent()) {
                     if (addNewUser(user)) {
                         ServerConnectionsHandler.this.messageService.sendMessage("onRegistration", "registered");
@@ -105,16 +111,66 @@ public class ServerConnectionsHandler extends ChannelInboundHandlerAdapter {
             }
         });
 
+        this.messageService.registerHandler("updateUser", new MessageHandler() {
+            @Override
+            public void handle(Object msg, ChannelFuture future) {
+                UserDTO userDTO = (UserDTO) msg;
+                User user = UtilsDTO.convertDTOtoUser(userDTO);
+                user.setPassword(Utils.encryptPassword(user.getPassword()));
+                log.debug("|Przy update " + user);
+                if (user != null) {
+                    if (updateUser(user)) {
+                        ServerConnectionsHandler.this.messageService.sendMessage("updateUser", "updated");
+                    } else {
+                        message += "Ups. Updating failed";
+                        ServerConnectionsHandler.this.messageService.sendMessage("updateUser", message);
+                    }
+                }
+            }
+        });
+
+        this.messageService.registerHandler("getCountryList", new MessageHandler() {
+            @Override
+            public void handle(Object msg, ChannelFuture future) {
+                List<Country> list = databaseConnector.getCountries();
+                List<CountryDTO> listDto = new ArrayList<>();
+                for (Country country : list) {
+                    listDto.add(UtilsDTO.convertCountryToDTO(country));
+                }
+                ServerConnectionsHandler.this.messageService.sendMessage("getCountryList", listDto);
+            }
+        });
+
+        this.messageService.registerHandler("getLanguagesList", new MessageHandler() {
+            @Override
+            public void handle(Object msg, ChannelFuture future) {
+                List<Language> list = databaseConnector.getLanguages();
+                List<LanguageDTO> languageDTO = new ArrayList<>();
+                for (Language lang : list) {
+                    languageDTO.add(UtilsDTO.convertLanguageToDTO(lang));
+                }
+                ServerConnectionsHandler.this.messageService.sendMessage("getLanguagesList", languageDTO);
+            }
+        });
+    }
+
+    private boolean updateUser(User user) {
+        try {
+            databaseConnector.updateUser(user);
+            return true;
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            return false;
+        }
     }
 
     public boolean checkPassword(User user) {
         if (Optional.ofNullable(checkUserInDatabase(user.getEmail())).isPresent()) {
             User checkedUser = databaseConnector.getByEmail(user.getEmail());
             checkedUser.setPassword(Utils.decryptPassword(checkedUser.getPassword()));
-            System.out.println(checkedUser.getPassword());
-            log.debug("logining! " + checkedUser);
             if (checkedUser.getPassword().equals(user.getPassword())) {
                 tmpUser = checkedUser;
+                log.debug("Logged! Actual system " + tmpUser);
                 return true;
             } else {
                 message += "Wrong password";

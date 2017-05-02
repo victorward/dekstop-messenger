@@ -15,7 +15,6 @@ import zaawjava.Main;
 import zaawjava.model.Country;
 import zaawjava.model.Language;
 import zaawjava.model.User;
-
 @Service
 public class DatabaseConnector {
     private Session session;
@@ -42,6 +41,14 @@ public class DatabaseConnector {
         session = Main.factory.getCurrentSession();
         session.beginTransaction();
         Country currentCountry = session.get(Country.class, countryID);
+        session.getTransaction().commit();
+        return currentCountry;
+    }
+
+    public Country getCountryObjectByID(String countryName) {
+        session = Main.factory.getCurrentSession();
+        session.beginTransaction();
+        Country currentCountry = session.get(Country.class, countryName);
         session.getTransaction().commit();
         return currentCountry;
     }
@@ -101,4 +108,5 @@ public class DatabaseConnector {
 		session.getTransaction().commit();
 		return listOfCountries;
 	}
+
 }

@@ -159,9 +159,10 @@ public class User implements Serializable {
         this.password = password;
     }
 
-    public User(Set<Language> languages, String firstName, String lastName, int phone, String gender,
+    public User(int id, Set<Language> languages, String firstName, String lastName, int phone, String gender,
                 String email, String password, String address, Country country, LocalDate birthDate, String photo) {
         super();
+        this.id = id;
         this.languages = languages;
         this.firstName = firstName;
         this.lastName = lastName;

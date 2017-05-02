@@ -74,7 +74,11 @@ public class RegistrationController implements Initializable {
         group.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
             @Override
             public void changed(ObservableValue<? extends Toggle> ov, Toggle t, Toggle t1) {
-                checkToggle = (ToggleButton) t1.getToggleGroup().getSelectedToggle();
+                try {
+                    checkToggle = (ToggleButton) t1.getToggleGroup().getSelectedToggle();
+                } catch (Exception ex) {
+                    System.out.println("Odznaczyl na null");
+                }
             }
         });
 
@@ -171,7 +175,6 @@ public class RegistrationController implements Initializable {
     void onSign() throws IOException {
         if (isInputValid()) {
             UserDTO user = new UserDTO(email.getText(), password.getText(), firstName.getText(), lastName.getText(), dataPicker.getValue(), checkToggle.getText());
-
             progressBar.setProgress(0.45);
             insertNewUser(user);
         }
@@ -190,11 +193,8 @@ public class RegistrationController implements Initializable {
                         } catch (IOException e) {
                             e.printStackTrace();
                             Platform.runLater(() -> errorLabel.setText("Cannot load login view"));
-
                         }
-
                     });
-//                        screensManager.goToMainView();
                 } else {
                     Platform.runLater(() -> errorLabel.setText("Registration failed during writing data to database. " + msg));
                 }

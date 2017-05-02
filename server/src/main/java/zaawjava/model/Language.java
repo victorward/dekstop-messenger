@@ -4,7 +4,7 @@ import javax.persistence.*;
 import java.io.Serializable;
 
 @Entity
-@Table(name = "language")
+@Table(name = "languages")
 public class Language implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

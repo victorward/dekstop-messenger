@@ -7,12 +7,12 @@ import java.util.HashSet;
 import java.util.Set;
 
 @Entity
-@Table(name = "user")
+@Table(name = "users")
 public class User implements Serializable {
 
 
     @ManyToMany(cascade = CascadeType.ALL)
-    @JoinTable(name = "user_language",
+    @JoinTable(name = "users_languages",
             joinColumns = {@JoinColumn(name = "user_id")},
             inverseJoinColumns = {@JoinColumn(name = "language_id")})
     private Set<Language> languages = new HashSet<Language>(0);

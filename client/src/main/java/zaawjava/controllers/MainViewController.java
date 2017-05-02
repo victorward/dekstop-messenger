@@ -78,6 +78,7 @@ public class MainViewController implements Initializable {
     @FXML
     void onLogoutClick(ActionEvent event) throws IOException {
         logOutUser(userService.getUser());
+        socketService.disconnect();
         screensManager.goToLoginView();
     }
 

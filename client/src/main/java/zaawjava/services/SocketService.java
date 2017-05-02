@@ -34,6 +34,9 @@ public class SocketService {
         this.messageService = messageService;
     }
 
+    public boolean isConnected() {
+        return connected;
+    }
 
     public ChannelFuture connect() {
         if (connected) throw new RuntimeException("Already connected");
@@ -74,6 +77,7 @@ public class SocketService {
         if (channel != null && group != null) {
             channel.close();
             group.shutdownGracefully();
+            connected = false;
         }
     }
 

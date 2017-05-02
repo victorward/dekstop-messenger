@@ -16,10 +16,6 @@ public class UserService {
         this.databaseConnector = databaseConnector;
     }
 
-    public DatabaseConnector getDatabaseConnector() {
-        return databaseConnector;
-    }
-
     private HashMap<Integer, User> listOfLoggedUsers = new HashMap<>();
 
     public void addUserToLoggedList(User user) {

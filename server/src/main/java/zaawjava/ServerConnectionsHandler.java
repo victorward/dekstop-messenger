@@ -65,9 +65,9 @@ public class ServerConnectionsHandler extends ChannelInboundHandlerAdapter {
                 User user = UtilsDTO.convertDTOtoUser(userDTO);
                 log.debug("Trying to log in! For " + user);
                 if (checkPassword(user)) {
-                    ServerConnectionsHandler.this.messageService.sendMessage("onLogin", "loggedIn");
+                    messageService.sendMessage("onLogin", "loggedIn");
                 } else {
-                    ServerConnectionsHandler.this.messageService.sendMessage("onLogin", message);
+                    messageService.sendMessage("onLogin", message);
                 }
             }
         });
@@ -81,13 +81,13 @@ public class ServerConnectionsHandler extends ChannelInboundHandlerAdapter {
                 User user = UtilsDTO.convertDTOtoUser(userDTO);
                 if (!Optional.ofNullable(checkUserInDatabase(user.getEmail())).isPresent()) {
                     if (addNewUser(user)) {
-                        ServerConnectionsHandler.this.messageService.sendMessage("onRegistration", "registered");
+                        messageService.sendMessage("onRegistration", "registered");
                     } else {
-                        ServerConnectionsHandler.this.messageService.sendMessage("onRegistration", message);
+                        messageService.sendMessage("onRegistration", message);
                     }
                 } else {
                     message += "Already registered";
-                    ServerConnectionsHandler.this.messageService.sendMessage("onRegistration", message);
+                    messageService.sendMessage("onRegistration", message);
                 }
             }
         });
@@ -97,7 +97,6 @@ public class ServerConnectionsHandler extends ChannelInboundHandlerAdapter {
             public void handle(Object msg, ChannelFuture future) {
                 ServerConnectionsHandler.this.messageService.sendMessage("getLoggedUser", UtilsDTO.convertUserToDTO(tmpUser));
                 userService.addUserToLoggedList(tmpUser);
-//                userService.printUserList();
                 messageService.sendMessageToGroup(allChannels, "numberOfUsersChanged", userService.getNumberOfLoggedUsers());
             }
         });
@@ -106,11 +105,9 @@ public class ServerConnectionsHandler extends ChannelInboundHandlerAdapter {
             @Override
             public void handle(Object msg, ChannelFuture future) {
                 User user = UtilsDTO.convertDTOtoUser((UserDTO) msg);
-                ServerConnectionsHandler.this.messageService.sendMessage("loggedOutUser", "loggedOutUser");
+                messageService.sendMessage("loggedOutUser", "loggedOutUser");
                 userService.deleteUserFromLoggedList(user);
-//                userService.printUserList();
                 messageService.sendMessageToGroup(allChannels, "numberOfUsersChanged", userService.getNumberOfLoggedUsers());
-
             }
         });
 
@@ -123,10 +120,10 @@ public class ServerConnectionsHandler extends ChannelInboundHandlerAdapter {
                 log.debug("|Przy update " + user);
                 if (user != null) {
                     if (updateUser(user)) {
-                        ServerConnectionsHandler.this.messageService.sendMessage("updateUser", "updated");
+                        messageService.sendMessage("updateUser", "updated");
                     } else {
                         message += "Ups. Updating failed";
-                        ServerConnectionsHandler.this.messageService.sendMessage("updateUser", message);
+                        messageService.sendMessage("updateUser", message);
                     }
                 }
             }
@@ -140,7 +137,7 @@ public class ServerConnectionsHandler extends ChannelInboundHandlerAdapter {
                 for (Country country : list) {
                     listDto.add(UtilsDTO.convertCountryToDTO(country));
                 }
-                ServerConnectionsHandler.this.messageService.sendMessage("getCountryList", listDto);
+                messageService.sendMessage("getCountryList", listDto);
             }
         });
 
@@ -152,7 +149,7 @@ public class ServerConnectionsHandler extends ChannelInboundHandlerAdapter {
                 for (Language lang : list) {
                     languageDTO.add(UtilsDTO.convertLanguageToDTO(lang));
                 }
-                ServerConnectionsHandler.this.messageService.sendMessage("getLanguagesList", languageDTO);
+                messageService.sendMessage("getLanguagesList", languageDTO);
             }
         });
         this.messageService.registerHandler("onNumberOfUsers", new MessageHandler() {

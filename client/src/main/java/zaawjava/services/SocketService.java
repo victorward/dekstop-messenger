@@ -95,19 +95,8 @@ public class SocketService {
         return completableFuture;
     }
 
-    public CompletableFuture<Object> on(String event) {
-        CompletableFuture<Object> completableFuture = new CompletableFuture<>();
-        messageService.registerHandler(event, new MessageHandler() {
-            @Override
-            public void handle(Object msg, ChannelFuture future) {
-                if (future.isSuccess()) {
-                    completableFuture.complete(msg);
-                } else {
-                    completableFuture.cancel(true);
-                }
-            }
-        });
-        return completableFuture;
+    public void on(String event, MessageHandler handler) {
+        messageService.registerHandler(event, handler);
 
     }
 }

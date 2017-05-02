@@ -33,7 +33,7 @@ import java.util.Optional;
 public class ServerConnectionsHandler extends ChannelInboundHandlerAdapter {
     private static final Logger log = LoggerFactory.getLogger(ServerConnectionsHandler.class);
 
-    private DefaultChannelGroup channels = new DefaultChannelGroup(GlobalEventExecutor.INSTANCE);
+    private DefaultChannelGroup allChannels = new DefaultChannelGroup(GlobalEventExecutor.INSTANCE);
 
     private final MessageService messageService;
 
@@ -97,17 +97,20 @@ public class ServerConnectionsHandler extends ChannelInboundHandlerAdapter {
             public void handle(Object msg, ChannelFuture future) {
                 ServerConnectionsHandler.this.messageService.sendMessage("getLoggedUser", UtilsDTO.convertUserToDTO(tmpUser));
                 userService.addUserToLoggedList(tmpUser);
-                userService.printUserList();
+//                userService.printUserList();
+                messageService.sendMessageToGroup(allChannels, "numberOfUsersChanged", userService.getNumberOfLoggedUsers());
             }
         });
 
         this.messageService.registerHandler("loggedOutUser", new MessageHandler() {
             @Override
             public void handle(Object msg, ChannelFuture future) {
-                User user = (User) msg;
+                User user = UtilsDTO.convertDTOtoUser((UserDTO) msg);
                 ServerConnectionsHandler.this.messageService.sendMessage("loggedOutUser", "loggedOutUser");
                 userService.deleteUserFromLoggedList(user);
-                userService.printUserList();
+//                userService.printUserList();
+                messageService.sendMessageToGroup(allChannels, "numberOfUsersChanged", userService.getNumberOfLoggedUsers());
+
             }
         });
 
@@ -150,6 +153,12 @@ public class ServerConnectionsHandler extends ChannelInboundHandlerAdapter {
                     languageDTO.add(UtilsDTO.convertLanguageToDTO(lang));
                 }
                 ServerConnectionsHandler.this.messageService.sendMessage("getLanguagesList", languageDTO);
+            }
+        });
+        this.messageService.registerHandler("onNumberOfUsers", new MessageHandler() {
+            @Override
+            public void handle(Object msg, ChannelFuture future) {
+                messageService.sendMessage("onNumberOfUsers", userService.getNumberOfLoggedUsers());
             }
         });
     }
@@ -203,7 +212,7 @@ public class ServerConnectionsHandler extends ChannelInboundHandlerAdapter {
 
     @Override
     public void channelActive(ChannelHandlerContext ctx) throws Exception {
-        channels.add(ctx.channel());
+        allChannels.add(ctx.channel());
         log.debug("Channel Active");
 
     }
@@ -216,7 +225,7 @@ public class ServerConnectionsHandler extends ChannelInboundHandlerAdapter {
             messageService.handleMessage((Message) msg);
 
         } catch (ClassCastException e) {
-            log.warn("Not message received");
+            log.warn("Not message received" + msg);
         }
 
     }

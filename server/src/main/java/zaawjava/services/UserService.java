@@ -30,6 +30,10 @@ public class UserService {
         listOfLoggedUsers.remove(user.getId());
     }
 
+    public int getNumberOfLoggedUsers() {
+        return listOfLoggedUsers.size();
+    }
+
     public void printUserList() {
         for (Map.Entry<Integer, User> entry : listOfLoggedUsers.entrySet()) {
             System.out.println("|User list: " + entry.getKey() + " : " + entry.getValue());

@@ -34,11 +34,12 @@ public class ClientHandler extends ChannelInboundHandlerAdapter {
     public void channelRead(ChannelHandlerContext ctx, Object msg) {
         // Echo back the received object to the server.
 //        ctx.write(msg);
-        log.debug("message received: " + msg);
+//        log.debug("message received: " + msg);
         try {
             messageService.handleMessage((Message) msg);
 
         } catch (ClassCastException e) {
+            log.debug("class cast exception" + e.getCause());
             e.printStackTrace();
         }
     }

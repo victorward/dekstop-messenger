@@ -74,10 +74,12 @@ public class SocketService {
     }
 
     public void disconnect() {
-        if (channel != null && group != null) {
-            channel.close();
-            group.shutdownGracefully();
-            connected = false;
+        if (connected) {
+            if (channel != null && group != null) {
+                channel.close();
+                group.shutdownGracefully();
+                connected = false;
+            }
         }
     }
 
@@ -88,7 +90,7 @@ public class SocketService {
 
         messageService.sendMessage(event, message, new MessageHandler() {
             @Override
-            public void handle(Object msg, ChannelFuture future) {
+            public void handle(Object msg, Channel channel, ChannelFuture future) {
                 if (future.isSuccess()) {
                     completableFuture.complete(msg);
                 } else {

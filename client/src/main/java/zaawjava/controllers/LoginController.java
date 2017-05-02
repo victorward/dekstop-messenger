@@ -76,6 +76,7 @@ public class LoginController {
                             getLoggedUser();
                             setMainView();
                         } else {
+                            socketService.disconnect();
                             Platform.runLater(() -> messageLabel.setText("Login failed. " + msg));
                         }
                     } catch (IOException e) {
@@ -150,7 +151,15 @@ public class LoginController {
 
     @FXML
     private void onRegisterButton(ActionEvent event) throws IOException {
-        screensManager.goToRegistrationView();
+
+        if (!socketService.isConnected()) {
+            socketService.connect().addListener((ChannelFuture future) -> {
+                if (future.isSuccess()) {
+                    Platform.runLater(() -> screensManager.goToRegistrationView());
+
+                }
+            });
+        }
     }
 
     public Label getMessageLabel() {

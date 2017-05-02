@@ -31,11 +31,19 @@ public class ClientHandler extends ChannelInboundHandlerAdapter {
     }
 
     @Override
+    public void channelInactive(ChannelHandlerContext ctx) throws Exception {
+        super.channelInactive(ctx);
+        log.debug("Channel inactive");
+
+    }
+
+    @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) {
         // Echo back the received object to the server.
 //        ctx.write(msg);
 //        log.debug("message received: " + msg);
         try {
+            messageService.setChannel(ctx.channel());
             messageService.handleMessage((Message) msg);
 
         } catch (ClassCastException e) {

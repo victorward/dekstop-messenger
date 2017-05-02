@@ -3,10 +3,7 @@ package zaawjava;
 import DTO.CountryDTO;
 import DTO.LanguageDTO;
 import DTO.UserDTO;
-import io.netty.channel.ChannelFuture;
-import io.netty.channel.ChannelHandler;
-import io.netty.channel.ChannelHandlerContext;
-import io.netty.channel.ChannelInboundHandlerAdapter;
+import io.netty.channel.*;
 import io.netty.channel.group.DefaultChannelGroup;
 import io.netty.util.concurrent.GlobalEventExecutor;
 import org.slf4j.Logger;
@@ -59,22 +56,28 @@ public class ServerConnectionsHandler extends ChannelInboundHandlerAdapter {
         this.messageService = messageService;
         this.messageService.registerHandler("onLogin", new MessageHandler() {
             @Override
-            public void handle(Object msg, ChannelFuture future) {
+            public void handle(Object msg, Channel channel, ChannelFuture future) {
                 message = "";
                 UserDTO userDTO = (UserDTO) msg;
                 User user = UtilsDTO.convertDTOtoUser(userDTO);
                 log.debug("Trying to log in! For " + user);
-                if (checkPassword(user)) {
-                    messageService.sendMessage("onLogin", "loggedIn");
+                User userToCheck = databaseConnector.getByEmail(user.getEmail());
+                if (!userService.checkIfLogged(userToCheck)) {
+                    if (checkPassword(user)) {
+                        messageService.sendMessage("onLogin", "loggedIn");
+                    } else {
+                        messageService.sendMessage("onLogin", message);
+                    }
                 } else {
-                    messageService.sendMessage("onLogin", message);
+                    messageService.sendMessage("onLogin", "Account already connected");
                 }
+
             }
         });
 
         this.messageService.registerHandler("onRegistration", new MessageHandler() {
             @Override
-            public void handle(Object msg, ChannelFuture future) {
+            public void handle(Object msg, Channel channel, ChannelFuture future) {
                 message = "";
                 log.debug("Registration" + msg);
                 UserDTO userDTO = (UserDTO) msg;
@@ -94,16 +97,16 @@ public class ServerConnectionsHandler extends ChannelInboundHandlerAdapter {
 
         this.messageService.registerHandler("getLoggedUser", new MessageHandler() {
             @Override
-            public void handle(Object msg, ChannelFuture future) {
+            public void handle(Object msg, Channel channel, ChannelFuture future) {
                 ServerConnectionsHandler.this.messageService.sendMessage("getLoggedUser", UtilsDTO.convertUserToDTO(tmpUser));
-                userService.addUserToLoggedList(tmpUser);
+                userService.addUserToLoggedList(tmpUser, channel);
                 messageService.sendMessageToGroup(allChannels, "numberOfUsersChanged", userService.getNumberOfLoggedUsers());
             }
         });
 
         this.messageService.registerHandler("loggedOutUser", new MessageHandler() {
             @Override
-            public void handle(Object msg, ChannelFuture future) {
+            public void handle(Object msg, Channel channel, ChannelFuture future) {
                 User user = UtilsDTO.convertDTOtoUser((UserDTO) msg);
                 messageService.sendMessage("loggedOutUser", "loggedOutUser");
                 userService.deleteUserFromLoggedList(user);
@@ -113,7 +116,7 @@ public class ServerConnectionsHandler extends ChannelInboundHandlerAdapter {
 
         this.messageService.registerHandler("updateUser", new MessageHandler() {
             @Override
-            public void handle(Object msg, ChannelFuture future) {
+            public void handle(Object msg, Channel channel, ChannelFuture future) {
                 UserDTO userDTO = (UserDTO) msg;
                 User user = UtilsDTO.convertDTOtoUser(userDTO);
                 user.setPassword(Utils.encryptPassword(user.getPassword()));
@@ -131,7 +134,7 @@ public class ServerConnectionsHandler extends ChannelInboundHandlerAdapter {
 
         this.messageService.registerHandler("getCountryList", new MessageHandler() {
             @Override
-            public void handle(Object msg, ChannelFuture future) {
+            public void handle(Object msg, Channel channel, ChannelFuture future) {
                 List<Country> list = databaseConnector.getCountries();
                 List<CountryDTO> listDto = new ArrayList<>();
                 for (Country country : list) {
@@ -143,7 +146,7 @@ public class ServerConnectionsHandler extends ChannelInboundHandlerAdapter {
 
         this.messageService.registerHandler("getLanguagesList", new MessageHandler() {
             @Override
-            public void handle(Object msg, ChannelFuture future) {
+            public void handle(Object msg, Channel channel, ChannelFuture future) {
                 List<Language> list = databaseConnector.getLanguages();
                 List<LanguageDTO> languageDTO = new ArrayList<>();
                 for (Language lang : list) {
@@ -154,7 +157,7 @@ public class ServerConnectionsHandler extends ChannelInboundHandlerAdapter {
         });
         this.messageService.registerHandler("onNumberOfUsers", new MessageHandler() {
             @Override
-            public void handle(Object msg, ChannelFuture future) {
+            public void handle(Object msg, Channel channel, ChannelFuture future) {
                 messageService.sendMessage("onNumberOfUsers", userService.getNumberOfLoggedUsers());
             }
         });

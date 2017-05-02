@@ -6,6 +6,7 @@
 package zaawjava.controllers;
 
 import DTO.UserDTO;
+import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
@@ -59,7 +60,7 @@ public class MainViewController implements Initializable {
         });
         socketService.on("numberOfUsersChanged", new MessageHandler() {
             @Override
-            public void handle(Object msg, ChannelFuture future) {
+            public void handle(Object msg, Channel channel, ChannelFuture future) {
                 System.out.println("number of users changed! " + msg);
 
                 Platform.runLater(() -> loggedUsersLabel.setText(String.valueOf(msg)));

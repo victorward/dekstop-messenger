@@ -42,8 +42,6 @@ public class ProfileController implements Initializable {
     private UserService userService;
     private final SocketService socketService;
 
-    private String selectedLanguage;
-
     @Autowired
     public void setUserService(UserService userService) {
         this.userService = userService;

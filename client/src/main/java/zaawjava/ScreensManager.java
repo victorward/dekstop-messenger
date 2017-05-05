@@ -93,8 +93,13 @@ public class ScreensManager {
     public void goToRegistrationView() {
         Parent rootNode = (Parent) loader.load("/fxml/registration.fxml");
         Scene scene = new Scene(rootNode);
-
         stage.setScene(scene);
+    }
+
+    public void goToUserToUserView(){
+        Parent rootNode = (Parent) loader.load("/fxml/userToUser.fxml");
+        mainViewController.getContentPane().getChildren().removeAll();
+        mainViewController.getContentPane().getChildren().add(rootNode);
     }
 
     public void goToProfileView() {

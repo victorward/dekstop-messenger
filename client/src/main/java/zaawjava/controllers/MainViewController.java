@@ -100,6 +100,15 @@ public class MainViewController implements Initializable {
                 Platform.runLater(() -> loggedUsersLabel.setText(String.valueOf(msg)));
             }
         });
+        usersList.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
+            if (newSelection != null) {
+                Platform.runLater(() -> {
+                    System.out.println(usersList.getSelectionModel().getSelectedItem().getId() + " " + usersList.getSelectionModel().getSelectedItem().getLastName());
+                    screensManager.goToUserToUserView();
+                });
+            }
+        });
+
         listOfUsers = FXCollections.observableArrayList();
         listOfUsersStatus = FXCollections.observableHashMap();
         initUserList();

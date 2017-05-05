@@ -69,7 +69,7 @@ public class ServerConnectionsHandler extends ChannelInboundHandlerAdapter {
                         messageService.sendMessage("onLogin", message);
                     }
                 } else {
-                    messageService.sendMessage("onLogin", "Account already connected");
+                    messageService.sendMessage("onLogin", "Account already connected or wrong email");
                 }
 
             }

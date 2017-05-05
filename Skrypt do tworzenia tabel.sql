@@ -1,3 +1,4 @@
+use ZaawJava;
 create table ZaawJava.countries
 (
 id int auto_increment primary key,

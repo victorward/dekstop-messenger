@@ -12,6 +12,7 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.Tooltip?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
@@ -45,10 +46,13 @@
         </rowConstraints>
          <children>
             <Label text="Password:" GridPane.rowIndex="2" />
-            <Label text="Female" GridPane.rowIndex="3">
+            <Label text="Male" GridPane.rowIndex="3">
                <GridPane.margin>
                   <Insets left="69.0" />
-               </GridPane.margin></Label>
+               </GridPane.margin>
+               <tooltip>
+                  <Tooltip text="If Male ToogleButton is FALSE" />
+               </tooltip></Label>
             <Label text="Date of birth" GridPane.rowIndex="4" />
             <Label text="Country*" GridPane.rowIndex="7" />
             <Label text="Mobile number*" GridPane.rowIndex="8" />
@@ -56,13 +60,16 @@
             <JFXTextField fx:id="firstName" promptText="First name" />
             <JFXTextField fx:id="email" promptText="Email" GridPane.columnSpan="2" GridPane.rowIndex="1" />
             <JFXPasswordField fx:id="password" promptText="**********" GridPane.columnIndex="1" GridPane.rowIndex="2" />
-            <JFXToggleButton fx:id="sex" text="Male" GridPane.columnIndex="1" GridPane.rowIndex="3">
+            <JFXToggleButton fx:id="sex" text="Female" GridPane.columnIndex="1" GridPane.rowIndex="3">
                <GridPane.margin>
                   <Insets />
                </GridPane.margin>
                <padding>
                   <Insets right="10.0" />
-               </padding></JFXToggleButton>
+               </padding>
+               <tooltip>
+                  <Tooltip text="If Female ToogleButton is TRUE" />
+               </tooltip></JFXToggleButton>
             <JFXDatePicker fx:id="date" promptText="Date" GridPane.columnIndex="1" GridPane.rowIndex="4" />
             <JFXTextField fx:id="number" GridPane.columnIndex="1" GridPane.rowIndex="8" />
             <ChoiceBox fx:id="country" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="7" />

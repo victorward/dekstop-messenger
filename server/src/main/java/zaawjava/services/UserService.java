@@ -35,7 +35,10 @@ public class UserService {
     }
 
     public boolean checkIfLogged(User user) {
-        return listOfLoggedUsers.containsKey(user.getId());
+        if (user != null) {
+            return listOfLoggedUsers.containsKey(user.getId());
+        }
+        return true;
     }
 
     public void printUserList() {

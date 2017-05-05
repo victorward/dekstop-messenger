@@ -105,7 +105,6 @@ public class ProfileController implements Initializable {
         addLenguagesToSystem();
         addCountryToSystem();
         fillUserData();
-        System.out.println("kraje " + allCountries);
     }
 
     void addLenguagesToSystem() {
@@ -151,7 +150,7 @@ public class ProfileController implements Initializable {
         lastName.setText(userService.getUser().getLastName());
         email.setText(userService.getUser().getEmail());
         password.setText(userService.getUser().getPassword());
-        sex.setSelected(userService.getUser().getGender().equals("Male"));
+        sex.setSelected(userService.getUser().getGender().equals("female"));
         date.setValue(userService.getUser().getBirthDate());
         number.setText(Integer.toString(userService.getUser().getPhone()));
         if (userService.getUser().getAddress() != null)
@@ -209,12 +208,15 @@ public class ProfileController implements Initializable {
         user.setAddress(street.getText());
         user.setBirthDate(date.getValue());
         user.setEmail(email.getText());
-        user.setGender(sex.getText());
+        if (sex.isSelected()) {
+            user.setGender("female");
+        } else {
+            user.setGender("male");
+        }
         user.setFirstName(firstName.getText());
         user.setLastName(lastName.getText());
         user.setPassword(password.getText());
         user.setPhone(Integer.parseInt(number.getText()));
-        //Jesli za pierwszym razem nie zadziala to za drugim za dziala, nie jestem jescze w stanie wyjasnic dalczego tak, na pewno nie pzez platform bo przed tym ja nie bylo
         user.setCountry(new CountryDTO(getCountryID(country.getValue()), country.getValue()));
         return user;
     }

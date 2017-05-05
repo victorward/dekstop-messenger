@@ -3,7 +3,6 @@ package utils;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.group.ChannelGroup;
-import io.netty.util.concurrent.GenericFutureListener;
 
 import java.util.HashMap;
 
@@ -24,7 +23,8 @@ public class MessageService {
             throw new RuntimeException("Channel not set");
         }
         handlers.put(kind, handler);
-        channel.writeAndFlush(new Message(kind, content)).addListener((GenericFutureListener<ChannelFuture>) handler::setFuture);
+        ChannelFuture future = channel.writeAndFlush(new Message(kind, content));
+        handler.setFuture(future);
     }
 
     public void sendMessage(String kind, Object content) {
@@ -38,14 +38,14 @@ public class MessageService {
 
     public void sendMessage(String kind, Object content, MessageHandler handler, Channel channel) {
         handlers.put(kind, handler);
-        channel.writeAndFlush(new Message(kind, content)).addListener((GenericFutureListener<ChannelFuture>) handler::setFuture);
-
+        ChannelFuture future = channel.writeAndFlush(new Message(kind, content));
+        handler.setFuture(future);
     }
 
     public void handleMessage(Message msg) {
         if (handlers.containsKey(msg.getKind())) {
             MessageHandler h = handlers.get(msg.getKind());
-            h.handle(msg.getContent(), h.getFuture());
+            h.handle(msg.getContent(), channel, h.getFuture());
         }
     }
 

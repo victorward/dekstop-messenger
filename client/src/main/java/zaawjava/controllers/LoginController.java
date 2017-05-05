@@ -1,6 +1,7 @@
 package zaawjava.controllers;
 
 import DTO.UserDTO;
+import io.netty.channel.ChannelFuture;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -23,8 +24,6 @@ import java.io.IOException;
 @Component
 public class LoginController {
     private static final Logger log = LoggerFactory.getLogger(LoginController.class);
-
-    private Boolean connecting = false;
 
     private final SocketService socketService;
     private ScreensManager screensManager;
@@ -77,6 +76,7 @@ public class LoginController {
                             getLoggedUser();
                             setMainView();
                         } else {
+                            socketService.disconnect();
                             Platform.runLater(() -> messageLabel.setText("Login failed. " + msg));
                         }
                     } catch (IOException e) {
@@ -131,12 +131,35 @@ public class LoginController {
 
     @FXML
     public void onLoginButton(ActionEvent event) throws IOException {
-        login();
+
+        if (!socketService.isConnected()) {
+            socketService.connect().addListener((ChannelFuture future) -> {
+                if (future.isSuccess()) {
+                    log.debug("Connected with server");
+                    Platform.runLater(() -> getMessageLabel().setText("Connected."));
+                    login();
+                } else {
+                    log.debug("Connection error. Please check server configuration");
+                    Platform.runLater(() -> getMessageLabel().setText("Connection error. Please check server configuration"));
+                    Platform.runLater(() -> getLogin().setDisable(true));
+                    Platform.runLater(() -> getRegistration().setDisable(true));
+                }
+            });
+        }
+
     }
 
     @FXML
     private void onRegisterButton(ActionEvent event) throws IOException {
-        screensManager.goToRegistrationView();
+
+        if (!socketService.isConnected()) {
+            socketService.connect().addListener((ChannelFuture future) -> {
+                if (future.isSuccess()) {
+                    Platform.runLater(() -> screensManager.goToRegistrationView());
+
+                }
+            });
+        }
     }
 
     public Label getMessageLabel() {

@@ -34,6 +34,9 @@ public class SocketService {
         this.messageService = messageService;
     }
 
+    public boolean isConnected() {
+        return connected;
+    }
 
     public ChannelFuture connect() {
         if (connected) throw new RuntimeException("Already connected");
@@ -71,9 +74,12 @@ public class SocketService {
     }
 
     public void disconnect() {
-        if (channel != null && group != null) {
-            channel.close();
-            group.shutdownGracefully();
+        if (connected) {
+            if (channel != null && group != null) {
+                channel.close();
+                group.shutdownGracefully();
+                connected = false;
+            }
         }
     }
 
@@ -84,7 +90,7 @@ public class SocketService {
 
         messageService.sendMessage(event, message, new MessageHandler() {
             @Override
-            public void handle(Object msg, ChannelFuture future) {
+            public void handle(Object msg, Channel channel, ChannelFuture future) {
                 if (future.isSuccess()) {
                     completableFuture.complete(msg);
                 } else {
@@ -95,19 +101,8 @@ public class SocketService {
         return completableFuture;
     }
 
-    public CompletableFuture<Object> on(String event) {
-        CompletableFuture<Object> completableFuture = new CompletableFuture<>();
-        messageService.registerHandler(event, new MessageHandler() {
-            @Override
-            public void handle(Object msg, ChannelFuture future) {
-                if (future.isSuccess()) {
-                    completableFuture.complete(msg);
-                } else {
-                    completableFuture.cancel(true);
-                }
-            }
-        });
-        return completableFuture;
+    public void on(String event, MessageHandler handler) {
+        messageService.registerHandler(event, handler);
 
     }
 }

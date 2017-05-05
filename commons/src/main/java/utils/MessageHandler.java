@@ -1,10 +1,12 @@
 package utils;
 
+import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
 
 public abstract class MessageHandler {
     private ChannelFuture future;
-    public abstract void handle(Object msg, ChannelFuture future);
+
+    public abstract void handle(Object msg, Channel channel, ChannelFuture future);
 
     public ChannelFuture getFuture() {
         return future;

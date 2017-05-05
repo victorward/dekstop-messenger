@@ -168,6 +168,7 @@ public class RegistrationController implements Initializable {
 
     @FXML
     void onBackClick(ActionEvent event) throws IOException {
+        socketService.disconnect();
         screensManager.goToLoginView();
     }
 
@@ -189,6 +190,7 @@ public class RegistrationController implements Initializable {
                         progressBar.setProgress(0.90);
                         showSuccess();
                         try {
+                            socketService.disconnect();
                             screensManager.goToLoginView();
                         } catch (IOException e) {
                             e.printStackTrace();

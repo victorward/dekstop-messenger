@@ -3,10 +3,7 @@ package zaawjava;
 import DTO.CountryDTO;
 import DTO.LanguageDTO;
 import DTO.UserDTO;
-import io.netty.channel.ChannelFuture;
-import io.netty.channel.ChannelHandler;
-import io.netty.channel.ChannelHandlerContext;
-import io.netty.channel.ChannelInboundHandlerAdapter;
+import io.netty.channel.*;
 import io.netty.channel.group.DefaultChannelGroup;
 import io.netty.util.concurrent.GlobalEventExecutor;
 import org.slf4j.Logger;
@@ -33,7 +30,7 @@ import java.util.Optional;
 public class ServerConnectionsHandler extends ChannelInboundHandlerAdapter {
     private static final Logger log = LoggerFactory.getLogger(ServerConnectionsHandler.class);
 
-    private DefaultChannelGroup channels = new DefaultChannelGroup(GlobalEventExecutor.INSTANCE);
+    private DefaultChannelGroup allChannels = new DefaultChannelGroup(GlobalEventExecutor.INSTANCE);
 
     private final MessageService messageService;
 
@@ -59,71 +56,77 @@ public class ServerConnectionsHandler extends ChannelInboundHandlerAdapter {
         this.messageService = messageService;
         this.messageService.registerHandler("onLogin", new MessageHandler() {
             @Override
-            public void handle(Object msg, ChannelFuture future) {
+            public void handle(Object msg, Channel channel, ChannelFuture future) {
                 message = "";
                 UserDTO userDTO = (UserDTO) msg;
                 User user = UtilsDTO.convertDTOtoUser(userDTO);
                 log.debug("Trying to log in! For " + user);
-                if (checkPassword(user)) {
-                    ServerConnectionsHandler.this.messageService.sendMessage("onLogin", "loggedIn");
+                User userToCheck = databaseConnector.getByEmail(user.getEmail());
+                if (!userService.checkIfLogged(userToCheck)) {
+                    if (checkPassword(user)) {
+                        messageService.sendMessage("onLogin", "loggedIn");
+                    } else {
+                        messageService.sendMessage("onLogin", message);
+                    }
                 } else {
-                    ServerConnectionsHandler.this.messageService.sendMessage("onLogin", message);
+                    messageService.sendMessage("onLogin", "Account already connected");
                 }
+
             }
         });
 
         this.messageService.registerHandler("onRegistration", new MessageHandler() {
             @Override
-            public void handle(Object msg, ChannelFuture future) {
+            public void handle(Object msg, Channel channel, ChannelFuture future) {
                 message = "";
                 log.debug("Registration" + msg);
                 UserDTO userDTO = (UserDTO) msg;
                 User user = UtilsDTO.convertDTOtoUser(userDTO);
                 if (!Optional.ofNullable(checkUserInDatabase(user.getEmail())).isPresent()) {
                     if (addNewUser(user)) {
-                        ServerConnectionsHandler.this.messageService.sendMessage("onRegistration", "registered");
+                        messageService.sendMessage("onRegistration", "registered");
                     } else {
-                        ServerConnectionsHandler.this.messageService.sendMessage("onRegistration", message);
+                        messageService.sendMessage("onRegistration", message);
                     }
                 } else {
                     message += "Already registered";
-                    ServerConnectionsHandler.this.messageService.sendMessage("onRegistration", message);
+                    messageService.sendMessage("onRegistration", message);
                 }
             }
         });
 
         this.messageService.registerHandler("getLoggedUser", new MessageHandler() {
             @Override
-            public void handle(Object msg, ChannelFuture future) {
+            public void handle(Object msg, Channel channel, ChannelFuture future) {
                 ServerConnectionsHandler.this.messageService.sendMessage("getLoggedUser", UtilsDTO.convertUserToDTO(tmpUser));
-                userService.addUserToLoggedList(tmpUser);
-                userService.printUserList();
+                userService.addUserToLoggedList(tmpUser, channel);
+                messageService.sendMessageToGroup(allChannels, "numberOfUsersChanged", userService.getNumberOfLoggedUsers());
             }
         });
 
         this.messageService.registerHandler("loggedOutUser", new MessageHandler() {
             @Override
-            public void handle(Object msg, ChannelFuture future) {
-                User user = (User) msg;
-                ServerConnectionsHandler.this.messageService.sendMessage("loggedOutUser", "loggedOutUser");
+            public void handle(Object msg, Channel channel, ChannelFuture future) {
+                User user = UtilsDTO.convertDTOtoUser((UserDTO) msg);
+                messageService.sendMessage("loggedOutUser", "loggedOutUser");
                 userService.deleteUserFromLoggedList(user);
-                userService.printUserList();
+                messageService.sendMessageToGroup(allChannels, "numberOfUsersChanged", userService.getNumberOfLoggedUsers());
             }
         });
 
         this.messageService.registerHandler("updateUser", new MessageHandler() {
             @Override
-            public void handle(Object msg, ChannelFuture future) {
+            public void handle(Object msg, Channel channel, ChannelFuture future) {
                 UserDTO userDTO = (UserDTO) msg;
                 User user = UtilsDTO.convertDTOtoUser(userDTO);
                 user.setPassword(Utils.encryptPassword(user.getPassword()));
                 log.debug("|Przy update " + user);
                 if (user != null) {
                     if (updateUser(user)) {
-                        ServerConnectionsHandler.this.messageService.sendMessage("updateUser", "updated");
+                        messageService.sendMessage("updateUser", "updated");
                     } else {
                         message += "Ups. Updating failed";
-                        ServerConnectionsHandler.this.messageService.sendMessage("updateUser", message);
+                        messageService.sendMessage("updateUser", message);
                     }
                 }
             }
@@ -131,25 +134,31 @@ public class ServerConnectionsHandler extends ChannelInboundHandlerAdapter {
 
         this.messageService.registerHandler("getCountryList", new MessageHandler() {
             @Override
-            public void handle(Object msg, ChannelFuture future) {
+            public void handle(Object msg, Channel channel, ChannelFuture future) {
                 List<Country> list = databaseConnector.getCountries();
                 List<CountryDTO> listDto = new ArrayList<>();
                 for (Country country : list) {
                     listDto.add(UtilsDTO.convertCountryToDTO(country));
                 }
-                ServerConnectionsHandler.this.messageService.sendMessage("getCountryList", listDto);
+                messageService.sendMessage("getCountryList", listDto);
             }
         });
 
         this.messageService.registerHandler("getLanguagesList", new MessageHandler() {
             @Override
-            public void handle(Object msg, ChannelFuture future) {
+            public void handle(Object msg, Channel channel, ChannelFuture future) {
                 List<Language> list = databaseConnector.getLanguages();
                 List<LanguageDTO> languageDTO = new ArrayList<>();
                 for (Language lang : list) {
                     languageDTO.add(UtilsDTO.convertLanguageToDTO(lang));
                 }
-                ServerConnectionsHandler.this.messageService.sendMessage("getLanguagesList", languageDTO);
+                messageService.sendMessage("getLanguagesList", languageDTO);
+            }
+        });
+        this.messageService.registerHandler("onNumberOfUsers", new MessageHandler() {
+            @Override
+            public void handle(Object msg, Channel channel, ChannelFuture future) {
+                messageService.sendMessage("onNumberOfUsers", userService.getNumberOfLoggedUsers());
             }
         });
     }
@@ -203,7 +212,7 @@ public class ServerConnectionsHandler extends ChannelInboundHandlerAdapter {
 
     @Override
     public void channelActive(ChannelHandlerContext ctx) throws Exception {
-        channels.add(ctx.channel());
+        allChannels.add(ctx.channel());
         log.debug("Channel Active");
 
     }
@@ -216,7 +225,7 @@ public class ServerConnectionsHandler extends ChannelInboundHandlerAdapter {
             messageService.handleMessage((Message) msg);
 
         } catch (ClassCastException e) {
-            log.warn("Not message received");
+            log.warn("Not message received" + msg);
         }
 
     }

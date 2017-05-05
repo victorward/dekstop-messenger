@@ -145,6 +145,16 @@ public class UserDTO implements Serializable {
         this.password = password;
     }
 
+    public UserDTO(int id, String email, String password, String firstName, String lastName, LocalDate birthDate, String gender) {
+        this.id = id;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.birthDate = birthDate;
+        this.gender = gender;
+        this.email = email;
+        this.password = password;
+    }
+
     public UserDTO(Set<LanguageDTO> languages, String firstName, String lastName, int phone, String gender,
                    String email, String password, String address, CountryDTO country, LocalDate birthDate, String photo) {
         super();

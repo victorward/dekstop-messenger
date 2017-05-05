@@ -9,10 +9,21 @@ import DTO.UserDTO;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
 import javafx.application.Platform;
+import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.value.ObservableValue;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import javafx.collections.ObservableMap;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
+import javafx.scene.layout.Pane;
+import javafx.util.Callback;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import utils.MessageHandler;
@@ -22,6 +33,9 @@ import zaawjava.services.UserService;
 
 import java.io.IOException;
 import java.net.URL;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.ResourceBundle;
 
 @Component
@@ -30,6 +44,21 @@ public class MainViewController implements Initializable {
     private ScreensManager screensManager;
     private UserService userService;
     private final SocketService socketService;
+
+    @FXML
+    private Pane contentPane;
+    @FXML
+    private TableView<UserDTO> usersList;
+    @FXML
+    private TableColumn<UserDTO, String> userName;
+    @FXML
+    private TableColumn<UserDTO, String> userStatus;
+    @FXML
+    private Label loggedUsersLabel;
+
+    ObservableMap<UserDTO, Boolean> listOfUsersStatus;
+    ObservableList<UserDTO> listOfUsers;
+
 
     @Autowired
     public MainViewController(SocketService socketService) {
@@ -66,10 +95,58 @@ public class MainViewController implements Initializable {
                 Platform.runLater(() -> loggedUsersLabel.setText(String.valueOf(msg)));
             }
         });
+        initUserList();
     }
 
-    @FXML
-    private Label loggedUsersLabel;
+    private void initUserList() {
+        listOfUsers = FXCollections.observableArrayList();
+        listOfUsersStatus = FXCollections.observableHashMap();
+        userName.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<UserDTO, String>, ObservableValue<String>>() {
+            @Override
+            public ObservableValue<String> call(TableColumn.CellDataFeatures<UserDTO, String> p) {
+                return new SimpleStringProperty(p.getValue().getFirstName() + " " + p.getValue().getLastName());
+            }
+        });
+
+        socketService.emit("checkUserList", "").whenComplete((msg, ex) -> {
+            if (ex == null) {
+                Platform.runLater(() -> {
+                    listOfUsers.clear();
+                    listOfUsers.addAll((List<UserDTO>) msg);
+                    usersList.setItems(listOfUsers);
+                });
+            } else {
+                Platform.runLater(() -> loggedUsersLabel.setText("err"));
+            }
+        });
+
+        socketService.emit("getUsersStatus", "").whenComplete((msg, ex) -> {
+            if (ex == null) {
+                Platform.runLater(() -> {
+                    listOfUsersStatus.clear();
+                    listOfUsersStatus.putAll((HashMap<UserDTO, Boolean>) msg);
+                });
+            } else {
+                Platform.runLater(() -> loggedUsersLabel.setText("status error"));
+            }
+        });
+
+        userStatus.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<UserDTO, String>, ObservableValue<String>>() {
+            @Override
+            public ObservableValue<String> call(TableColumn.CellDataFeatures<UserDTO, String> p) {
+                return new SimpleStringProperty(checkUserStatusOnList(p.getValue()));
+            }
+        });
+    }
+
+    private String checkUserStatusOnList(UserDTO userDTO) {
+        for (Map.Entry<UserDTO, Boolean> entry : listOfUsersStatus.entrySet()) {
+            if (entry.getKey().getId() == userDTO.getId() && entry.getValue()) {
+                return "Online";
+            }
+        }
+        return "";
+    }
 
     @FXML
     void onProfileClick(ActionEvent event) {
@@ -95,5 +172,18 @@ public class MainViewController implements Initializable {
                 Platform.runLater(() -> System.out.println("Failed during logout actual user"));
             }
         });
+    }
+
+    @FXML
+    private void goToWAMY() {
+        screensManager.goToMainView();
+    }
+
+    public Pane getContentPane() {
+        return contentPane;
+    }
+
+    public void setContentPane(Pane contentPane) {
+        this.contentPane = contentPane;
     }
 }

@@ -1,11 +1,15 @@
 package zaawjava.services;
 
+import DTO.UserDTO;
 import io.netty.channel.Channel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import zaawjava.Utils.UtilsDTO;
 import zaawjava.model.User;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Service
@@ -46,6 +50,22 @@ public class UserService {
             System.out.println("|User list: " + entry.getKey() + " : " + entry.getValue().getUser());
         }
     }
+
+    public List<User> getListOfLoggedUsers() {
+        List<User> userList = new ArrayList<User>();
+        for (Map.Entry<Integer, UserChannelPair> entry : listOfLoggedUsers.entrySet()) {
+            userList.add(entry.getValue().getUser());
+        }
+        return userList;
+    }
+
+//    public List<UserDTO> getListOfLoggedUsers() {
+//        List<UserDTO> userList = new ArrayList<UserDTO>();
+//        for (Map.Entry<Integer, UserChannelPair> entry : listOfLoggedUsers.entrySet()) {
+//            userList.add(UtilsDTO.convertUserToDTO(entry.getValue().getUser()));
+//        }
+//        return userList;
+//    }
 
     private class UserChannelPair {
         private User user;

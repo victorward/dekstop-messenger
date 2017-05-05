@@ -32,6 +32,15 @@ public class UtilsDTO implements Serializable {
         return userDTO;
     }
 
+    public static UserDTO convertUserToDTOwithOnlyMainData(User user) {
+        UserDTO userDTO = null;
+        if (user != null) {
+            userDTO = new UserDTO(user.getId(), user.getEmail(), user.getPassword(), user.getFirstName(), user.getLastName(), user.getBirthDate(), user.getGender());
+        }
+        return userDTO;
+    }
+
+
     public static Country convertDTOtoCountry(CountryDTO countryDTO) {
         Country country = null;
         if (countryDTO != null) {

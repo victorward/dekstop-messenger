@@ -3,6 +3,7 @@ package zaawjava;
 
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -98,8 +99,7 @@ public class ScreensManager {
 
     public void goToProfileView() {
         Parent rootNode = (Parent) loader.load("/fxml/profile.fxml");
-        Scene scene = new Scene(rootNode);
-        stage.setScene(scene);
-
+        mainViewController.getContentPane().getChildren().removeAll();
+        mainViewController.getContentPane().getChildren().add(rootNode);
     }
 }

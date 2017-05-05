@@ -22,6 +22,7 @@ import zaawjava.services.DatabaseConnector;
 import zaawjava.services.UserService;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
 
@@ -161,6 +162,44 @@ public class ServerConnectionsHandler extends ChannelInboundHandlerAdapter {
                 messageService.sendMessage("onNumberOfUsers", userService.getNumberOfLoggedUsers());
             }
         });
+        this.messageService.registerHandler("checkUserList", new MessageHandler() {
+            @Override
+            public void handle(Object msg, Channel channel, ChannelFuture future) {
+//                HashMap<UserDTO, Boolean> userList = getMapOfUsersWithStatus();
+                messageService.sendMessage("checkUserList", getAllUserList());
+            }
+        });
+        this.messageService.registerHandler("getUsersStatus", new MessageHandler() {
+            @Override
+            public void handle(Object msg, Channel channel, ChannelFuture future) {
+                messageService.sendMessage("getUsersStatus", getMapOfUsersWithStatus());
+            }
+        });
+    }
+
+    private List<UserDTO> getAllUserList() {
+        List<User> allUsers = databaseConnector.getAllUsers();
+        List<UserDTO> allInDTO = new ArrayList<>();
+        for (User user : allUsers) {
+            allInDTO.add(UtilsDTO.convertUserToDTOwithOnlyMainData(user));
+        }
+        return allInDTO;
+    }
+
+    private HashMap<UserDTO, Boolean> getMapOfUsersWithStatus() {
+        HashMap<UserDTO, Boolean> userList = new HashMap<>();
+        List<User> activeUsers = userService.getListOfLoggedUsers();
+        List<User> allUsers = databaseConnector.getAllUsers();
+        for (User user : allUsers) {
+            UserDTO userDTO = UtilsDTO.convertUserToDTOwithOnlyMainData(user);
+            Boolean status = false;
+            for (User userAct : activeUsers) {
+                if (userAct.getId() == user.getId()) status = true;
+            }
+            userList.put(userDTO, status);
+//            userList.put(userDTO, activeUsers.contains(user));
+        }
+        return userList;
     }
 
     private boolean updateUser(User user) {

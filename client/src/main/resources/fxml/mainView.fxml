@@ -44,12 +44,16 @@
             </ButtonBar>
          </top>
          <left>
-            <TableView fx:id="usersList" prefHeight="200.0" prefWidth="170.0" BorderPane.alignment="CENTER">
-              <columns>
-                <TableColumn fx:id="userName" prefWidth="120.0" resizable="false" text="Name" />
-                <TableColumn fx:id="userStatus" minWidth="48.0" prefWidth="-1.0" resizable="false" text="Online" />
-              </columns>
-            </TableView>
+            <AnchorPane BorderPane.alignment="CENTER">
+               <children>
+                  <TableView fx:id="usersList" prefHeight="500.0" prefWidth="170.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                    <columns>
+                      <TableColumn fx:id="userName" prefWidth="120.0" text="Name" />
+                      <TableColumn fx:id="userStatus" minWidth="48.0" prefWidth="-1.0" text="Online" />
+                    </columns>
+                  </TableView>
+               </children>
+            </AnchorPane>
          </left>
          <bottom>
             <HBox prefHeight="25.0" prefWidth="151.0" BorderPane.alignment="CENTER">
@@ -63,14 +67,18 @@
             </HBox>
          </bottom>
          <center>
-            <Pane fx:id="contentPane" prefHeight="490.0" prefWidth="620.0" BorderPane.alignment="CENTER">
+            <AnchorPane BorderPane.alignment="CENTER">
                <BorderPane.margin>
                   <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                </BorderPane.margin>
-               <padding>
-                  <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
-               </padding>
-            </Pane>
+               <children>
+                  <Pane fx:id="contentPane" prefHeight="490.0" prefWidth="620.0">
+                     <padding>
+                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                     </padding>
+                  </Pane>
+               </children>
+            </AnchorPane>
          </center>
       </BorderPane>
    </children>

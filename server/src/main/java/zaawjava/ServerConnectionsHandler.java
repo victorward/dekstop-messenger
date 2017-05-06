@@ -167,7 +167,6 @@ public class ServerConnectionsHandler extends ChannelInboundHandlerAdapter {
         this.messageService.registerHandler("checkUserList", new MessageHandler() {
             @Override
             public void handle(Object msg, Channel channel, ChannelFuture future) {
-//                HashMap<UserDTO, Boolean> userList = getMapOfUsersWithStatus();
                 messageService.sendMessage("checkUserList", getAllUserList());
             }
         });
@@ -199,7 +198,6 @@ public class ServerConnectionsHandler extends ChannelInboundHandlerAdapter {
                 if (userAct.getId() == user.getId()) status = true;
             }
             userList.put(userDTO, status);
-//            userList.put(userDTO, activeUsers.contains(user));
         }
         return userList;
     }

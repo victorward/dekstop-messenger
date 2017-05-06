@@ -102,6 +102,7 @@ public class ServerConnectionsHandler extends ChannelInboundHandlerAdapter {
                 ServerConnectionsHandler.this.messageService.sendMessage("getLoggedUser", UtilsDTO.convertUserToDTO(tmpUser));
                 userService.addUserToLoggedList(tmpUser, channel);
                 messageService.sendMessageToGroup(allChannels, "numberOfUsersChanged", userService.getNumberOfLoggedUsers());
+                messageService.sendMessageToGroup(allChannels,"listOfUsersChanged", getMapOfUsersWithStatus());
             }
         });
 
@@ -112,6 +113,7 @@ public class ServerConnectionsHandler extends ChannelInboundHandlerAdapter {
                 messageService.sendMessage("loggedOutUser", "loggedOutUser");
                 userService.deleteUserFromLoggedList(user);
                 messageService.sendMessageToGroup(allChannels, "numberOfUsersChanged", userService.getNumberOfLoggedUsers());
+                messageService.sendMessageToGroup(allChannels,"listOfUsersChanged", getMapOfUsersWithStatus());
             }
         });
 

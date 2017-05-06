@@ -53,16 +53,19 @@ public class MainViewController implements Initializable {
     private Pane contentPane;
     @FXML
     private TableView<UserDTO> usersList;
+//    private TableView<Map.Entry<UserDTO, String>> usersList;
     @FXML
-    private TableColumn<UserDTO, String> userName;
+        private TableColumn<UserDTO, String> userName;
+//    private TableColumn<Map.Entry<UserDTO, String>, String> userName;
     @FXML
     private TableColumn<UserDTO, String> userStatus;
+//    private TableColumn<Map.Entry<UserDTO, String>, String> userStatus;
+
     @FXML
     private Label loggedUsersLabel;
 
     ObservableMap<UserDTO, Boolean> listOfUsersStatus;
     ObservableList<UserDTO> listOfUsers;
-    Timeline fiveSecondsWonder;
 
 
     @Autowired
@@ -96,37 +99,62 @@ public class MainViewController implements Initializable {
             @Override
             public void handle(Object msg, Channel channel, ChannelFuture future) {
                 System.out.println("number of users changed! " + msg);
-
                 Platform.runLater(() -> loggedUsersLabel.setText(String.valueOf(msg)));
             }
         });
-        usersList.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
-            if (newSelection != null) {
+        socketService.on("listOfUsersChanged", new MessageHandler() {
+            @Override
+            public void handle(Object msg, Channel channel, ChannelFuture future) {
                 Platform.runLater(() -> {
-                    System.out.println(usersList.getSelectionModel().getSelectedItem().getId() + " " + usersList.getSelectionModel().getSelectedItem().getLastName());
-                    screensManager.goToUserToUserView();
+                    System.out.println("Weszlo do updatu listy");
+                    listOfUsersStatus.clear();
+                    listOfUsersStatus.putAll((HashMap<UserDTO, Boolean>) msg);
                 });
             }
         });
 
+        usersList.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
+            if (newSelection != null) {
+                    System.out.println(usersList.getSelectionModel().getSelectedItem().getId() + " " + usersList.getSelectionModel().getSelectedItem().getLastName());
+                    screensManager.goToUserToUserView(usersList.getSelectionModel().getSelectedItem());
+            }
+        });
+
+//        initHashTable();
+
         listOfUsers = FXCollections.observableArrayList();
         listOfUsersStatus = FXCollections.observableHashMap();
         initUserList();
-        initTimerForUsersUpdate();
     }
 
-    private void initTimerForUsersUpdate() {
-        Platform.runLater(() -> {
-            fiveSecondsWonder = new Timeline(new KeyFrame(Duration.seconds(5), new EventHandler<ActionEvent>() {
-                @Override
-                public void handle(ActionEvent event) {
-                    initUserList();
-                }
-            }));
-            fiveSecondsWonder.setCycleCount(Timeline.INDEFINITE);
-            fiveSecondsWonder.play();
-        });
-    }
+//    private void initHashTable() {
+//        userName.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<Map.Entry<UserDTO, String>, String>, ObservableValue<String>>() {
+//            @Override
+//            public ObservableValue<String> call(TableColumn.CellDataFeatures<Map.Entry<UserDTO, String>, String> p) {
+//                return new SimpleStringProperty(p.getValue().getKey().getFirstName() + " " + p.getValue().getKey().getLastName());
+//            }
+//        });
+//
+//        userStatus.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<Map.Entry<UserDTO, String>, String>, ObservableValue<String>>() {
+//            @Override
+//            public ObservableValue<String> call(TableColumn.CellDataFeatures<Map.Entry<UserDTO, String>, String> p) {
+//                return new SimpleStringProperty(p.getValue().getValue());
+//            }
+//        });
+//        usersList.getColumns().setAll(userName, userStatus);
+//
+//        socketService.emit("getUsersStatus", "").whenComplete((msg, ex) -> {
+//            if (ex == null) {
+//                Platform.runLater(() -> {
+//                    HashMap<UserDTO, Boolean> list = (HashMap<UserDTO, Boolean>) msg;
+//                    listOfUsersStatus.putAll(list);
+//                    usersList.setItems(listOfUsersStatus.entrySet());
+//                });
+//            } else {
+//                Platform.runLater(() -> loggedUsersLabel.setText("status error"));
+//            }
+//        });
+//    }
 
     private void initUserList() {
         userName.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<UserDTO, String>, ObservableValue<String>>() {
@@ -135,12 +163,8 @@ public class MainViewController implements Initializable {
                 return new SimpleStringProperty(p.getValue().getFirstName() + " " + p.getValue().getLastName());
             }
         });
-        userStatus.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<UserDTO, String>, ObservableValue<String>>() {
-            @Override
-            public ObservableValue<String> call(TableColumn.CellDataFeatures<UserDTO, String> p) {
-                return new SimpleStringProperty(checkUserStatusOnList(p.getValue()));
-            }
-        });
+//        userStatus.setCellValueFactory(p -> new SimpleStringProperty(checkUserStatusOnList(p.getValue())));
+        userStatus.setCellValueFactory(p -> new SimpleStringProperty(p.getValue().hashCode()+""));
 
         socketService.emit("checkUserList", "").whenComplete((msg, ex) -> {
             if (ex == null) {
@@ -158,6 +182,7 @@ public class MainViewController implements Initializable {
                 Platform.runLater(() -> {
                     listOfUsersStatus.clear();
                     listOfUsersStatus.putAll((HashMap<UserDTO, Boolean>) msg);
+//                    usersList.setItems(listOfUsersStatus);
                 });
             } else {
                 Platform.runLater(() -> loggedUsersLabel.setText("status error"));
@@ -182,7 +207,6 @@ public class MainViewController implements Initializable {
     @FXML
     void onLogoutClick(ActionEvent event) throws IOException {
         logOutUser(userService.getUser());
-        fiveSecondsWonder.stop();
         socketService.disconnect();
         screensManager.goToLoginView();
     }

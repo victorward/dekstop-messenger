@@ -1,6 +1,7 @@
 package zaawjava;
 
 
+import DTO.UserDTO;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.layout.Pane;
@@ -12,6 +13,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 import zaawjava.controllers.LoginController;
 import zaawjava.controllers.MainViewController;
+import zaawjava.controllers.UserToUserController;
 import zaawjava.services.SocketService;
 import zaawjava.utils.SpringFxmlLoader;
 
@@ -58,6 +60,12 @@ public class ScreensManager {
         this.mainViewController = mainViewController;
     }
 
+    private UserToUserController userToUserController;
+    @Autowired
+    public void setUserToUserController(UserToUserController userToUserController) {
+        this.userToUserController = userToUserController;
+    }
+
     public void init() {
         stage.setOnCloseRequest(event1 -> {
             log.debug("closing window...");
@@ -96,8 +104,11 @@ public class ScreensManager {
         stage.setScene(scene);
     }
 
-    public void goToUserToUserView(){
+    public void goToUserToUserView(UserDTO userDTO) {
+        mainViewController.getContentPane().getChildren().clear();
         Parent rootNode = (Parent) loader.load("/fxml/userToUser.fxml");
+        //dziala, ale hrenowo
+        userToUserController.setUserDTO(userDTO);
         mainViewController.getContentPane().getChildren().removeAll();
         mainViewController.getContentPane().getChildren().add(rootNode);
     }

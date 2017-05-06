@@ -1,5 +1,6 @@
 package zaawjava.controllers;
 
+import DTO.UserDTO;
 import com.jfoenix.controls.JFXTextArea;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -10,6 +11,7 @@ import org.springframework.stereotype.Component;
 import zaawjava.ScreensManager;
 import zaawjava.services.SocketService;
 import zaawjava.services.UserService;
+
 import java.net.URL;
 import java.util.ResourceBundle;
 
@@ -21,6 +23,8 @@ public class UserToUserController implements Initializable {
     private ScreensManager screensManager;
     private UserService userService;
     private final SocketService socketService;
+
+    private UserDTO userDTO;
 
     @Autowired
     public void setUserService(UserService userService) {
@@ -56,6 +60,13 @@ public class UserToUserController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
+        if (userDTO != null) {
+            userName.setText("");
+            userName.setText(userDTO.getFirstName() + " " + userDTO.getLastName());
+        }
+    }
 
+    public void setUserDTO(UserDTO userDTO) {
+        this.userDTO = userDTO;
     }
 }

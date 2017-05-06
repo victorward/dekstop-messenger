@@ -109,13 +109,12 @@ public class ScreensManager {
         Parent rootNode = (Parent) loader.load("/fxml/userToUser.fxml");
         //dziala, ale hrenowo
         userToUserController.setUserDTO(userDTO);
-        mainViewController.getContentPane().getChildren().removeAll();
         mainViewController.getContentPane().getChildren().add(rootNode);
     }
 
     public void goToProfileView() {
+        mainViewController.getContentPane().getChildren().clear();
         Parent rootNode = (Parent) loader.load("/fxml/profile.fxml");
-        mainViewController.getContentPane().getChildren().removeAll();
         mainViewController.getContentPane().getChildren().add(rootNode);
     }
 }

@@ -52,14 +52,11 @@ public class MainViewController implements Initializable {
     @FXML
     private Pane contentPane;
     @FXML
-    private TableView<UserDTO> usersList;
-//    private TableView<Map.Entry<UserDTO, String>> usersList;
+    private TableView<Map.Entry<UserDTO, Boolean>> usersList;
     @FXML
-        private TableColumn<UserDTO, String> userName;
-//    private TableColumn<Map.Entry<UserDTO, String>, String> userName;
+    private TableColumn<Map.Entry<UserDTO, Boolean>, String> userName;
     @FXML
-    private TableColumn<UserDTO, String> userStatus;
-//    private TableColumn<Map.Entry<UserDTO, String>, String> userStatus;
+    private TableColumn<Map.Entry<UserDTO, Boolean>, String> userStatus;
 
     @FXML
     private Label loggedUsersLabel;
@@ -107,96 +104,53 @@ public class MainViewController implements Initializable {
             public void handle(Object msg, Channel channel, ChannelFuture future) {
                 Platform.runLater(() -> {
                     System.out.println("Weszlo do updatu listy");
-                    listOfUsersStatus.clear();
-                    listOfUsersStatus.putAll((HashMap<UserDTO, Boolean>) msg);
+                    HashMap<UserDTO, Boolean> list = (HashMap<UserDTO, Boolean>) msg;
+                    ObservableList<Map.Entry<UserDTO, Boolean>> items = FXCollections.observableArrayList(list.entrySet());
+                    usersList.setItems(items);
                 });
             }
         });
 
         usersList.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
             if (newSelection != null) {
-                    System.out.println(usersList.getSelectionModel().getSelectedItem().getId() + " " + usersList.getSelectionModel().getSelectedItem().getLastName());
-                    screensManager.goToUserToUserView(usersList.getSelectionModel().getSelectedItem());
+                System.out.println(usersList.getSelectionModel().getSelectedItem().getKey().getId() + " " + usersList.getSelectionModel().getSelectedItem().getKey().getLastName());
+                screensManager.goToUserToUserView(usersList.getSelectionModel().getSelectedItem().getKey());
             }
         });
-
-//        initHashTable();
-
-        listOfUsers = FXCollections.observableArrayList();
-        listOfUsersStatus = FXCollections.observableHashMap();
-        initUserList();
+        initHashTable();
     }
 
-//    private void initHashTable() {
-//        userName.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<Map.Entry<UserDTO, String>, String>, ObservableValue<String>>() {
-//            @Override
-//            public ObservableValue<String> call(TableColumn.CellDataFeatures<Map.Entry<UserDTO, String>, String> p) {
-//                return new SimpleStringProperty(p.getValue().getKey().getFirstName() + " " + p.getValue().getKey().getLastName());
-//            }
-//        });
-//
-//        userStatus.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<Map.Entry<UserDTO, String>, String>, ObservableValue<String>>() {
-//            @Override
-//            public ObservableValue<String> call(TableColumn.CellDataFeatures<Map.Entry<UserDTO, String>, String> p) {
-//                return new SimpleStringProperty(p.getValue().getValue());
-//            }
-//        });
-//        usersList.getColumns().setAll(userName, userStatus);
-//
-//        socketService.emit("getUsersStatus", "").whenComplete((msg, ex) -> {
-//            if (ex == null) {
-//                Platform.runLater(() -> {
-//                    HashMap<UserDTO, Boolean> list = (HashMap<UserDTO, Boolean>) msg;
-//                    listOfUsersStatus.putAll(list);
-//                    usersList.setItems(listOfUsersStatus.entrySet());
-//                });
-//            } else {
-//                Platform.runLater(() -> loggedUsersLabel.setText("status error"));
-//            }
-//        });
-//    }
-
-    private void initUserList() {
-        userName.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<UserDTO, String>, ObservableValue<String>>() {
+    private void initHashTable() {
+        userName.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<Map.Entry<UserDTO, Boolean>, String>, ObservableValue<String>>() {
             @Override
-            public ObservableValue<String> call(TableColumn.CellDataFeatures<UserDTO, String> p) {
-                return new SimpleStringProperty(p.getValue().getFirstName() + " " + p.getValue().getLastName());
+            public ObservableValue<String> call(TableColumn.CellDataFeatures<Map.Entry<UserDTO, Boolean>, String> p) {
+                return new SimpleStringProperty(p.getValue().getKey().getFirstName() + " " + p.getValue().getKey().getLastName());
             }
         });
-//        userStatus.setCellValueFactory(p -> new SimpleStringProperty(checkUserStatusOnList(p.getValue())));
-        userStatus.setCellValueFactory(p -> new SimpleStringProperty(p.getValue().hashCode()+""));
 
-        socketService.emit("checkUserList", "").whenComplete((msg, ex) -> {
-            if (ex == null) {
-                Platform.runLater(() -> {
-                    listOfUsers.clear();
-                    listOfUsers.addAll((List<UserDTO>) msg);
-                    usersList.setItems(listOfUsers);
-                });
-            } else {
-                Platform.runLater(() -> loggedUsersLabel.setText("err"));
+        userStatus.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<Map.Entry<UserDTO, Boolean>, String>, ObservableValue<String>>() {
+            @Override
+            public ObservableValue<String> call(TableColumn.CellDataFeatures<Map.Entry<UserDTO, Boolean>, String> p) {
+                if (p.getValue().getValue().booleanValue()) {
+                    return new SimpleStringProperty("Online");
+                } else {
+                    return new SimpleStringProperty("");
+                }
             }
         });
+        usersList.getColumns().setAll(userName, userStatus);
+
         socketService.emit("getUsersStatus", "").whenComplete((msg, ex) -> {
             if (ex == null) {
                 Platform.runLater(() -> {
-                    listOfUsersStatus.clear();
-                    listOfUsersStatus.putAll((HashMap<UserDTO, Boolean>) msg);
-//                    usersList.setItems(listOfUsersStatus);
+                    HashMap<UserDTO, Boolean> list = (HashMap<UserDTO, Boolean>) msg;
+                    ObservableList<Map.Entry<UserDTO, Boolean>> items = FXCollections.observableArrayList(list.entrySet());
+                    usersList.setItems(items);
                 });
             } else {
                 Platform.runLater(() -> loggedUsersLabel.setText("status error"));
             }
         });
-    }
-
-    private String checkUserStatusOnList(UserDTO userDTO) {
-        for (Map.Entry<UserDTO, Boolean> entry : listOfUsersStatus.entrySet()) {
-            if (entry.getKey().getId() == userDTO.getId() && entry.getValue()) {
-                return "Online";
-            }
-        }
-        return "";
     }
 
     @FXML

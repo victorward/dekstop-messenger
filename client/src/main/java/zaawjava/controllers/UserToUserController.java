@@ -48,9 +48,6 @@ public class UserToUserController implements Initializable {
     private Label userName;
 
     @FXML
-    private Label userStatus;
-
-    @FXML
     private JFXTextArea sendMessageArea;
 
     @FXML
@@ -60,13 +57,14 @@ public class UserToUserController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        if (userDTO != null) {
-            userName.setText("");
-            userName.setText(userDTO.getFirstName() + " " + userDTO.getLastName());
-        }
+
     }
 
     public void setUserDTO(UserDTO userDTO) {
         this.userDTO = userDTO;
+        if (userDTO != null) {
+            userName.setText("");
+            userName.setText(userDTO.getFirstName() + " " + userDTO.getLastName());
+        }
     }
 }

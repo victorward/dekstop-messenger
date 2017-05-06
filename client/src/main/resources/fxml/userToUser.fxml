@@ -34,7 +34,6 @@
                         <Font size="18.0" />
                      </font>
                   </Label>
-                  <Label fx:id="userStatus" layoutX="60.0" layoutY="24.0" text="Status" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="60.0" />
                </children>
             </AnchorPane>
          </top>

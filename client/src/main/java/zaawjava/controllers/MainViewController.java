@@ -61,10 +61,6 @@ public class MainViewController implements Initializable {
     @FXML
     private Label loggedUsersLabel;
 
-    ObservableMap<UserDTO, Boolean> listOfUsersStatus;
-    ObservableList<UserDTO> listOfUsers;
-
-
     @Autowired
     public MainViewController(SocketService socketService) {
         this.socketService = socketService;
@@ -103,7 +99,6 @@ public class MainViewController implements Initializable {
             @Override
             public void handle(Object msg, Channel channel, ChannelFuture future) {
                 Platform.runLater(() -> {
-                    System.out.println("Weszlo do updatu listy");
                     HashMap<UserDTO, Boolean> list = (HashMap<UserDTO, Boolean>) msg;
                     ObservableList<Map.Entry<UserDTO, Boolean>> items = FXCollections.observableArrayList(list.entrySet());
                     usersList.setItems(items);
@@ -113,7 +108,6 @@ public class MainViewController implements Initializable {
 
         usersList.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
             if (newSelection != null) {
-                System.out.println(usersList.getSelectionModel().getSelectedItem().getKey().getId() + " " + usersList.getSelectionModel().getSelectedItem().getKey().getLastName());
                 screensManager.goToUserToUserView(usersList.getSelectionModel().getSelectedItem().getKey());
             }
         });

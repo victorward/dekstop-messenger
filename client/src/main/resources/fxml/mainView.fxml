@@ -1,27 +1,78 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import com.jfoenix.controls.JFXButton?>
-<?import com.jfoenix.controls.JFXToolbar?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.Cursor?>
 <?import javafx.scene.control.ButtonBar?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
 <?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.text.Font?>
 
-<AnchorPane id="rootPane" prefHeight="556.0" prefWidth="760.0" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="zaawjava.controllers.MainViewController">
+<AnchorPane id="rootPane" minHeight="560.0" minWidth="760.0" style="-fx-background-color: linen;" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="zaawjava.controllers.MainViewController">
    <children>
-      <JFXToolbar layoutX="114.0" layoutY="87.0" />
-      <ButtonBar buttonMinWidth="120.0" layoutX="114.0" layoutY="40.0" prefHeight="40.0" prefWidth="200.0" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="5.0">
-        <buttons>
-            <JFXButton minWidth="120.0" onAction="#onProfileClick" text="Profil" />
-            <JFXButton onAction="#onLogoutClick" text="Logout" />
-        </buttons>
-      </ButtonBar>
-      <HBox layoutX="604.0" layoutY="531.0" prefHeight="25.0" prefWidth="151.0">
-         <children>
-            <Label text="Logged users: " />
-            <Label fx:id="loggedUsersLabel" />
-         </children>
-      </HBox>
+      <BorderPane layoutX="321.0" layoutY="178.0" minHeight="560.0" minWidth="760.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+         <top>
+            <ButtonBar buttonMinWidth="120.0" prefHeight="40.0" prefWidth="200.0" style="-fx-background-color: #6495ed;" BorderPane.alignment="CENTER">
+              <buttons>
+                  <JFXButton minWidth="120.0" onAction="#onProfileClick" text="Profil" textFill="#ffdddd">
+                     <font>
+                        <Font name="System Bold Italic" size="12.0" />
+                     </font>
+                  </JFXButton>
+                  <JFXButton cancelButton="true" onAction="#onLogoutClick" text="Logout" textFill="#ffdddd">
+                     <font>
+                        <Font name="System Bold" size="12.0" />
+                     </font>
+                  </JFXButton>
+                  <JFXButton buttonType="RAISED" defaultButton="true" onAction="#goToWAMY" text="WAMY">
+                     <font>
+                        <Font name="Magneto Bold" size="18.0" />
+                     </font>
+                     <cursor>
+                        <Cursor fx:constant="CLOSED_HAND" />
+                     </cursor>
+                  </JFXButton>
+              </buttons>
+               <cursor>
+                  <Cursor fx:constant="HAND" />
+               </cursor>
+            </ButtonBar>
+         </top>
+         <left>
+            <TableView fx:id="usersList" prefHeight="200.0" prefWidth="170.0" BorderPane.alignment="CENTER">
+              <columns>
+                <TableColumn fx:id="userName" prefWidth="120.0" resizable="false" text="Name" />
+                <TableColumn fx:id="userStatus" minWidth="48.0" prefWidth="-1.0" resizable="false" text="Online" />
+              </columns>
+            </TableView>
+         </left>
+         <bottom>
+            <HBox prefHeight="25.0" prefWidth="151.0" BorderPane.alignment="CENTER">
+               <children>
+                  <Label text="Logged users: " />
+                  <Label fx:id="loggedUsersLabel" />
+               </children>
+               <padding>
+                  <Insets top="5.0" />
+               </padding>
+            </HBox>
+         </bottom>
+         <center>
+            <Pane fx:id="contentPane" prefHeight="490.0" prefWidth="620.0" BorderPane.alignment="CENTER">
+               <BorderPane.margin>
+                  <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+               </BorderPane.margin>
+               <padding>
+                  <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+               </padding>
+            </Pane>
+         </center>
+      </BorderPane>
    </children>
 
 </AnchorPane>

@@ -74,6 +74,7 @@ public class DatabaseConnector {
         return currentUser;
     }
 
+
     public void insertUser(User user) {
         session = Main.factory.getCurrentSession();
         session.beginTransaction();
@@ -88,6 +89,17 @@ public class DatabaseConnector {
         session.getTransaction().commit();
         session.close();
     }
+
+    public List<User> getAllUsers(){
+        session = Main.factory.getCurrentSession();
+        session.beginTransaction();
+        CriteriaQuery<User> criteriaQuery = session.getCriteriaBuilder().createQuery(User.class);
+        criteriaQuery.from(User.class);
+        List<User> listOfUsers = session.createQuery(criteriaQuery).getResultList();
+        session.getTransaction().commit();
+        return listOfUsers;
+    }
+
 	public List<Language> getLanguages()
 	{
 		session = Main.factory.getCurrentSession();
@@ -98,6 +110,7 @@ public class DatabaseConnector {
 		session.getTransaction().commit();
 		return listOfLanguages;
 	}
+
 	public List<Country> getCountries()
 	{
 		session = Main.factory.getCurrentSession();

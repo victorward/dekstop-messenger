@@ -49,7 +49,6 @@ public class MainViewController implements Initializable {
     private TableColumn<Map.Entry<UserDTO, Boolean>, String> userName;
     @FXML
     private TableColumn<Map.Entry<UserDTO, Boolean>, String> userStatus;
-
     @FXML
     private Label loggedUsersLabel;
 

@@ -105,7 +105,6 @@ public class GlobalChatController implements Initializable {
     }
 
     private void sendChatMessage() {
-        System.out.println("Send chat message");
         if (messageTextArea.getText().trim().length() == 0) return;
         ChatMessage message = new ChatMessage(userService.getUser(), messageTextArea.getText().trim());
         messageTextArea.setText("");

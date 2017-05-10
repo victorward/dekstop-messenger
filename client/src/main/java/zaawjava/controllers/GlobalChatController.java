@@ -8,10 +8,13 @@ import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.util.Callback;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -53,11 +56,6 @@ public class GlobalChatController implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-//        chatMessages.add(new ChatMessage(userService.getUser(), "content"));
-//        for (int i = 0; i < 200; i++) {
-//            chatMessages.add(new ChatMessage(userService.getUser(), "content"));
-//
-//        }
         chatListView.setItems(chatMessages);
 
         chatListView.setCellFactory(new Callback<ListView<ChatMessage>, ListCell<ChatMessage>>() {
@@ -82,6 +80,15 @@ public class GlobalChatController implements Initializable {
             }
         });
 
+        messageTextArea.setOnKeyPressed(new EventHandler<KeyEvent>() {
+            @Override
+            public void handle(KeyEvent event) {
+                if (event.getCode() == KeyCode.ENTER) {
+                    sendChatMessage();
+                }
+            }
+        });
+
         socketService.on("onGlobalChatMessage", new MessageHandler() {
             @Override
             public void handle(Object msg, Channel channel, ChannelFuture future) {
@@ -94,11 +101,15 @@ public class GlobalChatController implements Initializable {
 
     @FXML
     void sendMessageBtn(ActionEvent event) {
-        if (messageTextArea.getText().length() == 0) return;
-        ChatMessage message = new ChatMessage(userService.getUser(), messageTextArea.getText());
-        socketService.emit("newGlobalChatMessage", message);
-        messageTextArea.clear();
+        sendChatMessage();
+    }
 
+    private void sendChatMessage() {
+        System.out.println("Send chat message");
+        if (messageTextArea.getText().trim().length() == 0) return;
+        ChatMessage message = new ChatMessage(userService.getUser(), messageTextArea.getText().trim());
+        messageTextArea.setText("");
+        socketService.emit("newGlobalChatMessage", message);
     }
 
 

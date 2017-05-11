@@ -8,26 +8,19 @@ package zaawjava.controllers;
 import DTO.UserDTO;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
-import javafx.animation.KeyFrame;
-import javafx.animation.Timeline;
 import javafx.application.Platform;
-import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.collections.ObservableMap;
 import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.layout.Pane;
 import javafx.util.Callback;
-import javafx.util.Duration;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import utils.MessageHandler;
@@ -38,7 +31,6 @@ import zaawjava.services.UserService;
 import java.io.IOException;
 import java.net.URL;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
 
@@ -57,7 +49,6 @@ public class MainViewController implements Initializable {
     private TableColumn<Map.Entry<UserDTO, Boolean>, String> userName;
     @FXML
     private TableColumn<Map.Entry<UserDTO, Boolean>, String> userStatus;
-
     @FXML
     private Label loggedUsersLabel;
 
@@ -108,7 +99,7 @@ public class MainViewController implements Initializable {
 
         usersList.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
             if (newSelection != null) {
-                screensManager.goToUserToUserView(usersList.getSelectionModel().getSelectedItem().getKey());
+                screensManager.setUserToUserView(usersList.getSelectionModel().getSelectedItem().getKey());
             }
         });
         initHashTable();
@@ -149,7 +140,7 @@ public class MainViewController implements Initializable {
 
     @FXML
     void onProfileClick(ActionEvent event) {
-        screensManager.goToProfileView();
+        screensManager.setProfileView();
     }
 
     @FXML
@@ -175,7 +166,7 @@ public class MainViewController implements Initializable {
 
     @FXML
     private void goToWAMY() {
-        screensManager.goToMainView();
+        screensManager.setGlobalChatView();
     }
 
     public Pane getContentPane() {

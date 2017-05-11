@@ -4,7 +4,6 @@ package zaawjava;
 import DTO.UserDTO;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -96,6 +95,7 @@ public class ScreensManager {
         Parent rootNode = (Parent) loader.load("/fxml/mainView.fxml");
         Scene scene = new Scene(rootNode);
         stage.setScene(scene);
+        setGlobalChatView();
     }
 
     public void goToRegistrationView() {
@@ -104,17 +104,23 @@ public class ScreensManager {
         stage.setScene(scene);
     }
 
-    public void goToUserToUserView(UserDTO userDTO) {
-        mainViewController.getContentPane().getChildren().clear();
+    public void setUserToUserView(UserDTO userDTO) {
         Parent rootNode = (Parent) loader.load("/fxml/userToUser.fxml");
         //dziala, ale hrenowo
+        mainViewController.getContentPane().getChildren().clear();
         userToUserController.setUserDTO(userDTO);
         mainViewController.getContentPane().getChildren().add(rootNode);
     }
 
-    public void goToProfileView() {
-        mainViewController.getContentPane().getChildren().clear();
+    public void setProfileView() {
         Parent rootNode = (Parent) loader.load("/fxml/profile.fxml");
+        mainViewController.getContentPane().getChildren().clear();
+        mainViewController.getContentPane().getChildren().add(rootNode);
+    }
+
+    public void setGlobalChatView() {
+        Parent rootNode = (Parent) loader.load("/fxml/globalChat.fxml");
+        mainViewController.getContentPane().getChildren().clear();
         mainViewController.getContentPane().getChildren().add(rootNode);
     }
 }

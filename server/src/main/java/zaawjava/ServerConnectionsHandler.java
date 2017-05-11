@@ -176,6 +176,13 @@ public class ServerConnectionsHandler extends ChannelInboundHandlerAdapter {
                 messageService.sendMessage("getUsersStatus", getMapOfUsersWithStatus());
             }
         });
+
+        this.messageService.registerHandler("newGlobalChatMessage", new MessageHandler() {
+            @Override
+            public void handle(Object msg, Channel channel, ChannelFuture future) {
+                messageService.sendMessageToGroup(allChannels, "onGlobalChatMessage", msg);
+            }
+        });
     }
 
     private List<UserDTO> getAllUserList() {

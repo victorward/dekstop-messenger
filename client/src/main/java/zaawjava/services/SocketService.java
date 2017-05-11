@@ -8,6 +8,8 @@ import io.netty.channel.socket.nio.NioSocketChannel;
 import io.netty.handler.codec.serialization.ClassResolvers;
 import io.netty.handler.codec.serialization.ObjectDecoder;
 import io.netty.handler.codec.serialization.ObjectEncoder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import utils.MessageHandler;
@@ -18,6 +20,8 @@ import java.util.concurrent.CompletableFuture;
 
 @Service
 public class SocketService {
+    private static final Logger log = LoggerFactory.getLogger(SocketService.class);
+
     static final String HOST = "localhost";
     static final int PORT = 8080;
 
@@ -91,6 +95,10 @@ public class SocketService {
         messageService.sendMessage(event, message, new MessageHandler() {
             @Override
             public void handle(Object msg, Channel channel, ChannelFuture future) {
+                if (future == null) {
+                    log.warn("Future is null!");
+                    return;
+                }
                 if (future.isSuccess()) {
                     completableFuture.complete(msg);
                 } else {

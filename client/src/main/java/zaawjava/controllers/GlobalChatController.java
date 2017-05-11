@@ -1,5 +1,6 @@
 package zaawjava.controllers;
 
+import DTO.ChatMessageDTO;
 import com.jfoenix.controls.JFXListView;
 import com.jfoenix.controls.JFXTextArea;
 import io.netty.channel.Channel;
@@ -20,7 +21,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import transport.ChatMessage;
 import utils.MessageHandler;
 import zaawjava.services.SocketService;
 import zaawjava.services.UserService;
@@ -47,24 +47,24 @@ public class GlobalChatController implements Initializable {
     }
 
     @FXML
-    private JFXListView<ChatMessage> chatListView;
+    private JFXListView<ChatMessageDTO> chatListView;
 
     @FXML
     private JFXTextArea messageTextArea;
 
-    private ObservableList<ChatMessage> chatMessages = FXCollections.observableArrayList();
+    private ObservableList<ChatMessageDTO> chatMessageDTOS = FXCollections.observableArrayList();
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        chatListView.setItems(chatMessages);
+        chatListView.setItems(chatMessageDTOS);
 
-        chatListView.setCellFactory(new Callback<ListView<ChatMessage>, ListCell<ChatMessage>>() {
+        chatListView.setCellFactory(new Callback<ListView<ChatMessageDTO>, ListCell<ChatMessageDTO>>() {
             @Override
-            public ListCell<ChatMessage> call(ListView<ChatMessage> param) {
-                return new ListCell<ChatMessage>() {
+            public ListCell<ChatMessageDTO> call(ListView<ChatMessageDTO> param) {
+                return new ListCell<ChatMessageDTO>() {
 
                     @Override
-                    protected void updateItem(ChatMessage item, boolean empty) {
+                    protected void updateItem(ChatMessageDTO item, boolean empty) {
                         super.updateItem(item, empty);
                         if (item != null) {
                             StringBuilder sb = new StringBuilder();
@@ -92,8 +92,8 @@ public class GlobalChatController implements Initializable {
         socketService.on("onGlobalChatMessage", new MessageHandler() {
             @Override
             public void handle(Object msg, Channel channel, ChannelFuture future) {
-                log.debug("chat message received: " + ((ChatMessage) msg).getContent());
-                Platform.runLater(() -> chatMessages.add((ChatMessage) msg));
+                log.debug("chat message received: " + ((ChatMessageDTO) msg).getContent());
+                Platform.runLater(() -> chatMessageDTOS.add((ChatMessageDTO) msg));
             }
         });
 
@@ -106,7 +106,7 @@ public class GlobalChatController implements Initializable {
 
     private void sendChatMessage() {
         if (messageTextArea.getText().trim().length() == 0) return;
-        ChatMessage message = new ChatMessage(userService.getUser(), messageTextArea.getText().trim());
+        ChatMessageDTO message = new ChatMessageDTO(userService.getUser(), messageTextArea.getText().trim());
         messageTextArea.setText("");
         socketService.emit("newGlobalChatMessage", message);
     }

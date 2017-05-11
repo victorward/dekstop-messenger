@@ -1,26 +1,24 @@
-package transport;
-
-import DTO.UserDTO;
+package DTO;
 
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
-public class ChatMessage implements Serializable{
+public class ChatMessageDTO implements Serializable {
     private UserDTO sender;
     private List<UserDTO> recipients;
     private String content;
 
-    public ChatMessage() {
+    public ChatMessageDTO() {
     }
 
-    public ChatMessage(UserDTO sender, String content) {
+    public ChatMessageDTO(UserDTO sender, String content) {
         this.sender = sender;
         this.content = content;
     }
 
-    public ChatMessage(UserDTO sender, List<UserDTO> recipients, String content) {
+    public ChatMessageDTO(UserDTO sender, List<UserDTO> recipients, String content) {
         if (recipients == null) this.recipients = new ArrayList<>();
         this.sender = sender;
         this.recipients = recipients;

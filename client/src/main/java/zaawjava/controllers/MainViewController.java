@@ -81,6 +81,9 @@ public class MainViewController implements Initializable {
      */
     @Override
     public void initialize(URL url, ResourceBundle rb) {
+        screensManager.getStage().setOnCloseRequest(event1 -> {
+            logOutUser(userService.getUser());
+        });
         socketService.emit("onNumberOfUsers", "").whenComplete((msg, ex) -> {
             if (ex == null) {
                 Platform.runLater(() -> loggedUsersLabel.setText(String.valueOf(msg)));

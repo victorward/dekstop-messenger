@@ -344,4 +344,9 @@ values ('Kamil', 'Kamilowski', 333333333, 'male', 'Kamil@ggg.gg', 'uPU/Y5hjiwVNP
 insert into users (first_name, last_name, phone, gender, email, user_password, address, country_id, birth_date, photo)
 values ('Yuriy', 'Yurok', 39933, 'male', 'ii@i.ua', 'uPU/Y5hjiwVNPwgeySE0kw==', 'Dobra ulica', 190,  '1990-10-10', 'piekneZdjecie');
 
+insert into conversations (user1, user2) values (1,2); 
+
+insert into private_messages (conversation_id, sender, content, send_date) values (1, 1, "Czesc", now());
+insert into private_messages (conversation_id, sender, content, send_date) values (1, 1, "Siema", now());
+insert into private_messages (conversation_id, sender, content, send_date) values (1, 2, "Co tam u ciebie?", now());
 COMMIT;

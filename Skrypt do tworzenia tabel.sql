@@ -34,3 +34,24 @@ language_id int,
 foreign key (user_id) references ZaawJava.users(id),
 foreign key (language_id) references ZaawJava.languages(id)
 );
+
+create table ZaawJava.conversations
+(
+conversation_id int auto_increment primary key,
+user1 int,
+user2 int,
+foreign key (user1) references ZaawJava.users(id),
+foreign key (user2) references ZaawJava.users(id),
+CONSTRAINT UQ_UserId_ContactID UNIQUE(user1, user2)
+);
+
+create table ZaawJava.private_messages
+(
+message_id int auto_increment primary key,
+conversation_id int,
+sender int,
+content text,
+send_date datetime,
+foreign key (conversation_id) references ZaawJava.conversations(conversation_id)
+);
+CREATE INDEX Datetime_Index ON ZaawJava.private_messages (send_date);

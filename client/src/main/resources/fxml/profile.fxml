@@ -22,7 +22,7 @@
 
 <Pane prefHeight="485.0" prefWidth="620.0" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="zaawjava.controllers.ProfileController">
    <children>
-      <ImageView fitHeight="160.0" fitWidth="140.0" layoutX="475.0" layoutY="60.0" pickOnBounds="true" preserveRatio="true">
+      <ImageView fx:id="avatar" fitHeight="160.0" fitWidth="140.0" layoutX="475.0" layoutY="60.0" pickOnBounds="true" preserveRatio="true">
          <image>
             <Image url="@/images/default_avatar.jpg" />
          </image>
@@ -79,7 +79,7 @@
             <JFXTextField fx:id="street" promptText="Street" GridPane.columnSpan="2" GridPane.rowIndex="6" />
          </children>
       </GridPane>
-      <JFXButton layoutX="490.0" layoutY="230.0" text="Change avatar..." />
+      <JFXButton layoutX="490.0" layoutY="230.0" onAction="#changeAvatar" text="Change avatar..." />
       <ButtonBar layoutX="390.0" layoutY="410.0" prefHeight="40.0" prefWidth="200.0">
         <buttons>
             <JFXButton onAction="#onCancelClick" text="Cancel" />

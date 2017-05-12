@@ -27,6 +27,8 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.util.Callback;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -82,6 +84,8 @@ public class ProfileController implements Initializable {
     private JFXTextField number;
     @FXML
     private JFXTextField street;
+    @FXML
+    private ImageView avatar;
 
     private ObservableList<LanguageDTO> languagess;
 
@@ -155,6 +159,13 @@ public class ProfileController implements Initializable {
             street.setText(userService.getUser().getAddress());
         if (userService.getUser().getCountry() != null)
             country.setValue(userService.getUser().getCountry().getCountryName());
+        setProfileAvatar();
+    }
+
+    void setProfileAvatar() {
+        String imageSource = userService.getUser().getPhoto();
+        Image image = new Image(imageSource);
+        avatar.setImage(image);
     }
 
     @FXML
@@ -313,4 +324,8 @@ public class ProfileController implements Initializable {
         this.allCountries = allCountries;
     }
 
+    @FXML
+    void changeAvatar(ActionEvent event) {
+
+    }
 }

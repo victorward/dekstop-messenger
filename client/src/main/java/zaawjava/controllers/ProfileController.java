@@ -17,6 +17,7 @@ import DTO.LanguageDTO;
 import DTO.UserDTO;
 import com.jfoenix.controls.JFXPasswordField;
 import com.jfoenix.controls.JFXTextField;
+import javafx.animation.Transition;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.value.ChangeListener;
@@ -30,6 +31,7 @@ import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.util.Callback;
+import javafx.util.Duration;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import zaawjava.ScreensManager;
@@ -86,10 +88,14 @@ public class ProfileController implements Initializable {
     private JFXTextField street;
     @FXML
     private ImageView avatar;
+    @FXML
+    private ProgressIndicator progressIndicator;
+    @FXML
+    private JFXTextField imageTextField;
 
     private ObservableList<LanguageDTO> languagess;
-
     List<CountryDTO> allCountries;
+    Transition loadingTransition;
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
@@ -104,12 +110,14 @@ public class ProfileController implements Initializable {
     }
 
     void init() {
+        startTransition();
         addLenguagesToSystem();
         addCountryToSystem();
         fillUserData();
     }
 
     void addLenguagesToSystem() {
+        increaseTransiotionValue(0.1);
         ObservableList<String> languagesObsList = FXCollections.observableArrayList();
         languagess.addAll(userService.getUser().getLanguages());
         Languages.setItems(languagess);
@@ -126,9 +134,11 @@ public class ProfileController implements Initializable {
                 Platform.runLater(() -> showError("Failed during getting languages list"));
             }
         });
+        increaseTransiotionValue(0.1);
     }
 
     void addCountryToSystem() {
+        increaseTransiotionValue(0.1);
         ObservableList<String> countryObsList = FXCollections.observableArrayList();
         socketService.emit("getCountryList", "").whenComplete((msg, ex) -> {
             if (ex == null) {
@@ -144,10 +154,11 @@ public class ProfileController implements Initializable {
                 Platform.runLater(() -> showError("Failed during getting country list"));
             }
         });
-
+        increaseTransiotionValue(0.1);
     }
 
     void fillUserData() {
+        increaseTransiotionValue(0.2);
         firstName.setText(userService.getUser().getFirstName());
         lastName.setText(userService.getUser().getLastName());
         email.setText(userService.getUser().getEmail());
@@ -159,13 +170,37 @@ public class ProfileController implements Initializable {
             street.setText(userService.getUser().getAddress());
         if (userService.getUser().getCountry() != null)
             country.setValue(userService.getUser().getCountry().getCountryName());
-        setProfileAvatar();
+        Platform.runLater(() -> setProfileAvatar());
+        Platform.runLater(() -> stopTransition());
     }
 
     void setProfileAvatar() {
+        increaseTransiotionValue(0.1);
         String imageSource = userService.getUser().getPhoto();
-        Image image = new Image(imageSource);
-        avatar.setImage(image);
+        if (imageSource != null && !imageSource.equals("")) {
+            imageTextField.setText(imageSource);
+            Image image = new Image(imageSource);
+            increaseTransiotionValue(0.1);
+            avatar.setImage(image);
+        }
+        increaseTransiotionValue(1);
+    }
+
+    void startTransition() {
+        progressIndicator.setVisible(true);
+        progressIndicator.setProgress(0.01);
+        increaseTransiotionValue(0.1);
+    }
+
+    void stopTransition() {
+        progressIndicator.setVisible(false);
+    }
+
+    void increaseTransiotionValue(double value) {
+//        for (double i = progressIndicator.getProgress(); i < value; i++) {
+//        progressIndicator.setProgress(i/10);
+        progressIndicator.setProgress(value + progressIndicator.getProgress());
+//        }
     }
 
     @FXML
@@ -227,6 +262,9 @@ public class ProfileController implements Initializable {
         user.setPassword(password.getText());
         user.setPhone(Integer.parseInt(number.getText()));
         user.setCountry(new CountryDTO(getCountryID(country.getValue()), country.getValue()));
+        if (!imageTextField.disableProperty().get()) {
+            user.setPhoto(imageTextField.getText());
+        }
         return user;
     }
 
@@ -270,9 +308,9 @@ public class ProfileController implements Initializable {
             if (!Utils.validDate(date.getValue())) {
                 errorMessage += "No valid date. Use the format yyyy-dd-mm!\n";
             }
-            if (!Utils.validDate(date.getValue())) {
-                errorMessage += "No valid date. Use the format yyyy-dd-mm!\n";
-            }
+        }
+        if (imageTextField.getText() == null || imageTextField.getText().length() == 0) {
+            errorMessage += "Empty image link!\n";
         }
         if (sex == null) {
             errorMessage += "Please select your gender!\n";
@@ -292,6 +330,7 @@ public class ProfileController implements Initializable {
 
     private void showSuccess() {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.initOwner(screensManager.getStage());
         alert.setTitle("Success");
         alert.setHeaderText("Congratulations your data have successfully updated");
         alert.setContentText("Now you check new data in your profile");
@@ -326,6 +365,6 @@ public class ProfileController implements Initializable {
 
     @FXML
     void changeAvatar(ActionEvent event) {
-
+        imageTextField.setDisable(false);
     }
 }

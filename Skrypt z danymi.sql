@@ -339,9 +339,9 @@ INSERT INTO languages (language_name) VALUES('Zulu');
 
 use ZaawJava;
 insert into users (first_name, last_name, phone, gender, email, user_password, address, country_id, birth_date, photo)
-values ('Kamil', 'Kamilowski', 333333333, 'male', 'Kamil@ggg.gg', 'uPU/Y5hjiwVNPwgeySE0kw==', 'Uliczna 28', 144,  '1999-12-24', 'https://goo.gl/aBm3gg');
+values ('Kamil', 'Kamilowski', 333333333, 'male', 'Kamil@ggg.gg', 'uPU/Y5hjiwVNPwgeySE0kw==', 'Uliczna 28', 144,  '1999-12-24', 'https://goo.gl/1Zs4oJ');
 
 insert into users (first_name, last_name, phone, gender, email, user_password, address, country_id, birth_date, photo)
-values ('Yuriy', 'Yurok', 39933, 'male', 'ii@i.ua', 'uPU/Y5hjiwVNPwgeySE0kw==', 'Dobra ulica', 190,  '1990-10-10', 'https://goo.gl/uR8Hsm');
+values ('Yuriy', 'Yurok', 39933, 'male', 'ii@i.ua', 'uPU/Y5hjiwVNPwgeySE0kw==', 'Dobra ulica', 190,  '1990-10-10', 'https://goo.gl/88LVqv');
 
 COMMIT;

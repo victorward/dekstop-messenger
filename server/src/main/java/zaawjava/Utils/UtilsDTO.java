@@ -35,7 +35,7 @@ public class UtilsDTO implements Serializable {
     public static UserDTO convertUserToDTOwithOnlyMainData(User user) {
         UserDTO userDTO = null;
         if (user != null) {
-            userDTO = new UserDTO(user.getId(), user.getEmail(), user.getPassword(), user.getFirstName(), user.getLastName(), user.getBirthDate(), user.getGender());
+            userDTO = new UserDTO(user.getId(), user.getEmail(), user.getPassword(), user.getFirstName(), user.getLastName(), user.getBirthDate(), user.getGender(), user.getPhoto());
         }
         return userDTO;
     }

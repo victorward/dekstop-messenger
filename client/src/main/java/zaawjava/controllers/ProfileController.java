@@ -260,8 +260,16 @@ public class ProfileController implements Initializable {
         user.setFirstName(firstName.getText());
         user.setLastName(lastName.getText());
         user.setPassword(password.getText());
-        user.setPhone(Integer.parseInt(number.getText()));
-        user.setCountry(new CountryDTO(getCountryID(country.getValue()), country.getValue()));
+        if (number.getText() != null) {
+            if (number.getText().length() != 0) {
+                user.setPhone(Integer.parseInt(number.getText()));
+            }
+        }
+        if (country.getValue() != null) {
+            if (country.getValue().length() != 0) {
+                user.setCountry(new CountryDTO(getCountryID(country.getValue()), country.getValue()));
+            }
+        }
         if (!imageTextField.disableProperty().get()) {
             user.setPhoto(imageTextField.getText());
         }

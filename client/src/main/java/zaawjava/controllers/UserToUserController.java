@@ -2,10 +2,13 @@ package zaawjava.controllers;
 
 import DTO.UserDTO;
 import com.jfoenix.controls.JFXTextArea;
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import zaawjava.ScreensManager;
@@ -51,6 +54,9 @@ public class UserToUserController implements Initializable {
     private JFXTextArea sendMessageArea;
 
     @FXML
+    private ImageView userAvatar;
+
+    @FXML
     void sendMessageBtn(ActionEvent event) {
 
     }
@@ -65,6 +71,15 @@ public class UserToUserController implements Initializable {
         if (userDTO != null) {
             userName.setText("");
             userName.setText(userDTO.getFirstName() + " " + userDTO.getLastName());
+            Platform.runLater(() -> setProfileAvatar(userDTO));
+        }
+    }
+
+    void setProfileAvatar(UserDTO userDTO) {
+        String imageSource = userDTO.getPhoto();
+        if (imageSource != null && !imageSource.equals("")) {
+            Image image = new Image(imageSource);
+            userAvatar.setImage(image);
         }
     }
 }

@@ -11,7 +11,7 @@
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.RowConstraints?>
 
-<AnchorPane id="rootPane" prefHeight="300.0" prefWidth="370.0" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="zaawjava.controllers.LoginController">
+<AnchorPane id="rootPane" minHeight="300.0" minWidth="370.0" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="zaawjava.controllers.LoginController">
    <GridPane prefHeight="269.0" prefWidth="350.0" AnchorPane.bottomAnchor="30.0" AnchorPane.leftAnchor="15.0" AnchorPane.rightAnchor="15.0" AnchorPane.topAnchor="70.0">
      <columnConstraints>
        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" />
@@ -46,7 +46,7 @@
       </children>
    </GridPane>
    <Label fx:id="messageLabel" layoutX="29.0" layoutY="218.0" prefHeight="40.0" prefWidth="340.0" AnchorPane.bottomAnchor="5.0" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="5.0" />
-   <JFXButton layoutX="26.0" layoutY="14.0" onAction="#loginWithOAuth" ripplerFill="WHITE" style="-fx-background-color: #3d32da;" text="Login with facebook" textFill="WHITE" AnchorPane.bottomAnchor="240.0" AnchorPane.leftAnchor="15.0" AnchorPane.rightAnchor="15.0" AnchorPane.topAnchor="15.0">
+   <JFXButton layoutX="26.0" layoutY="14.0" onAction="#loginWithOAuth" prefHeight="45.0" ripplerFill="WHITE" style="-fx-background-color: #3d32da;" text="Login with facebook" textFill="WHITE" AnchorPane.leftAnchor="15.0" AnchorPane.rightAnchor="15.0" AnchorPane.topAnchor="15.0">
       <opaqueInsets>
          <Insets />
       </opaqueInsets>

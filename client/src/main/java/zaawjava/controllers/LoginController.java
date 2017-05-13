@@ -1,6 +1,9 @@
 package zaawjava.controllers;
 
 import DTO.UserDTO;
+import com.restfb.DefaultFacebookClient;
+import com.restfb.FacebookClient;
+import com.restfb.types.User;
 import io.netty.channel.ChannelFuture;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
@@ -10,6 +13,8 @@ import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.chrome.ChromeDriver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -173,6 +178,6 @@ public class LoginController {
 
     @FXML
     void loginWithOAuth(ActionEvent event) {
-
+        screensManager.setLoginOAuth();
     }
 }

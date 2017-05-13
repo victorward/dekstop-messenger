@@ -88,7 +88,6 @@ public class ScreensManager {
     }
 
     public void goToMainView() {
-
         Parent rootNode = (Parent) loader.load("/fxml/mainView.fxml");
         Scene scene = new Scene(rootNode);
         stage.setScene(scene);
@@ -121,6 +120,9 @@ public class ScreensManager {
     }
 
     public void setLoginOAuth() {
-
+        Parent rootNode = (Parent) loader.load("/fxml/facebookWeb.fxml");
+        Scene scene = new Scene(rootNode);
+        stage.setTitle("Facebook autorization");
+        stage.setScene(scene);
     }
 }

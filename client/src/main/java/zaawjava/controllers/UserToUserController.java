@@ -17,6 +17,7 @@ import zaawjava.services.UserService;
 
 import java.net.URL;
 import java.util.ResourceBundle;
+import java.util.concurrent.CompletableFuture;
 
 /**
  * Created by Yuriy
@@ -78,8 +79,11 @@ public class UserToUserController implements Initializable {
     void setProfileAvatar(UserDTO userDTO) {
         String imageSource = userDTO.getPhoto();
         if (imageSource != null && !imageSource.equals("")) {
-            Image image = new Image(imageSource);
-            userAvatar.setImage(image);
+            CompletableFuture
+                    .supplyAsync(() -> new Image(imageSource))
+                    .whenComplete((img, ex) -> {
+                        Platform.runLater(() -> userAvatar.setImage(img));
+                    });
         }
     }
 }

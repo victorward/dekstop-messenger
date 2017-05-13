@@ -34,6 +34,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
+import java.util.concurrent.CompletableFuture;
 
 @Component
 public class ProfileController implements Initializable {
@@ -166,8 +167,8 @@ public class ProfileController implements Initializable {
             street.setText(userService.getUser().getAddress());
         if (userService.getUser().getCountry() != null)
             country.setValue(userService.getUser().getCountry().getCountryName());
-        Platform.runLater(() -> setProfileAvatar());
-        Platform.runLater(() -> stopTransition());
+        setProfileAvatar();
+        stopTransition();
     }
 
     void setProfileAvatar() {
@@ -175,9 +176,13 @@ public class ProfileController implements Initializable {
         String imageSource = userService.getUser().getPhoto();
         if (imageSource != null && !imageSource.equals("")) {
             imageTextField.setText(imageSource);
-            Image image = new Image(imageSource);
-            increaseTransiotionValue(0.1);
-            avatar.setImage(image);
+
+            CompletableFuture
+                    .supplyAsync(() -> new Image(imageSource))
+                    .whenComplete((img, ex) -> {
+                        increaseTransiotionValue(0.1);
+                        Platform.runLater(() -> avatar.setImage(img));
+                    });
         }
         increaseTransiotionValue(1);
     }

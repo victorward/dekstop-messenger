@@ -5,13 +5,6 @@
  */
 package zaawjava.controllers;
 
-import java.lang.reflect.Array;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
-import java.util.ResourceBundle;
-
 import DTO.CountryDTO;
 import DTO.LanguageDTO;
 import DTO.UserDTO;
@@ -20,7 +13,6 @@ import com.jfoenix.controls.JFXTextField;
 import javafx.animation.Transition;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -31,13 +23,17 @@ import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.util.Callback;
-import javafx.util.Duration;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import zaawjava.ScreensManager;
 import zaawjava.services.SocketService;
 import zaawjava.services.UserService;
 import zaawjava.utils.Utils;
+
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.ResourceBundle;
 
 @Component
 public class ProfileController implements Initializable {
@@ -234,8 +230,7 @@ public class ProfileController implements Initializable {
             socketService.emit("updateUser", user).whenComplete((msg, ex) -> {
                 if (ex == null) {
                     if ("updated".equals(msg)) {
-                        Platform.runLater(() -> showSuccess());
-                        screensManager.goToMainView();
+                        Platform.runLater(this::showSuccess);
                     } else {
                         Platform.runLater(() -> showError("Read server output. " + msg));
                     }

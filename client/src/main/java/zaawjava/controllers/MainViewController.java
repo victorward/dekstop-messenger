@@ -74,6 +74,7 @@ public class MainViewController implements Initializable {
     public void initialize(URL url, ResourceBundle rb) {
         screensManager.getStage().setOnCloseRequest(event1 -> {
             logOutUser(userService.getUser());
+            socketService.disconnect();
         });
         socketService.emit("onNumberOfUsers", "").whenComplete((msg, ex) -> {
             if (ex == null) {

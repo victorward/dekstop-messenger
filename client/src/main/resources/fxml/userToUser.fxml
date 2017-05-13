@@ -24,7 +24,7 @@
          <top>
             <AnchorPane minHeight="60.0" BorderPane.alignment="CENTER">
                <children>
-                  <ImageView fitHeight="45.0" fitWidth="45.0" layoutX="541.0" layoutY="8.0" pickOnBounds="true" preserveRatio="true" AnchorPane.bottomAnchor="5.0" AnchorPane.leftAnchor="15.0" AnchorPane.topAnchor="5.0">
+                  <ImageView fx:id="userAvatar" fitHeight="45.0" fitWidth="45.0" layoutX="541.0" layoutY="8.0" pickOnBounds="true" preserveRatio="true" AnchorPane.bottomAnchor="5.0" AnchorPane.leftAnchor="15.0" AnchorPane.topAnchor="5.0">
                      <image>
                         <Image url="@../images/default_avatar.jpg" />
                      </image>

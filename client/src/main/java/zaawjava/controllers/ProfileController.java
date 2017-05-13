@@ -168,7 +168,6 @@ public class ProfileController implements Initializable {
         if (userService.getUser().getCountry() != null)
             country.setValue(userService.getUser().getCountry().getCountryName());
         setProfileAvatar();
-        stopTransition();
     }
 
     void setProfileAvatar() {
@@ -182,13 +181,13 @@ public class ProfileController implements Initializable {
                     .whenComplete((img, ex) -> {
                         increaseTransiotionValue(0.1);
                         Platform.runLater(() -> avatar.setImage(img));
+                        increaseTransiotionValue(1);
+                        stopTransition();
                     });
         }
-        increaseTransiotionValue(1);
     }
 
     void startTransition() {
-        progressIndicator.setVisible(true);
         progressIndicator.setProgress(0.01);
         increaseTransiotionValue(0.1);
     }
@@ -198,10 +197,7 @@ public class ProfileController implements Initializable {
     }
 
     void increaseTransiotionValue(double value) {
-//        for (double i = progressIndicator.getProgress(); i < value; i++) {
-//        progressIndicator.setProgress(i/10);
         progressIndicator.setProgress(value + progressIndicator.getProgress());
-//        }
     }
 
     @FXML
@@ -317,8 +313,17 @@ public class ProfileController implements Initializable {
                 errorMessage += "No valid date. Use the format yyyy-dd-mm!\n";
             }
         }
-        if (imageTextField.getText() == null || imageTextField.getText().length() == 0) {
-            errorMessage += "Empty image link!\n";
+        if (!imageTextField.disableProperty().get()) {
+            if (imageTextField.getText() == null || imageTextField.getText().length() == 0) {
+                errorMessage += "Empty image link!\n";
+            }
+        }
+        if (number.getText() != null || number.getText().length() != 0) {
+            try {
+                Integer.parseInt(number.getText());
+            } catch (Exception ex) {
+                errorMessage += "Please correct your phone number!\n";
+            }
         }
         if (sex == null) {
             errorMessage += "Please select your gender!\n";

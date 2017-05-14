@@ -81,7 +81,7 @@ public class ScreensManager {
     public void goToLoginView() throws IOException {
         String fxmlFile = "/fxml/login.fxml";
         Parent rootNode = (Parent) loader.load(fxmlFile);
-        Scene scene = new Scene(rootNode, 400, 200);
+        Scene scene = new Scene(rootNode);
         stage.setTitle("Login");
         stage.setScene(scene);
 

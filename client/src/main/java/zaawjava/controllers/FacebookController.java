@@ -1,16 +1,19 @@
 package zaawjava.controllers;
 
+import DTO.UserDTO;
 import com.restfb.DefaultFacebookClient;
 import com.restfb.FacebookClient;
+import com.restfb.Parameter;
+import com.restfb.Version;
 import com.restfb.exception.FacebookOAuthException;
 import com.restfb.types.User;
+import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.Initializable;
 import javafx.scene.web.WebView;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.chrome.ChromeDriver;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import zaawjava.ScreensManager;
@@ -18,11 +21,14 @@ import zaawjava.services.SocketService;
 import zaawjava.services.UserService;
 import javafx.concurrent.Worker;
 import javafx.concurrent.Worker.State;
+import zaawjava.utils.Utils;
 
 import java.io.IOException;
+import java.net.URL;
+import java.util.ResourceBundle;
 
 @Component
-public class FacebookController {
+public class FacebookController implements Initializable {
     private ScreensManager screensManager;
     private UserService userService;
     private final SocketService socketService;
@@ -45,24 +51,13 @@ public class FacebookController {
         this.screensManager = screensManager;
     }
 
-    String domain = "https://github.com/sikora195703/jcom";  //To strona na ktora bedzie redirect, moze trzeba jakos to lepiej wymyslic
+    String domain = "https://ftims.edu.p.lodz.pl/";  //To strona na ktora bedzie redirect, moze trzeba jakos to lepiej wymyslic
     String appID = "1954377814849369"; //To jest ID naszej apki na stronie Facebook Developers
     String accessToken;
-
     String authUrl = "https://www.facebook.com/v2.9/dialog/oauth?client_id=" + appID + "&response_type=token&redirect_uri=" + domain + "&scope=" +
-            "email";
-//                "email,first_name,last_name,gender";
-
-    //                + "birthday,email,first_name,gender,languages,last_name,locale,ads_management";
+            "email,public_profile,user_birthday";
     FacebookClient facebookClient;
     User userFB;
-
-    @FXML
-    public void initialize() {
-//        doAutorizatrionByChrome();
-        doAuthorizationByWebView();
-    }
-
 
     private void doAuthorizationByWebView() {
         webView.getEngine().load(authUrl);
@@ -75,11 +70,11 @@ public class FacebookController {
                             screensManager.getStage().setTitle(location);
                             if (!location.contains("facebook.com")) {
                                 accessToken = location.replaceAll(".*#access_token=(.+)&.*", "$1");
-                                System.out.println("Access token:\n" + accessToken);
                                 try {
-                                    facebookClient = new DefaultFacebookClient(accessToken);
-                                    userFB = facebookClient.fetchObject("me", com.restfb.types.User.class);
+                                    facebookClient = new DefaultFacebookClient(accessToken, Version.VERSION_2_8);
+                                    userFB = facebookClient.fetchObject("me", com.restfb.types.User.class, Parameter.with("fields", "first_name,last_name,gender,name,picture,email,birthday"));
                                     System.out.println(userFB);
+                                    doRegistration();
                                 } catch (FacebookOAuthException ex) {
                                     System.out.println("FB error" + ex.getErrorType() + " " + ex.getErrorMessage());
                                 }
@@ -90,24 +85,27 @@ public class FacebookController {
                 });
     }
 
-    private void doAutorizatrionByChrome() {
-        System.setProperty("webdriver.chrome.driver", "chromedriver.exe");
-        WebDriver webDriver = new ChromeDriver();
-        webDriver.get(authUrl);
-        while (true) { //Sprawdzamy czy uzytkownik jest na stronie facebooka
-            if (webDriver.getCurrentUrl() != null) {
-                if (!webDriver.getCurrentUrl().contains("facebook.com")) {
-                    String url = webDriver.getCurrentUrl();
-                    accessToken = url.replaceAll(".*#access_token=(.+)&.*", "$1");
-                    webDriver.quit();
-                    System.out.println("Access token:\n" + accessToken);
-                    FacebookClient facebookClient = new DefaultFacebookClient(accessToken);
-                    User userFB = facebookClient.fetchObject("me", com.restfb.types.User.class);
-                    System.out.println(userFB);
-                    return;
+    private void doRegistration() {
+        UserDTO userNew = new UserDTO(userFB.getEmail(), "pass", userFB.getFirstName(), userFB.getLastName(), Utils.parse(userFB.getBirthday()), userFB.getGender());
+        socketService.emit("onRegistration", userNew).whenComplete((msg, ex) -> {
+            if (ex == null) {
+                if ("registered".equals(msg)) {
+                    Platform.runLater(() -> {
+                        try {
+                            socketService.disconnect();
+                            screensManager.goToLoginView();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                            System.out.println("Cannot load login view");
+                        }
+                    });
+                } else {
+                    System.out.println("Registration failed during writing data to database. " + msg);
                 }
+            } else {
+                System.out.println("Registration failed during connection to database");
             }
-        }
+        });
     }
 
     @FXML
@@ -117,5 +115,10 @@ public class FacebookController {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    @Override
+    public void initialize(URL location, ResourceBundle resources) {
+        doAuthorizationByWebView();
     }
 }

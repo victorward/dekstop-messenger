@@ -1,17 +1,13 @@
 package zaawjava.controllers;
 
-import com.microsoft.alm.oauth2.useragent.AuthorizationException;
-import com.microsoft.alm.oauth2.useragent.AuthorizationResponse;
-import com.microsoft.alm.oauth2.useragent.UserAgent;
-import com.microsoft.alm.oauth2.useragent.UserAgentImpl;
 import com.restfb.DefaultFacebookClient;
 import com.restfb.FacebookClient;
+import com.restfb.exception.FacebookOAuthException;
 import com.restfb.types.User;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
@@ -24,8 +20,6 @@ import javafx.concurrent.Worker;
 import javafx.concurrent.Worker.State;
 
 import java.io.IOException;
-import java.net.URI;
-import java.net.URISyntaxException;
 
 @Component
 public class FacebookController {
@@ -54,53 +48,49 @@ public class FacebookController {
     String domain = "https://github.com/sikora195703/jcom";  //To strona na ktora bedzie redirect, moze trzeba jakos to lepiej wymyslic
     String appID = "1954377814849369"; //To jest ID naszej apki na stronie Facebook Developers
     String accessToken;
-    String authUrl = "https://graph.facebook.com/oauth/authorize?type=user_agent&client_id=" + appID + "&redirect_uri=" + domain + "&scope=user_about_me,"
-            + ",email";
+
+    String authUrl = "https://www.facebook.com/v2.9/dialog/oauth?client_id=" + appID + "&response_type=token&redirect_uri=" + domain + "&scope=" +
+            "email";
+//                "email,first_name,last_name,gender";
+
     //                + "birthday,email,first_name,gender,languages,last_name,locale,ads_management";
     FacebookClient facebookClient;
     User userFB;
 
     @FXML
     public void initialize() {
-//        doAutorizatrion();
-        authorization();
+//        doAutorizatrionByChrome();
+        doAuthorizationByWebView();
     }
 
-    private void authorization() {
+
+    private void doAuthorizationByWebView() {
         webView.getEngine().load(authUrl);
         webView.getEngine().getLoadWorker().stateProperty().addListener(
                 new ChangeListener<State>() {
                     @Override
                     public void changed(ObservableValue ov, State oldState, State newState) {
                         if (newState == Worker.State.SUCCEEDED) {
-                            screensManager.getStage().setTitle(webView.getEngine().getLocation());
-                            if (!webView.getEngine().getLocation().contains("facebook.com")) {
-                                String url = webView.getEngine().getLocation();
-                                accessToken = url.replaceAll(".*#access_token=(.+)&.*", "$1");
-                                facebookClient = new DefaultFacebookClient(accessToken);
-                                userFB = facebookClient.fetchObject("me", User.class);
-                                System.out.println(userFB.getAbout() + " " + userFB.getEmail());
+                            String location = webView.getEngine().getLocation();
+                            screensManager.getStage().setTitle(location);
+                            if (!location.contains("facebook.com")) {
+                                accessToken = location.replaceAll(".*#access_token=(.+)&.*", "$1");
+                                System.out.println("Access token:\n" + accessToken);
+                                try {
+                                    facebookClient = new DefaultFacebookClient(accessToken);
+                                    userFB = facebookClient.fetchObject("me", com.restfb.types.User.class);
+                                    System.out.println(userFB);
+                                } catch (FacebookOAuthException ex) {
+                                    System.out.println("FB error" + ex.getErrorType() + " " + ex.getErrorMessage());
+                                }
+
                             }
                         }
                     }
                 });
     }
 
-
-    public void login(String endpoint, String uri) throws AuthorizationException, URISyntaxException {
-        final URI authorizationEndpoint = new URI(endpoint);
-        final URI redirectUri = new URI(uri);
-
-        final UserAgent userAgent = new UserAgentImpl();
-
-        final AuthorizationResponse authorizationResponse = userAgent.requestAuthorizationCode(authorizationEndpoint, redirectUri);
-        final String code = authorizationResponse.getCode();
-
-        System.out.print("Authorization Code: ");
-        System.out.println(code);
-    }
-
-    private void doAutorizatrion() {
+    private void doAutorizatrionByChrome() {
         System.setProperty("webdriver.chrome.driver", "chromedriver.exe");
         WebDriver webDriver = new ChromeDriver();
         webDriver.get(authUrl);
@@ -110,10 +100,10 @@ public class FacebookController {
                     String url = webDriver.getCurrentUrl();
                     accessToken = url.replaceAll(".*#access_token=(.+)&.*", "$1");
                     webDriver.quit();
+                    System.out.println("Access token:\n" + accessToken);
                     FacebookClient facebookClient = new DefaultFacebookClient(accessToken);
-                    User userFB = facebookClient.fetchObject("me", User.class);
-//                    messageLabel.setText(userFB.getFirstName() + "" + userFB.getLastName());
-                    System.out.println(userFB.getAbout() + " " + userFB.getEmail());
+                    User userFB = facebookClient.fetchObject("me", com.restfb.types.User.class);
+                    System.out.println(userFB);
                     return;
                 }
             }

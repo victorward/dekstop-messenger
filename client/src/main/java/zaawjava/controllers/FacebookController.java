@@ -1,6 +1,5 @@
 package zaawjava.controllers;
 
-import DTO.CountryDTO;
 import DTO.UserDTO;
 import com.restfb.DefaultFacebookClient;
 import com.restfb.FacebookClient;
@@ -35,14 +34,8 @@ public class FacebookController implements Initializable {
     private UserService userService;
     private SocketService socketService;
 
-
     @FXML
     private WebView webView;
-
-//    @Autowired
-//    public FacebookController(SocketService socketService) {
-//        this.socketService = socketService;
-//    }
 
     @Autowired
     public void setSocketService(SocketService socketService) {

@@ -14,6 +14,7 @@ import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.Alert;
 import javafx.scene.web.WebView;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -84,7 +85,8 @@ public class FacebookController implements Initializable {
 //                                    System.out.println(userFB);
                                     doRegistration();
                                 } catch (FacebookOAuthException ex) {
-                                    System.out.println("FB error" + ex.getErrorType() + " " + ex.getErrorMessage());
+                                    Platform.runLater(()-> showErrorMessege("FB error: " + ex.getErrorType() + " " + ex.getErrorMessage()));
+                                    System.out.println("FB error: " + ex.getErrorType() + " " + ex.getErrorMessage());
                                 }
 
                             }
@@ -103,19 +105,37 @@ public class FacebookController implements Initializable {
                     Platform.runLater(() -> {
                         try {
                             socketService.disconnect();
+                            Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+                            alert.initOwner(screensManager.getStage());
+                            alert.setTitle("Information about your Account password");
+                            alert.setHeaderText("Your default password is 'pass'");
+                            alert.setContentText("Please change your password in 'Profil'!");
+                            alert.showAndWait();
                             screensManager.goToLoginView();
                         } catch (IOException e) {
                             e.printStackTrace();
+                            Platform.runLater(()-> showErrorMessege("Cannot load login view"));
                             System.out.println("Cannot load login view");
                         }
                     });
                 } else {
+                    Platform.runLater(()-> showErrorMessege("Registration failed during writing data to database. " + msg));
                     System.out.println("Registration failed during writing data to database. " + msg);
                 }
             } else {
+                Platform.runLater(()-> showErrorMessege("Registration failed during connection to database"));
                 System.out.println("Registration failed during connection to database");
             }
         });
+    }
+
+    private void showErrorMessege(String content){
+        Alert alert = new Alert(Alert.AlertType.ERROR);
+        alert.initOwner(screensManager.getStage());
+        alert.setTitle("WAMY error");
+        alert.setHeaderText("Please correct invalid fields or contact with administrator");
+        alert.setContentText(content);
+        alert.showAndWait();
     }
 
     @FXML

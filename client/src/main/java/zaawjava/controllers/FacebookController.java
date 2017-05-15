@@ -1,5 +1,6 @@
 package zaawjava.controllers;
 
+import DTO.CountryDTO;
 import DTO.UserDTO;
 import com.restfb.DefaultFacebookClient;
 import com.restfb.FacebookClient;
@@ -31,13 +32,19 @@ import java.util.ResourceBundle;
 public class FacebookController implements Initializable {
     private ScreensManager screensManager;
     private UserService userService;
-    private final SocketService socketService;
+    private SocketService socketService;
+
 
     @FXML
     private WebView webView;
 
+//    @Autowired
+//    public FacebookController(SocketService socketService) {
+//        this.socketService = socketService;
+//    }
+
     @Autowired
-    public FacebookController(SocketService socketService) {
+    public void setSocketService(SocketService socketService) {
         this.socketService = socketService;
     }
 
@@ -55,7 +62,7 @@ public class FacebookController implements Initializable {
     String appID = "1954377814849369"; //To jest ID naszej apki na stronie Facebook Developers
     String accessToken;
     String authUrl = "https://www.facebook.com/v2.9/dialog/oauth?client_id=" + appID + "&response_type=token&redirect_uri=" + domain + "&scope=" +
-            "email,public_profile,user_birthday";
+            "email,public_profile,user_birthday,user_location";
     FacebookClient facebookClient;
     User userFB;
 
@@ -70,10 +77,11 @@ public class FacebookController implements Initializable {
                             screensManager.getStage().setTitle(location);
                             if (!location.contains("facebook.com")) {
                                 accessToken = location.replaceAll(".*#access_token=(.+)&.*", "$1");
+                                System.out.println(accessToken);
                                 try {
                                     facebookClient = new DefaultFacebookClient(accessToken, Version.VERSION_2_8);
-                                    userFB = facebookClient.fetchObject("me", com.restfb.types.User.class, Parameter.with("fields", "first_name,last_name,gender,name,picture,email,birthday"));
-                                    System.out.println(userFB);
+                                    userFB = facebookClient.fetchObject("me", com.restfb.types.User.class, Parameter.with("fields", "first_name,last_name,gender,name,picture,email,birthday,location"));
+//                                    System.out.println(userFB);
                                     doRegistration();
                                 } catch (FacebookOAuthException ex) {
                                     System.out.println("FB error" + ex.getErrorType() + " " + ex.getErrorMessage());
@@ -86,7 +94,9 @@ public class FacebookController implements Initializable {
     }
 
     private void doRegistration() {
-        UserDTO userNew = new UserDTO(userFB.getEmail(), "pass", userFB.getFirstName(), userFB.getLastName(), Utils.parse(userFB.getBirthday()), userFB.getGender());
+        UserDTO userNew = new UserDTO(userFB.getEmail(), "pass", userFB.getFirstName(), userFB.getLastName(), Utils.parseFB(userFB.getBirthday()), userFB.getGender());
+        userNew.setPhoto(userFB.getPicture().getUrl());
+        userNew.setAddress(userFB.getLocation().getName());
         socketService.emit("onRegistration", userNew).whenComplete((msg, ex) -> {
             if (ex == null) {
                 if ("registered".equals(msg)) {

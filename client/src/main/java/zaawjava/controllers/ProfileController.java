@@ -175,7 +175,6 @@ public class ProfileController implements Initializable {
         String imageSource = userService.getUser().getPhoto();
         if (imageSource != null && !imageSource.equals("")) {
             imageTextField.setText(imageSource);
-
             CompletableFuture
                     .supplyAsync(() -> new Image(imageSource))
                     .whenComplete((img, ex) -> {
@@ -184,6 +183,8 @@ public class ProfileController implements Initializable {
                         increaseTransiotionValue(1);
                         stopTransition();
                     });
+        } else {
+            increaseTransiotionValue(1);
         }
     }
 

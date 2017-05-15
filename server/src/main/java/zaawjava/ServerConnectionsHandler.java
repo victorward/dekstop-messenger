@@ -102,7 +102,7 @@ public class ServerConnectionsHandler extends ChannelInboundHandlerAdapter {
                 ServerConnectionsHandler.this.messageService.sendMessage("getLoggedUser", UtilsDTO.convertUserToDTO(tmpUser));
                 userService.addUserToLoggedList(tmpUser, channel);
                 messageService.sendMessageToGroup(allChannels, "numberOfUsersChanged", userService.getNumberOfLoggedUsers());
-                messageService.sendMessageToGroup(allChannels,"listOfUsersChanged", getMapOfUsersWithStatus());
+                messageService.sendMessageToGroup(allChannels, "listOfUsersChanged", getMapOfUsersWithStatus());
             }
         });
 
@@ -113,7 +113,7 @@ public class ServerConnectionsHandler extends ChannelInboundHandlerAdapter {
                 messageService.sendMessage("loggedOutUser", "loggedOutUser");
                 userService.deleteUserFromLoggedList(user);
                 messageService.sendMessageToGroup(allChannels, "numberOfUsersChanged", userService.getNumberOfLoggedUsers());
-                messageService.sendMessageToGroup(allChannels,"listOfUsersChanged", getMapOfUsersWithStatus());
+                messageService.sendMessageToGroup(allChannels, "listOfUsersChanged", getMapOfUsersWithStatus());
             }
         });
 
@@ -244,8 +244,10 @@ public class ServerConnectionsHandler extends ChannelInboundHandlerAdapter {
 
     public boolean addNewUser(User user) {
         try {
-            user.setAddress("");
-            user.setPhoto("");
+            if (user.getAddress().length() < 1)
+                user.setAddress("");
+            if (user.getPhoto().length() < 1)
+                user.setPhoto("");
             user.setPassword(Utils.encryptPassword(user.getPassword()));
             log.debug("Trying add to database" + user);
             databaseConnector.insertUser(user);

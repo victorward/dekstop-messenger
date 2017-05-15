@@ -178,6 +178,14 @@ public class LoginController {
 
     @FXML
     void loginWithOAuth(ActionEvent event) {
-        screensManager.setLoginOAuth();
+        if (!socketService.isConnected()) {
+            socketService.connect().addListener((ChannelFuture future) -> {
+                if (future.isSuccess()) {
+                    Platform.runLater(() -> screensManager.setLoginOAuth());
+
+                }
+            });
+        }
+
     }
 }

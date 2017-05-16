@@ -5,8 +5,6 @@ import io.netty.channel.ChannelFuture;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
@@ -66,6 +64,8 @@ public class LoginController {
         passwordField.setText("pass");
     }
 
+    String errorMessage;
+
     private void login() {
         UserDTO user = new UserDTO(loginField.getText(), passwordField.getText());
         if (isInputValid()) {
@@ -87,7 +87,8 @@ public class LoginController {
                 }
             });
         } else {
-            Platform.runLater(() -> messageLabel.setText("Login failed. Please write correct values"));
+            socketService.disconnect();
+            Platform.runLater(() -> messageLabel.setText("Login failed. Please write correct values. " + errorMessage));
         }
     }
 
@@ -103,7 +104,7 @@ public class LoginController {
     }
 
     private boolean isInputValid() {
-        String errorMessage = "";
+        errorMessage = "";
 
         if (loginField.getText() == null || loginField.getText().length() == 0) {
             errorMessage += "Empty email!\n";
@@ -119,12 +120,6 @@ public class LoginController {
         if (errorMessage.length() == 0) {
             return true;
         } else {
-            Alert alert = new Alert(AlertType.ERROR);
-            alert.initOwner(screensManager.getStage());
-            alert.setTitle("Invalid Fields");
-            alert.setHeaderText("Please correct invalid fields");
-            alert.setContentText(errorMessage);
-            alert.showAndWait();
             return false;
         }
     }
@@ -172,5 +167,18 @@ public class LoginController {
 
     public Button getRegistration() {
         return registration;
+    }
+
+    @FXML
+    void loginWithOAuth(ActionEvent event) {
+        if (!socketService.isConnected()) {
+            socketService.connect().addListener((ChannelFuture future) -> {
+                if (future.isSuccess()) {
+                    Platform.runLater(() -> screensManager.setLoginOAuth());
+
+                }
+            });
+        }
+
     }
 }

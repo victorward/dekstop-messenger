@@ -100,6 +100,13 @@
             <version>4.3.7.RELEASE</version>
         </dependency>
 
+        <!-- https://mvnrepository.com/artifact/com.restfb/restfb -->
+        <dependency>
+            <groupId>com.restfb</groupId>
+            <artifactId>restfb</artifactId>
+            <version>2.0.0-rc.2</version>
+        </dependency>
+
     </dependencies>
 
 </project>

@@ -60,6 +60,7 @@ public class ScreensManager {
     }
 
     private UserToUserController userToUserController;
+
     @Autowired
     public void setUserToUserController(UserToUserController userToUserController) {
         this.userToUserController = userToUserController;
@@ -79,19 +80,14 @@ public class ScreensManager {
 
     public void goToLoginView() throws IOException {
         String fxmlFile = "/fxml/login.fxml";
-
         Parent rootNode = (Parent) loader.load(fxmlFile);
-
-        Scene scene = new Scene(rootNode, 400, 200);
-        scene.getStylesheets().add("/styles/styles.css");
-
+        Scene scene = new Scene(rootNode);
         stage.setTitle("Login");
         stage.setScene(scene);
 
     }
 
     public void goToMainView() {
-
         Parent rootNode = (Parent) loader.load("/fxml/mainView.fxml");
         Scene scene = new Scene(rootNode);
         stage.setScene(scene);
@@ -106,7 +102,6 @@ public class ScreensManager {
 
     public void setUserToUserView(UserDTO userDTO) {
         Parent rootNode = (Parent) loader.load("/fxml/userToUser.fxml");
-        //dziala, ale hrenowo
         mainViewController.getContentPane().getChildren().clear();
         userToUserController.setUserDTO(userDTO);
         mainViewController.getContentPane().getChildren().add(rootNode);
@@ -122,5 +117,12 @@ public class ScreensManager {
         Parent rootNode = (Parent) loader.load("/fxml/globalChat.fxml");
         mainViewController.getContentPane().getChildren().clear();
         mainViewController.getContentPane().getChildren().add(rootNode);
+    }
+
+    public void setLoginOAuth() {
+        Parent rootNode = (Parent) loader.load("/fxml/facebookWeb.fxml");
+        Scene scene = new Scene(rootNode);
+        stage.setTitle("Facebook autorization");
+        stage.setScene(scene);
     }
 }

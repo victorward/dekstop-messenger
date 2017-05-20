@@ -1,5 +1,6 @@
 package zaawjava;
 
+import DTO.ChatMessageDTO;
 import DTO.CountryDTO;
 import DTO.LanguageDTO;
 import DTO.UserDTO;
@@ -15,10 +16,7 @@ import utils.MessageHandler;
 import utils.MessageService;
 import zaawjava.Utils.Utils;
 import zaawjava.Utils.UtilsDTO;
-import zaawjava.model.ChatMessage;
-import zaawjava.model.Country;
-import zaawjava.model.Language;
-import zaawjava.model.User;
+import zaawjava.model.*;
 import zaawjava.services.DatabaseConnector;
 import zaawjava.services.UserService;
 
@@ -192,6 +190,30 @@ public class ServerConnectionsHandler extends ChannelInboundHandlerAdapter {
                 List<ChatMessage> messageList =
                         databaseConnector.getMessageListByUsers(userService.getUserByChannel(channel), user);
                 messageService.sendMessage("getConversation", UtilsDTO.convertChatMessageToDTO(messageList));
+            }
+        });
+        this.messageService.registerHandler("newPrivateMessage", new MessageHandler() {
+            @Override
+            public void handle(Object msg, Channel channel, ChannelFuture future) {
+                ChatMessageDTO chatMessageDTO = (ChatMessageDTO) msg;
+                User sender = userService.getUserByChannel(channel);
+                User recipient = UtilsDTO.convertDTOtoUser(chatMessageDTO.getRecipient());
+
+                Conversation conversation = databaseConnector.getConversationByUsers(sender, recipient);
+                ChatMessage newChatMessage = UtilsDTO.convertDTOToChatMessage(chatMessageDTO);
+                newChatMessage.setConversation(conversation);
+
+                databaseConnector.insertPrivateMessage(newChatMessage);
+
+                if (userService.checkIfLogged(recipient)) {
+                    DefaultChannelGroup users = new DefaultChannelGroup(GlobalEventExecutor.INSTANCE);
+                    users.add(channel);
+                    users.add(userService.getUserChannel(recipient));
+
+                    messageService.sendMessageToGroup(users, "privateMessage", msg);
+                } else {
+                    messageService.sendMessage("privateMessage", msg);
+                }
             }
         });
     }

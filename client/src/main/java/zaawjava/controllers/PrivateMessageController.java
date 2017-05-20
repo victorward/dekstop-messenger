@@ -10,11 +10,14 @@ import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import utils.MessageHandler;
@@ -24,6 +27,7 @@ import zaawjava.services.UserService;
 import zaawjava.utils.ChatMessageCellFactory;
 
 import java.net.URL;
+import java.util.Date;
 import java.util.List;
 import java.util.ResourceBundle;
 import java.util.concurrent.CompletableFuture;
@@ -71,11 +75,7 @@ public class PrivateMessageController implements Initializable {
 
     @FXML
     void sendMessageBtn(ActionEvent event) {
-        if (sendMessageArea.getText().trim().length() == 0) return;
-        ChatMessageDTO message = new ChatMessageDTO(userService.getUser(), sendMessageArea.getText().trim());
-        message.addRecipient(userDTO);
-        sendMessageArea.setText("");
-        socketService.emit("newPrivateMessage", message);
+        sendChatMessage();
     }
 
     @Override
@@ -83,7 +83,16 @@ public class PrivateMessageController implements Initializable {
         chatMessageDTOS.clear();
         messagesListView.setItems(chatMessageDTOS);
         messagesListView.setCellFactory(new ChatMessageCellFactory());
+        sendMessageArea.setOnKeyPressed(new EventHandler<KeyEvent>() {
+            @Override
+            public void handle(KeyEvent event) {
+                if (event.getCode() == KeyCode.ENTER) {
+                    sendChatMessage();
+                }
+            }
+        });
     }
+
 
     public void setUserDTO(UserDTO userDTO) {
         this.userDTO = userDTO;
@@ -92,7 +101,7 @@ public class PrivateMessageController implements Initializable {
             socketService.on("privateMessage", new MessageHandler() {
                 @Override
                 public void handle(Object msg, Channel channel, ChannelFuture future) {
-
+                    Platform.runLater(() -> chatMessageDTOS.add((ChatMessageDTO) msg));
                 }
             });
         });
@@ -114,5 +123,14 @@ public class PrivateMessageController implements Initializable {
                         Platform.runLater(() -> userAvatar.setImage(img));
                     });
         }
+    }
+
+    private void sendChatMessage() {
+        if (sendMessageArea.getText().trim().length() == 0) return;
+        ChatMessageDTO message = new ChatMessageDTO(userService.getUser(), sendMessageArea.getText().trim());
+        message.setRecipient(userDTO);
+        message.setDate(new Date());
+        sendMessageArea.setText("");
+        socketService.emit("newPrivateMessage", message);
     }
 }

@@ -1,15 +1,12 @@
 package DTO;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.LinkedList;
-import java.util.List;
 
 public class ChatMessageDTO implements Serializable {
     private int id;
     private UserDTO sender;
-    private List<UserDTO> recipients;
+    private UserDTO recipient;
     private String content;
     private Date date;
 
@@ -22,11 +19,18 @@ public class ChatMessageDTO implements Serializable {
         this.content = content;
     }
 
-    public ChatMessageDTO(UserDTO sender, List<UserDTO> recipients, String content) {
-        if (recipients == null) this.recipients = new ArrayList<>();
+    public ChatMessageDTO(UserDTO sender, UserDTO recipient, String content) {
         this.sender = sender;
-        this.recipients = recipients;
+        this.recipient = recipient;
         this.content = content;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     public UserDTO getSender() {
@@ -37,12 +41,12 @@ public class ChatMessageDTO implements Serializable {
         this.sender = sender;
     }
 
-    public List<UserDTO> getRecipients() {
-        return recipients;
+    public UserDTO getRecipient() {
+        return recipient;
     }
 
-    public void setRecipients(List<UserDTO> recipients) {
-        this.recipients = recipients;
+    public void setRecipient(UserDTO recipient) {
+        this.recipient = recipient;
     }
 
     public String getContent() {
@@ -51,24 +55,6 @@ public class ChatMessageDTO implements Serializable {
 
     public void setContent(String content) {
         this.content = content;
-    }
-
-    public void addRecipient(UserDTO user) {
-        if (recipients == null) recipients = new LinkedList<>();
-        recipients.add(user);
-    }
-
-    public int getNumberOfRecipients() {
-        if (recipients == null) return 0;
-        return recipients.size();
-    }
-
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
     }
 
     public Date getDate() {

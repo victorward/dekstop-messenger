@@ -54,6 +54,13 @@ public class UserService {
         return userList;
     }
 
+    public Channel getUserChannel(User user) {
+        if (listOfLoggedUsers.containsKey(user.getId())) {
+            return listOfLoggedUsers.get(user.getId()).getChannel();
+        }
+        return null;
+    }
+
     public User getUserByChannel(Channel channel) {
         Optional<UserChannelPair> optional = listOfLoggedUsers
                 .values()

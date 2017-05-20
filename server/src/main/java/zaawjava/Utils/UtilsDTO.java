@@ -1,16 +1,20 @@
 package zaawjava.Utils;
 
+import DTO.ChatMessageDTO;
 import DTO.CountryDTO;
 import DTO.LanguageDTO;
 import DTO.UserDTO;
 import org.springframework.beans.BeanUtils;
+import zaawjava.model.ChatMessage;
 import zaawjava.model.Country;
 import zaawjava.model.Language;
 import zaawjava.model.User;
 
 import java.io.Serializable;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * Created by Yuriy
@@ -101,6 +105,26 @@ public class UtilsDTO implements Serializable {
             BeanUtils.copyProperties(language, languageDTO);
         }
         return languageDTO;
+    }
+
+    public static ChatMessageDTO convertChatMessageToDTO(ChatMessage chatMessage) {
+        ChatMessageDTO converted = new ChatMessageDTO();
+        BeanUtils.copyProperties(chatMessage, converted);
+        converted.setSender(UtilsDTO.convertUserToDTO(chatMessage.getSender()));
+        return converted;
+    }
+
+    public static ChatMessage convertDTOToChatMessage(ChatMessageDTO chatMessageDTO) {
+        ChatMessage converted = new ChatMessage();
+        BeanUtils.copyProperties(chatMessageDTO, converted);
+        converted.setSender(UtilsDTO.convertDTOtoUser(chatMessageDTO.getSender()));
+        return converted;
+    }
+
+    public static List<ChatMessageDTO> convertChatMessageToDTO(List<ChatMessage> chatMessages) {
+        return chatMessages.stream()
+                .map(UtilsDTO::convertChatMessageToDTO)
+                .collect(Collectors.toList());
     }
 
 }

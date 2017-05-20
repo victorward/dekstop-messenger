@@ -15,6 +15,7 @@ import utils.MessageHandler;
 import utils.MessageService;
 import zaawjava.Utils.Utils;
 import zaawjava.Utils.UtilsDTO;
+import zaawjava.model.ChatMessage;
 import zaawjava.model.Country;
 import zaawjava.model.Language;
 import zaawjava.model.User;
@@ -181,6 +182,16 @@ public class ServerConnectionsHandler extends ChannelInboundHandlerAdapter {
             @Override
             public void handle(Object msg, Channel channel, ChannelFuture future) {
                 messageService.sendMessageToGroup(allChannels, "onGlobalChatMessage", msg);
+            }
+        });
+
+        this.messageService.registerHandler("getConversation", new MessageHandler() {
+            @Override
+            public void handle(Object msg, Channel channel, ChannelFuture future) {
+                User user = UtilsDTO.convertDTOtoUser((UserDTO) msg);
+                List<ChatMessage> messageList =
+                        databaseConnector.getMessageListByUsers(userService.getUserByChannel(channel), user);
+                messageService.sendMessage("getConversation", UtilsDTO.convertChatMessageToDTO(messageList));
             }
         });
     }

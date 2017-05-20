@@ -12,11 +12,8 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.ListCell;
-import javafx.scene.control.ListView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
-import javafx.util.Callback;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +21,7 @@ import org.springframework.stereotype.Component;
 import utils.MessageHandler;
 import zaawjava.services.SocketService;
 import zaawjava.services.UserService;
+import zaawjava.utils.ChatMessageCellFactory;
 
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -58,27 +56,7 @@ public class GlobalChatController implements Initializable {
     public void initialize(URL location, ResourceBundle resources) {
         chatListView.setItems(chatMessageDTOS);
 
-        chatListView.setCellFactory(new Callback<ListView<ChatMessageDTO>, ListCell<ChatMessageDTO>>() {
-            @Override
-            public ListCell<ChatMessageDTO> call(ListView<ChatMessageDTO> param) {
-                return new ListCell<ChatMessageDTO>() {
-
-                    @Override
-                    protected void updateItem(ChatMessageDTO item, boolean empty) {
-                        super.updateItem(item, empty);
-                        if (item != null) {
-                            StringBuilder sb = new StringBuilder();
-                            sb
-                                    .append(item.getSender().getFirstName())
-                                    .append(" ").append(item.getSender().getLastName())
-                                    .append(" : ")
-                                    .append(item.getContent());
-                            setText(sb.toString());
-                        }
-                    }
-                };
-            }
-        });
+        chatListView.setCellFactory(new ChatMessageCellFactory());
 
         messageTextArea.setOnKeyPressed(new EventHandler<KeyEvent>() {
             @Override

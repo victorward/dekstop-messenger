@@ -2,13 +2,17 @@ package DTO;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
 public class ChatMessageDTO implements Serializable {
+    private int id;
     private UserDTO sender;
     private List<UserDTO> recipients;
     private String content;
+    private Date date;
+
 
     public ChatMessageDTO() {
     }
@@ -57,5 +61,21 @@ public class ChatMessageDTO implements Serializable {
     public int getNumberOfRecipients() {
         if (recipients == null) return 0;
         return recipients.size();
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public Date getDate() {
+        return date;
+    }
+
+    public void setDate(Date date) {
+        this.date = date;
     }
 }

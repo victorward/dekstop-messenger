@@ -12,6 +12,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import utils.CryptoUtils;
 import zaawjava.ScreensManager;
 import zaawjava.services.SocketService;
 import zaawjava.services.UserService;
@@ -67,7 +68,7 @@ public class LoginController {
     String errorMessage;
 
     private void login() {
-        UserDTO user = new UserDTO(loginField.getText(), passwordField.getText());
+        UserDTO user = new UserDTO(loginField.getText(), CryptoUtils.encryptPassword(passwordField.getText()));
         if (isInputValid()) {
             socketService.emit("onLogin", user).whenComplete((msg, ex) -> {
                 if (ex == null) {

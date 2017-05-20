@@ -11,10 +11,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import utils.CryptoUtils;
 import utils.Message;
 import utils.MessageHandler;
 import utils.MessageService;
-import zaawjava.Utils.Utils;
 import zaawjava.Utils.UtilsDTO;
 import zaawjava.model.*;
 import zaawjava.services.DatabaseConnector;
@@ -121,7 +121,7 @@ public class ServerConnectionsHandler extends ChannelInboundHandlerAdapter {
             public void handle(Object msg, Channel channel, ChannelFuture future) {
                 UserDTO userDTO = (UserDTO) msg;
                 User user = UtilsDTO.convertDTOtoUser(userDTO);
-                user.setPassword(Utils.encryptPassword(user.getPassword()));
+                user.setPassword(CryptoUtils.encryptPassword(user.getPassword()));
                 log.debug("|Przy update " + user);
                 if (user != null) {
                     if (updateUser(user)) {
@@ -255,8 +255,8 @@ public class ServerConnectionsHandler extends ChannelInboundHandlerAdapter {
     public boolean checkPassword(User user) {
         if (Optional.ofNullable(checkUserInDatabase(user.getEmail())).isPresent()) {
             User checkedUser = databaseConnector.getByEmail(user.getEmail());
-            checkedUser.setPassword(Utils.decryptPassword(checkedUser.getPassword()));
-            if (checkedUser.getPassword().equals(user.getPassword())) {
+            checkedUser.setPassword(CryptoUtils.decryptPassword(checkedUser.getPassword()));
+            if (checkedUser.getPassword().equals(CryptoUtils.decryptPassword(user.getPassword()))) {
                 tmpUser = checkedUser;
                 log.debug("Logged! Actual system " + tmpUser);
                 return true;
@@ -277,11 +277,11 @@ public class ServerConnectionsHandler extends ChannelInboundHandlerAdapter {
 
     public boolean addNewUser(User user) {
         try {
-            if (user.getAddress().length() < 1)
+            if (user.getAddress() == null || user.getAddress().length() < 1)
                 user.setAddress("");
-            if (user.getPhoto().length() < 1)
+            if (user.getPhoto() == null || user.getPhoto().length() < 1)
                 user.setPhoto("");
-            user.setPassword(Utils.encryptPassword(user.getPassword()));
+            user.setPassword(CryptoUtils.encryptPassword(user.getPassword()));
             log.debug("Trying add to database" + user);
             databaseConnector.insertUser(user);
             return true;

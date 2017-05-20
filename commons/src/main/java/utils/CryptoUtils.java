@@ -1,11 +1,11 @@
-package zaawjava.Utils;
+package utils;
 
 import org.jasypt.util.text.BasicTextEncryptor;
 
 /**
  * Created by Yuriy
  */
-public class Utils {
+public class CryptoUtils {
     public static String encryptPassword(String pass){
 //        StandardPBEStringEncryptor encryptor = new StandardPBEStringEncryptor();
 //        encryptor.setPassword("zaawjava");

@@ -101,7 +101,13 @@ public class PrivateMessageController implements Initializable {
             socketService.on("privateMessage", new MessageHandler() {
                 @Override
                 public void handle(Object msg, Channel channel, ChannelFuture future) {
-                    Platform.runLater(() -> chatMessageDTOS.add((ChatMessageDTO) msg));
+                    Platform.runLater(() -> {
+                        ChatMessageDTO newChatMessage = (ChatMessageDTO) msg;
+                        if (newChatMessage.getSender().getId() == userDTO.getId()
+                                || newChatMessage.getSender().getId() == userService.getUser().getId()) {
+                            chatMessageDTOS.add(newChatMessage);
+                        }
+                    });
                 }
             });
         });

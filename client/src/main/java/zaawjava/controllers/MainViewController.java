@@ -103,7 +103,7 @@ public class MainViewController implements Initializable {
 
         usersList.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
             if (newSelection != null) {
-                screensManager.setUserToUserView(usersList.getSelectionModel().getSelectedItem().getKey());
+                screensManager.setPrivateMessageController(usersList.getSelectionModel().getSelectedItem().getKey());
             }
         });
         initHashTable();
@@ -120,7 +120,7 @@ public class MainViewController implements Initializable {
         userStatus.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<Map.Entry<UserDTO, Boolean>, String>, ObservableValue<String>>() {
             @Override
             public ObservableValue<String> call(TableColumn.CellDataFeatures<Map.Entry<UserDTO, Boolean>, String> p) {
-                if (p.getValue().getValue().booleanValue()) {
+                if (p.getValue().getValue()) {
                     return new SimpleStringProperty("Online");
                 } else {
                     return new SimpleStringProperty("");

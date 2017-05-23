@@ -3,7 +3,6 @@ package zaawjava.utils;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
-import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -39,7 +38,7 @@ public class Utils {
         try {
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM/dd/yyyy");
             return LocalDate.parse(dateString, formatter);
-        } catch (DateTimeParseException ex) {
+        } catch (Exception ex) {
             return null;
         }
     }

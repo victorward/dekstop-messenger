@@ -13,7 +13,7 @@
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane id="rootPane" minHeight="560.0" minWidth="760.0" style="-fx-background-color: linen;" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="zaawjava.controllers.MainViewController">
+<AnchorPane id="rootPane" minHeight="560.0" minWidth="760.0" style="-fx-background-color: linen;" xmlns="http://javafx.com/javafx/8.0.102" xmlns:fx="http://javafx.com/fxml/1" fx:controller="zaawjava.controllers.MainViewController">
    <children>
       <BorderPane layoutX="321.0" layoutY="178.0" minHeight="560.0" minWidth="760.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <top>
@@ -44,12 +44,12 @@
             </ButtonBar>
          </top>
          <left>
-            <AnchorPane BorderPane.alignment="CENTER">
+            <AnchorPane prefHeight="500.0" prefWidth="214.0" BorderPane.alignment="CENTER">
                <children>
                   <TableView fx:id="usersList" prefHeight="500.0" prefWidth="170.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                     <columns>
-                      <TableColumn fx:id="userName" prefWidth="120.0" text="Name" />
-                      <TableColumn fx:id="userStatus" minWidth="48.0" prefWidth="-1.0" text="Online" />
+                      <TableColumn fx:id="userName" prefWidth="130.0" text="Name" />
+                      <TableColumn fx:id="userStatus" minWidth="48.0" prefWidth="81.0" text="Online" />
                     </columns>
                   </TableView>
                </children>

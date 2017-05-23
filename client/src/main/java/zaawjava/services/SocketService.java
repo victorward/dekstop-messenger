@@ -16,6 +16,7 @@ import utils.MessageHandler;
 import utils.MessageService;
 import zaawjava.handlers.ClientHandler;
 
+import java.io.Serializable;
 import java.util.concurrent.CompletableFuture;
 
 @Service
@@ -87,7 +88,7 @@ public class SocketService {
         }
     }
 
-    public CompletableFuture<Object> emit(String event, Object message) {
+    public CompletableFuture<Object> emit(String event, Serializable message) {
 
         CompletableFuture<Object> completableFuture = new CompletableFuture<>();
 

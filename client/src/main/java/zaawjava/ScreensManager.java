@@ -12,7 +12,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 import zaawjava.controllers.LoginController;
 import zaawjava.controllers.MainViewController;
-import zaawjava.controllers.UserToUserController;
+import zaawjava.controllers.PrivateMessageController;
 import zaawjava.services.SocketService;
 import zaawjava.utils.SpringFxmlLoader;
 
@@ -59,10 +59,10 @@ public class ScreensManager {
         this.mainViewController = mainViewController;
     }
 
-    private UserToUserController userToUserController;
+    private PrivateMessageController userToUserController;
 
     @Autowired
-    public void setUserToUserController(UserToUserController userToUserController) {
+    public void setUserToUserController(PrivateMessageController userToUserController) {
         this.userToUserController = userToUserController;
     }
 
@@ -101,7 +101,7 @@ public class ScreensManager {
     }
 
     public void setUserToUserView(UserDTO userDTO) {
-        Parent rootNode = (Parent) loader.load("/fxml/userToUser.fxml");
+        Parent rootNode = (Parent) loader.load("/fxml/privateMessage.fxml");
         mainViewController.getContentPane().getChildren().clear();
         userToUserController.setUserDTO(userDTO);
         mainViewController.getContentPane().getChildren().add(rootNode);

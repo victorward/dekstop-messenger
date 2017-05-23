@@ -1,5 +1,6 @@
 package zaawjava;
 
+import DTO.ChatMessageDTO;
 import DTO.CountryDTO;
 import DTO.LanguageDTO;
 import DTO.UserDTO;
@@ -10,14 +11,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import utils.CryptoUtils;
 import utils.Message;
 import utils.MessageHandler;
 import utils.MessageService;
-import zaawjava.Utils.Utils;
 import zaawjava.Utils.UtilsDTO;
-import zaawjava.model.Country;
-import zaawjava.model.Language;
-import zaawjava.model.User;
+import zaawjava.model.*;
 import zaawjava.services.DatabaseConnector;
 import zaawjava.services.UserService;
 
@@ -122,7 +121,7 @@ public class ServerConnectionsHandler extends ChannelInboundHandlerAdapter {
             public void handle(Object msg, Channel channel, ChannelFuture future) {
                 UserDTO userDTO = (UserDTO) msg;
                 User user = UtilsDTO.convertDTOtoUser(userDTO);
-                user.setPassword(Utils.encryptPassword(user.getPassword()));
+                user.setPassword(CryptoUtils.encryptPassword(user.getPassword()));
                 log.debug("|Przy update " + user);
                 if (user != null) {
                     if (updateUser(user)) {
@@ -183,6 +182,40 @@ public class ServerConnectionsHandler extends ChannelInboundHandlerAdapter {
                 messageService.sendMessageToGroup(allChannels, "onGlobalChatMessage", msg);
             }
         });
+
+        this.messageService.registerHandler("getConversation", new MessageHandler() {
+            @Override
+            public void handle(Object msg, Channel channel, ChannelFuture future) {
+                User user = UtilsDTO.convertDTOtoUser((UserDTO) msg);
+                List<ChatMessage> messageList =
+                        databaseConnector.getMessageListByUsers(userService.getUserByChannel(channel), user);
+                messageService.sendMessage("getConversation", UtilsDTO.convertChatMessageToDTO(messageList));
+            }
+        });
+        this.messageService.registerHandler("newPrivateMessage", new MessageHandler() {
+            @Override
+            public void handle(Object msg, Channel channel, ChannelFuture future) {
+                ChatMessageDTO chatMessageDTO = (ChatMessageDTO) msg;
+                User sender = userService.getUserByChannel(channel);
+                User recipient = UtilsDTO.convertDTOtoUser(chatMessageDTO.getRecipient());
+
+                Conversation conversation = databaseConnector.getConversationByUsers(sender, recipient);
+                ChatMessage newChatMessage = UtilsDTO.convertDTOToChatMessage(chatMessageDTO);
+                newChatMessage.setConversation(conversation);
+
+                databaseConnector.insertPrivateMessage(newChatMessage);
+
+                if (userService.checkIfLogged(recipient)) {
+                    DefaultChannelGroup users = new DefaultChannelGroup(GlobalEventExecutor.INSTANCE);
+                    users.add(channel);
+                    users.add(userService.getUserChannel(recipient));
+
+                    messageService.sendMessageToGroup(users, "privateMessage", msg);
+                } else {
+                    messageService.sendMessage("privateMessage", msg);
+                }
+            }
+        });
     }
 
     private List<UserDTO> getAllUserList() {
@@ -222,8 +255,8 @@ public class ServerConnectionsHandler extends ChannelInboundHandlerAdapter {
     public boolean checkPassword(User user) {
         if (Optional.ofNullable(checkUserInDatabase(user.getEmail())).isPresent()) {
             User checkedUser = databaseConnector.getByEmail(user.getEmail());
-            checkedUser.setPassword(Utils.decryptPassword(checkedUser.getPassword()));
-            if (checkedUser.getPassword().equals(user.getPassword())) {
+            checkedUser.setPassword(CryptoUtils.decryptPassword(checkedUser.getPassword()));
+            if (checkedUser.getPassword().equals(CryptoUtils.decryptPassword(user.getPassword()))) {
                 tmpUser = checkedUser;
                 log.debug("Logged! Actual system " + tmpUser);
                 return true;
@@ -244,11 +277,11 @@ public class ServerConnectionsHandler extends ChannelInboundHandlerAdapter {
 
     public boolean addNewUser(User user) {
         try {
-            if (user.getAddress().length() < 1)
+            if (user.getAddress() == null || user.getAddress().length() < 1)
                 user.setAddress("");
-            if (user.getPhoto().length() < 1)
+            if (user.getPhoto() == null || user.getPhoto().length() < 1)
                 user.setPhoto("");
-            user.setPassword(Utils.encryptPassword(user.getPassword()));
+            user.setPassword(CryptoUtils.encryptPassword(user.getPassword()));
             log.debug("Trying add to database" + user);
             databaseConnector.insertUser(user);
             return true;

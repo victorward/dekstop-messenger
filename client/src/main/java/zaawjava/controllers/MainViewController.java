@@ -19,6 +19,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 import javafx.util.Callback;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -51,6 +52,8 @@ public class MainViewController implements Initializable {
     private TableColumn<Map.Entry<UserDTO, Boolean>, String> userStatus;
     @FXML
     private Label loggedUsersLabel;
+    @FXML
+    private Label actualUser;
 
     @Autowired
     public MainViewController(SocketService socketService) {
@@ -76,6 +79,7 @@ public class MainViewController implements Initializable {
             logOutUser(userService.getUser());
             socketService.disconnect();
         });
+        Platform.runLater(() -> actualUser.setText(userService.getUser().getFirstName() + " " + userService.getUser().getLastName()));
         socketService.emit("onNumberOfUsers", "").whenComplete((msg, ex) -> {
             if (ex == null) {
                 Platform.runLater(() -> loggedUsersLabel.setText(String.valueOf(msg)));
@@ -171,6 +175,19 @@ public class MainViewController implements Initializable {
     @FXML
     private void goToWAMY() {
         screensManager.setGlobalChatView();
+    }
+
+    @FXML
+    private void goToMeInList(MouseEvent event) {
+        Platform.runLater(() -> {
+            UserDTO userDTO = userService.getUser();
+            for (Map.Entry<UserDTO, Boolean> user : usersList.getItems()) {
+                System.out.println(user.getValue());
+                if (user.getValue().equals(userDTO)) {
+                    usersList.getSelectionModel().select(user);
+                }
+            }
+        });
     }
 
     public Pane getContentPane() {

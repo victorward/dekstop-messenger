@@ -13,35 +13,50 @@
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane id="rootPane" minHeight="560.0" minWidth="760.0" style="-fx-background-color: linen;" xmlns="http://javafx.com/javafx/8.0.102" xmlns:fx="http://javafx.com/fxml/1" fx:controller="zaawjava.controllers.MainViewController">
+<AnchorPane id="rootPane" minHeight="560.0" minWidth="760.0" style="-fx-background-color: linen;" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="zaawjava.controllers.MainViewController">
    <children>
       <BorderPane layoutX="321.0" layoutY="178.0" minHeight="560.0" minWidth="760.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <top>
-            <ButtonBar buttonMinWidth="120.0" prefHeight="40.0" prefWidth="200.0" style="-fx-background-color: #6495ed;" BorderPane.alignment="CENTER">
-              <buttons>
-                  <JFXButton minWidth="120.0" onAction="#onProfileClick" text="Profil" textFill="#ffdddd">
-                     <font>
-                        <Font name="System Bold Italic" size="12.0" />
-                     </font>
-                  </JFXButton>
-                  <JFXButton cancelButton="true" onAction="#onLogoutClick" text="Logout" textFill="#ffdddd">
-                     <font>
-                        <Font name="System Bold" size="12.0" />
-                     </font>
-                  </JFXButton>
-                  <JFXButton buttonType="RAISED" defaultButton="true" onAction="#goToWAMY" text="WAMY">
+            <AnchorPane style="-fx-background-color: #6495ed;" BorderPane.alignment="CENTER">
+               <children>
+                  <ButtonBar buttonMinWidth="120.0" layoutY="10.0" prefHeight="40.0" prefWidth="200.0" style="-fx-background-color: #6495ed;" AnchorPane.bottomAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                    <buttons>
+                        <JFXButton minWidth="120.0" onAction="#onProfileClick" text="Profil" textFill="#ffdddd">
+                           <font>
+                              <Font name="System Bold Italic" size="12.0" />
+                           </font>
+                        </JFXButton>
+                        <JFXButton cancelButton="true" onAction="#onLogoutClick" text="Logout" textFill="#ffdddd">
+                           <font>
+                              <Font name="System Bold" size="12.0" />
+                           </font>
+                        </JFXButton>
+                    </buttons>
+                     <cursor>
+                        <Cursor fx:constant="HAND" />
+                     </cursor>
+                  </ButtonBar>
+                  <JFXButton buttonType="RAISED" defaultButton="true" onAction="#goToWAMY" style="-fx-background-color: #6495ed;" text="WAMY" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="0.0">
                      <font>
                         <Font name="Magneto Bold" size="18.0" />
                      </font>
                      <cursor>
                         <Cursor fx:constant="CLOSED_HAND" />
                      </cursor>
+                     <padding>
+                        <Insets left="30.0" right="50.0" />
+                     </padding>
                   </JFXButton>
-              </buttons>
-               <cursor>
-                  <Cursor fx:constant="HAND" />
-               </cursor>
-            </ButtonBar>
+                  <Label fx:id="actualUser" layoutX="365.0" layoutY="8.0" onMouseClicked="#goToMeInList" text="Actual User" textFill="WHITE" AnchorPane.bottomAnchor="5.0" AnchorPane.leftAnchor="360.0" AnchorPane.rightAnchor="365.0" AnchorPane.topAnchor="5.0">
+                     <opaqueInsets>
+                        <Insets />
+                     </opaqueInsets>
+                     <font>
+                        <Font name="Lobster" size="18.0" />
+                     </font>
+                  </Label>
+               </children>
+            </AnchorPane>
          </top>
          <left>
             <AnchorPane prefHeight="500.0" prefWidth="214.0" BorderPane.alignment="CENTER">

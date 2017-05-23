@@ -59,11 +59,11 @@ public class ScreensManager {
         this.mainViewController = mainViewController;
     }
 
-    private PrivateMessageController userToUserController;
+    private PrivateMessageController privateMessageController;
 
     @Autowired
-    public void setUserToUserController(PrivateMessageController userToUserController) {
-        this.userToUserController = userToUserController;
+    public void setPrivateMessageController(PrivateMessageController privateMessageController) {
+        this.privateMessageController = privateMessageController;
     }
 
     public void init() {
@@ -100,10 +100,10 @@ public class ScreensManager {
         stage.setScene(scene);
     }
 
-    public void setUserToUserView(UserDTO userDTO) {
+    public void setPrivateMessageController(UserDTO userDTO) {
         Parent rootNode = (Parent) loader.load("/fxml/privateMessage.fxml");
         mainViewController.getContentPane().getChildren().clear();
-        userToUserController.setUserDTO(userDTO);
+        privateMessageController.setUserDTO(userDTO);
         mainViewController.getContentPane().getChildren().add(rootNode);
     }
 

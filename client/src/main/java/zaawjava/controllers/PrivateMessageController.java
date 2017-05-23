@@ -71,6 +71,7 @@ public class PrivateMessageController implements Initializable {
     private ImageView userAvatar;
 
     private ObservableList<ChatMessageDTO> chatMessageDTOS = FXCollections.observableArrayList();
+    private CompletableFuture<Image> prevImageFuture;
 
 
     @FXML
@@ -123,7 +124,10 @@ public class PrivateMessageController implements Initializable {
     void setProfileAvatar(UserDTO userDTO) {
         String imageSource = userDTO.getPhoto();
         if (imageSource != null && !imageSource.equals("")) {
-            CompletableFuture
+            if (prevImageFuture != null && !prevImageFuture.isDone()) {
+                prevImageFuture.cancel(false);
+            }
+            prevImageFuture = CompletableFuture
                     .supplyAsync(() -> new Image(imageSource))
                     .whenComplete((img, ex) -> {
                         Platform.runLater(() -> userAvatar.setImage(img));

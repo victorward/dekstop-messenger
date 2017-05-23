@@ -182,8 +182,7 @@ public class MainViewController implements Initializable {
         Platform.runLater(() -> {
             UserDTO userDTO = userService.getUser();
             for (Map.Entry<UserDTO, Boolean> user : usersList.getItems()) {
-                System.out.println(user.getValue());
-                if (user.getValue().equals(userDTO)) {
+                if (user.getKey().getId() == userDTO.getId()) {
                     usersList.getSelectionModel().select(user);
                 }
             }

@@ -178,7 +178,7 @@ public class MainViewController implements Initializable {
     }
 
     @FXML
-    private void goToMeInList(MouseEvent event) {
+    private void goToMeInList() {
         Platform.runLater(() -> {
             UserDTO userDTO = userService.getUser();
             for (Map.Entry<UserDTO, Boolean> user : usersList.getItems()) {

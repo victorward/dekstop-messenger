@@ -78,7 +78,7 @@ public class FacebookController implements Initializable {
 //                                    System.out.println(userFB);
                                     doRegistration();
                                 } catch (FacebookOAuthException ex) {
-                                    Platform.runLater(()-> showErrorMessage("FB error: " + ex.getErrorType() + " " + ex.getErrorMessage()));
+                                    Platform.runLater(() -> showErrorMessege("FB error: " + ex.getErrorType() + " " + ex.getErrorMessage()));
                                     System.out.println("FB error: " + ex.getErrorType() + " " + ex.getErrorMessage());
                                 }
 
@@ -90,8 +90,10 @@ public class FacebookController implements Initializable {
 
     private void doRegistration() {
         UserDTO userNew = new UserDTO(userFB.getEmail(), "pass", userFB.getFirstName(), userFB.getLastName(), Utils.parseFB(userFB.getBirthday()), userFB.getGender());
-        userNew.setPhoto(userFB.getPicture().getUrl());
-        userNew.setAddress(userFB.getLocation().getName());
+        String userPhoto = userFB.getPicture().getUrl();
+        String userAdress = userFB.getLocation().getName();
+        if (userPhoto != null) userNew.setPhoto(userPhoto);
+        if (userAdress != null) userNew.setAddress(userAdress);
         socketService.emit("onRegistration", userNew).whenComplete((msg, ex) -> {
             if (ex == null) {
                 if ("registered".equals(msg)) {
@@ -107,22 +109,22 @@ public class FacebookController implements Initializable {
                             screensManager.goToLoginView();
                         } catch (IOException e) {
                             e.printStackTrace();
-                            Platform.runLater(()-> showErrorMessage("Cannot load login view"));
+                            Platform.runLater(() -> showErrorMessege("Cannot load login view"));
                             System.out.println("Cannot load login view");
                         }
                     });
                 } else {
-                    Platform.runLater(()-> showErrorMessage("Registration failed during writing data to database. " + msg));
+                    Platform.runLater(() -> showErrorMessege("Registration failed during writing data to database. " + msg));
                     System.out.println("Registration failed during writing data to database. " + msg);
                 }
             } else {
-                Platform.runLater(()-> showErrorMessage("Registration failed during connection to database"));
+                Platform.runLater(() -> showErrorMessege("Registration failed during connection to database"));
                 System.out.println("Registration failed during connection to database");
             }
         });
     }
 
-    private void showErrorMessage(String content){
+    private void showErrorMessege(String content) {
         Alert alert = new Alert(Alert.AlertType.ERROR);
         alert.initOwner(screensManager.getStage());
         alert.setTitle("WAMY error");

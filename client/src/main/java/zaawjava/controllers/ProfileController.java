@@ -91,7 +91,7 @@ public class ProfileController implements Initializable {
     private JFXTextField imageTextField;
 
     private ObservableList<LanguageDTO> languagess;
-    List<CountryDTO> allCountries;
+    private List<CountryDTO> allCountries;
     Transition loadingTransition;
 
     @Override
@@ -108,13 +108,13 @@ public class ProfileController implements Initializable {
 
     void init() {
         startTransition();
-        addLenguagesToSystem();
+        addLanguagesToSystem();
         addCountryToSystem();
         fillUserData();
     }
 
-    void addLenguagesToSystem() {
-        increaseTransiotionValue(0.1);
+    void addLanguagesToSystem() {
+        increaseTransitionValue(0.1);
         ObservableList<String> languagesObsList = FXCollections.observableArrayList();
         languagess.addAll(userService.getUser().getLanguages());
         Languages.setItems(languagess);
@@ -131,11 +131,11 @@ public class ProfileController implements Initializable {
                 Platform.runLater(() -> showError("Failed during getting languages list"));
             }
         });
-        increaseTransiotionValue(0.1);
+        increaseTransitionValue(0.1);
     }
 
     void addCountryToSystem() {
-        increaseTransiotionValue(0.1);
+        increaseTransitionValue(0.1);
         ObservableList<String> countryObsList = FXCollections.observableArrayList();
         socketService.emit("getCountryList", "").whenComplete((msg, ex) -> {
             if (ex == null) {
@@ -151,11 +151,11 @@ public class ProfileController implements Initializable {
                 Platform.runLater(() -> showError("Failed during getting country list"));
             }
         });
-        increaseTransiotionValue(0.1);
+        increaseTransitionValue(0.1);
     }
 
     void fillUserData() {
-        increaseTransiotionValue(0.2);
+        increaseTransitionValue(0.2);
         firstName.setText(userService.getUser().getFirstName());
         lastName.setText(userService.getUser().getLastName());
         email.setText(userService.getUser().getEmail());
@@ -171,33 +171,33 @@ public class ProfileController implements Initializable {
     }
 
     void setProfileAvatar() {
-        increaseTransiotionValue(0.1);
+        increaseTransitionValue(0.1);
         String imageSource = userService.getUser().getPhoto();
         if (imageSource != null && !imageSource.equals("")) {
             imageTextField.setText(imageSource);
             CompletableFuture
                     .supplyAsync(() -> new Image(imageSource))
                     .whenComplete((img, ex) -> {
-                        increaseTransiotionValue(0.1);
+                        increaseTransitionValue(0.1);
                         Platform.runLater(() -> avatar.setImage(img));
-                        increaseTransiotionValue(1);
+                        increaseTransitionValue(1);
                         stopTransition();
                     });
         } else {
-            increaseTransiotionValue(1);
+            increaseTransitionValue(1);
         }
     }
 
     void startTransition() {
         progressIndicator.setProgress(0.01);
-        increaseTransiotionValue(0.1);
+        increaseTransitionValue(0.1);
     }
 
     void stopTransition() {
         progressIndicator.setVisible(false);
     }
 
-    void increaseTransiotionValue(double value) {
+    void increaseTransitionValue(double value) {
         progressIndicator.setProgress(value + progressIndicator.getProgress());
     }
 
@@ -218,7 +218,7 @@ public class ProfileController implements Initializable {
     void addLanguage() {
         if (languagesList.getValue() != null) {
 //            if (!userService.getUser().getLanguages().contains(languagesList.getValue())) {
-            if (!checkAllLeng()) {
+            if (!checkAllLang()) {
                 userService.getUser().getLanguages().add(new LanguageDTO(languagesList.getValue()));
                 updateLanguages();
             }
@@ -364,7 +364,7 @@ public class ProfileController implements Initializable {
         languagess.addAll(userService.getUser().getLanguages());
     }
 
-    private boolean checkAllLeng() {
+    private boolean checkAllLang() {
         for (LanguageDTO lang : languagess) {
             if (lang.getLanguageName().equals(languagesList.getValue())) {
                 return true;

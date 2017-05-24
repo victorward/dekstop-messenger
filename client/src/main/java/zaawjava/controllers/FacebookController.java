@@ -78,7 +78,7 @@ public class FacebookController implements Initializable {
 //                                    System.out.println(userFB);
                                     doRegistration();
                                 } catch (FacebookOAuthException ex) {
-                                    Platform.runLater(()-> showErrorMessege("FB error: " + ex.getErrorType() + " " + ex.getErrorMessage()));
+                                    Platform.runLater(()-> showErrorMessage("FB error: " + ex.getErrorType() + " " + ex.getErrorMessage()));
                                     System.out.println("FB error: " + ex.getErrorType() + " " + ex.getErrorMessage());
                                 }
 
@@ -107,22 +107,22 @@ public class FacebookController implements Initializable {
                             screensManager.goToLoginView();
                         } catch (IOException e) {
                             e.printStackTrace();
-                            Platform.runLater(()-> showErrorMessege("Cannot load login view"));
+                            Platform.runLater(()-> showErrorMessage("Cannot load login view"));
                             System.out.println("Cannot load login view");
                         }
                     });
                 } else {
-                    Platform.runLater(()-> showErrorMessege("Registration failed during writing data to database. " + msg));
+                    Platform.runLater(()-> showErrorMessage("Registration failed during writing data to database. " + msg));
                     System.out.println("Registration failed during writing data to database. " + msg);
                 }
             } else {
-                Platform.runLater(()-> showErrorMessege("Registration failed during connection to database"));
+                Platform.runLater(()-> showErrorMessage("Registration failed during connection to database"));
                 System.out.println("Registration failed during connection to database");
             }
         });
     }
 
-    private void showErrorMessege(String content){
+    private void showErrorMessage(String content){
         Alert alert = new Alert(Alert.AlertType.ERROR);
         alert.initOwner(screensManager.getStage());
         alert.setTitle("WAMY error");

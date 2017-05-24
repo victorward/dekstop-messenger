@@ -6,10 +6,13 @@ import com.restfb.FacebookClient;
 import com.restfb.Parameter;
 import com.restfb.Version;
 import com.restfb.exception.FacebookOAuthException;
+import com.restfb.types.NamedFacebookType;
 import com.restfb.types.User;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.concurrent.Worker;
+import javafx.concurrent.Worker.State;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -20,8 +23,6 @@ import org.springframework.stereotype.Component;
 import zaawjava.ScreensManager;
 import zaawjava.services.SocketService;
 import zaawjava.services.UserService;
-import javafx.concurrent.Worker;
-import javafx.concurrent.Worker.State;
 import zaawjava.utils.Utils;
 
 import java.io.IOException;
@@ -78,7 +79,7 @@ public class FacebookController implements Initializable {
 //                                    System.out.println(userFB);
                                     doRegistration();
                                 } catch (FacebookOAuthException ex) {
-                                    Platform.runLater(() -> showErrorMessege("FB error: " + ex.getErrorType() + " " + ex.getErrorMessage()));
+                                    Platform.runLater(() -> showErrorMessage("FB error: " + ex.getErrorType() + " " + ex.getErrorMessage()));
                                     System.out.println("FB error: " + ex.getErrorType() + " " + ex.getErrorMessage());
                                 }
 
@@ -91,9 +92,13 @@ public class FacebookController implements Initializable {
     private void doRegistration() {
         UserDTO userNew = new UserDTO(userFB.getEmail(), "pass", userFB.getFirstName(), userFB.getLastName(), Utils.parseFB(userFB.getBirthday()), userFB.getGender());
         String userPhoto = userFB.getPicture().getUrl();
-        String userAdress = userFB.getLocation().getName();
+        NamedFacebookType userLocation = userFB.getLocation();
+        String userAddress = "";
+        if (userLocation != null) {
+            userAddress = userLocation.getName();
+        }
         if (userPhoto != null) userNew.setPhoto(userPhoto);
-        if (userAdress != null) userNew.setAddress(userAdress);
+        if (userAddress != null && userLocation != null) userNew.setAddress(userLocation.getName());
         socketService.emit("onRegistration", userNew).whenComplete((msg, ex) -> {
             if (ex == null) {
                 if ("registered".equals(msg)) {
@@ -109,22 +114,22 @@ public class FacebookController implements Initializable {
                             screensManager.goToLoginView();
                         } catch (IOException e) {
                             e.printStackTrace();
-                            Platform.runLater(() -> showErrorMessege("Cannot load login view"));
+                            Platform.runLater(() -> showErrorMessage("Cannot load login view"));
                             System.out.println("Cannot load login view");
                         }
                     });
                 } else {
-                    Platform.runLater(() -> showErrorMessege("Registration failed during writing data to database. " + msg));
+                    Platform.runLater(() -> showErrorMessage("Registration failed during writing data to database. " + msg));
                     System.out.println("Registration failed during writing data to database. " + msg);
                 }
             } else {
-                Platform.runLater(() -> showErrorMessege("Registration failed during connection to database"));
+                Platform.runLater(() -> showErrorMessage("Registration failed during connection to database"));
                 System.out.println("Registration failed during connection to database");
             }
         });
     }
 
-    private void showErrorMessege(String content) {
+    private void showErrorMessage(String content) {
         Alert alert = new Alert(Alert.AlertType.ERROR);
         alert.initOwner(screensManager.getStage());
         alert.setTitle("WAMY error");

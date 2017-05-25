@@ -24,10 +24,10 @@ public class Main {
         Server server = applicationContext.getBean(Server.class);
 
 //        DatabaseConnector connector = new DatabaseConnector();
-//        List<ChatMessage> ha = connector.getMessageListByUsers(connector.getByEmail("dodawany5@dodany.dod"), connector.getByEmail("JakiesTakie@Zmienione.pl"));
-//        Conversation conversation = connector.getConversationByUsers(connector.getByEmail("Insertowy1@insert.gg"),connector.getByEmail("JakiesTakie@Zmienione.pl"));
+//        List<ChatMessage> ha = connector.getMessageListByUsers(connector.getUserByEmail("dodawany5@dodany.dod"), connector.getUserByEmail("JakiesTakie@Zmienione.pl"));
+//        Conversation conversation = connector.getConversationByUsers(connector.getUserByEmail("Insertowy1@insert.gg"),connector.getUserByEmail("JakiesTakie@Zmienione.pl"));
 //        System.out.println(conversation.toString());
-//        connector.insertPrivateMessage(new ChatMessage(conversation,"Yo",connector.getByEmail("dodawany5@dodany.dod")));
+//        connector.insertPrivateMessage(new ChatMessage(conversation,"Yo",connector.getUserByEmail("dodawany5@dodany.dod")));
 
         server.run();
 //        new Server().run();

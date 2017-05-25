@@ -15,12 +15,12 @@ import utils.CryptoUtils;
 import utils.Message;
 import utils.MessageHandler;
 import utils.MessageService;
-import zaawjava.Utils.UtilsDTO;
-import zaawjava.model.*;
+import zaawjava.Utils.DTOUtils;
+import zaawjava.model.ChatMessage;
+import zaawjava.model.Conversation;
 import zaawjava.services.DatabaseConnector;
 import zaawjava.services.UserService;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
@@ -38,7 +38,7 @@ public class ServerConnectionsHandler extends ChannelInboundHandlerAdapter {
 
     private String message;
 
-    private User tmpUser;
+    private UserDTO tmpUser;
 
     private UserService userService;
 
@@ -59,11 +59,10 @@ public class ServerConnectionsHandler extends ChannelInboundHandlerAdapter {
             public void handle(Object msg, Channel channel, ChannelFuture future) {
                 message = "";
                 UserDTO userDTO = (UserDTO) msg;
-                User user = UtilsDTO.convertDTOtoUser(userDTO);
-                log.debug("Trying to log in! For " + user);
-                User userToCheck = databaseConnector.getByEmail(user.getEmail());
+                log.debug("Trying to log in! For " + userDTO);
+                UserDTO userToCheck = databaseConnector.getUserByEmail(userDTO.getEmail());
                 if (!userService.checkIfLogged(userToCheck)) {
-                    if (checkPassword(user)) {
+                    if (checkPassword(userDTO)) {
                         messageService.sendMessage("onLogin", "loggedIn");
                     } else {
                         messageService.sendMessage("onLogin", message);
@@ -81,9 +80,8 @@ public class ServerConnectionsHandler extends ChannelInboundHandlerAdapter {
                 message = "";
                 log.debug("Registration" + msg);
                 UserDTO userDTO = (UserDTO) msg;
-                User user = UtilsDTO.convertDTOtoUser(userDTO);
-                if (!Optional.ofNullable(checkUserInDatabase(user.getEmail())).isPresent()) {
-                    if (addNewUser(user)) {
+                if (!Optional.ofNullable(checkUserInDatabase(userDTO.getEmail())).isPresent()) {
+                    if (addNewUser(userDTO)) {
                         messageService.sendMessage("onRegistration", "registered");
                     } else {
                         messageService.sendMessage("onRegistration", message);
@@ -98,7 +96,7 @@ public class ServerConnectionsHandler extends ChannelInboundHandlerAdapter {
         this.messageService.registerHandler("getLoggedUser", new MessageHandler() {
             @Override
             public void handle(Object msg, Channel channel, ChannelFuture future) {
-                ServerConnectionsHandler.this.messageService.sendMessage("getLoggedUser", UtilsDTO.convertUserToDTO(tmpUser));
+                ServerConnectionsHandler.this.messageService.sendMessage("getLoggedUser", tmpUser);
                 userService.addUserToLoggedList(tmpUser, channel);
                 messageService.sendMessageToGroup(allChannels, "numberOfUsersChanged", userService.getNumberOfLoggedUsers());
                 messageService.sendMessageToGroup(allChannels, "listOfUsersChanged", getMapOfUsersWithStatus());
@@ -108,7 +106,7 @@ public class ServerConnectionsHandler extends ChannelInboundHandlerAdapter {
         this.messageService.registerHandler("loggedOutUser", new MessageHandler() {
             @Override
             public void handle(Object msg, Channel channel, ChannelFuture future) {
-                User user = UtilsDTO.convertDTOtoUser((UserDTO) msg);
+                UserDTO user = (UserDTO) msg;
                 messageService.sendMessage("loggedOutUser", "loggedOutUser");
                 userService.deleteUserFromLoggedList(user);
                 messageService.sendMessageToGroup(allChannels, "numberOfUsersChanged", userService.getNumberOfLoggedUsers());
@@ -120,11 +118,10 @@ public class ServerConnectionsHandler extends ChannelInboundHandlerAdapter {
             @Override
             public void handle(Object msg, Channel channel, ChannelFuture future) {
                 UserDTO userDTO = (UserDTO) msg;
-                User user = UtilsDTO.convertDTOtoUser(userDTO);
-                user.setPassword(CryptoUtils.encryptPassword(user.getPassword()));
-                log.debug("|Przy update " + user);
-                if (user != null) {
-                    if (updateUser(user)) {
+                userDTO.setPassword(CryptoUtils.encryptPassword(userDTO.getPassword()));
+                log.debug("|Przy update " + userDTO);
+                if (userDTO != null) {
+                    if (updateUser(userDTO)) {
                         messageService.sendMessage("updateUser", "updated");
                     } else {
                         message += "Ups. Updating failed";
@@ -137,24 +134,16 @@ public class ServerConnectionsHandler extends ChannelInboundHandlerAdapter {
         this.messageService.registerHandler("getCountryList", new MessageHandler() {
             @Override
             public void handle(Object msg, Channel channel, ChannelFuture future) {
-                List<Country> list = databaseConnector.getCountries();
-                List<CountryDTO> listDto = new ArrayList<>();
-                for (Country country : list) {
-                    listDto.add(UtilsDTO.convertCountryToDTO(country));
-                }
-                messageService.sendMessage("getCountryList", listDto);
+                List<CountryDTO> list = databaseConnector.getCountries();
+                messageService.sendMessage("getCountryList", list);
             }
         });
 
         this.messageService.registerHandler("getLanguagesList", new MessageHandler() {
             @Override
             public void handle(Object msg, Channel channel, ChannelFuture future) {
-                List<Language> list = databaseConnector.getLanguages();
-                List<LanguageDTO> languageDTO = new ArrayList<>();
-                for (Language lang : list) {
-                    languageDTO.add(UtilsDTO.convertLanguageToDTO(lang));
-                }
-                messageService.sendMessage("getLanguagesList", languageDTO);
+                List<LanguageDTO> list = databaseConnector.getLanguages();
+                messageService.sendMessage("getLanguagesList", list);
             }
         });
         this.messageService.registerHandler("onNumberOfUsers", new MessageHandler() {
@@ -186,21 +175,21 @@ public class ServerConnectionsHandler extends ChannelInboundHandlerAdapter {
         this.messageService.registerHandler("getConversation", new MessageHandler() {
             @Override
             public void handle(Object msg, Channel channel, ChannelFuture future) {
-                User user = UtilsDTO.convertDTOtoUser((UserDTO) msg);
-                List<ChatMessage> messageList =
+                UserDTO user = (UserDTO) msg;
+                List<ChatMessageDTO> messageList =
                         databaseConnector.getMessageListByUsers(userService.getUserByChannel(channel), user);
-                messageService.sendMessage("getConversation", UtilsDTO.convertChatMessageToDTO(messageList));
+                messageService.sendMessage("getConversation", messageList);
             }
         });
         this.messageService.registerHandler("newPrivateMessage", new MessageHandler() {
             @Override
             public void handle(Object msg, Channel channel, ChannelFuture future) {
                 ChatMessageDTO chatMessageDTO = (ChatMessageDTO) msg;
-                User sender = userService.getUserByChannel(channel);
-                User recipient = UtilsDTO.convertDTOtoUser(chatMessageDTO.getRecipient());
+                UserDTO sender = userService.getUserByChannel(channel);
+                UserDTO recipient = chatMessageDTO.getRecipient();
 
                 Conversation conversation = databaseConnector.getConversationByUsers(sender, recipient);
-                ChatMessage newChatMessage = UtilsDTO.convertDTOToChatMessage(chatMessageDTO);
+                ChatMessage newChatMessage = DTOUtils.convertDTOToChatMessage(chatMessageDTO);
                 newChatMessage.setConversation(conversation);
 
                 databaseConnector.insertPrivateMessage(newChatMessage);
@@ -219,30 +208,25 @@ public class ServerConnectionsHandler extends ChannelInboundHandlerAdapter {
     }
 
     private List<UserDTO> getAllUserList() {
-        List<User> allUsers = databaseConnector.getAllUsers();
-        List<UserDTO> allInDTO = new ArrayList<>();
-        for (User user : allUsers) {
-            allInDTO.add(UtilsDTO.convertUserToDTOwithOnlyMainData(user));
-        }
-        return allInDTO;
+        List<UserDTO> allUsers = databaseConnector.getAllUsers();
+        return allUsers;
     }
 
     private HashMap<UserDTO, Boolean> getMapOfUsersWithStatus() {
         HashMap<UserDTO, Boolean> userList = new HashMap<>();
-        List<User> activeUsers = userService.getListOfLoggedUsers();
-        List<User> allUsers = databaseConnector.getAllUsers();
-        for (User user : allUsers) {
-            UserDTO userDTO = UtilsDTO.convertUserToDTOwithOnlyMainData(user);
+        List<UserDTO> activeUsers = userService.getListOfLoggedUsers();
+        List<UserDTO> allUsers = databaseConnector.getAllUsers();
+        for (UserDTO user : allUsers) {
             Boolean status = false;
-            for (User userAct : activeUsers) {
+            for (UserDTO userAct : activeUsers) {
                 if (userAct.getId() == user.getId()) status = true;
             }
-            userList.put(userDTO, status);
+            userList.put(user, status);
         }
         return userList;
     }
 
-    private boolean updateUser(User user) {
+    private boolean updateUser(UserDTO user) {
         try {
             databaseConnector.updateUser(user);
             return true;
@@ -252,9 +236,9 @@ public class ServerConnectionsHandler extends ChannelInboundHandlerAdapter {
         }
     }
 
-    public boolean checkPassword(User user) {
+    public boolean checkPassword(UserDTO user) {
         if (Optional.ofNullable(checkUserInDatabase(user.getEmail())).isPresent()) {
-            User checkedUser = databaseConnector.getByEmail(user.getEmail());
+            UserDTO checkedUser = databaseConnector.getUserByEmail(user.getEmail());
             checkedUser.setPassword(CryptoUtils.decryptPassword(checkedUser.getPassword()));
             if (checkedUser.getPassword().equals(CryptoUtils.decryptPassword(user.getPassword()))) {
                 tmpUser = checkedUser;
@@ -270,12 +254,12 @@ public class ServerConnectionsHandler extends ChannelInboundHandlerAdapter {
         }
     }
 
-    public User checkUserInDatabase(String email) {
-        User user = databaseConnector.getByEmail(email);
+    public UserDTO checkUserInDatabase(String email) {
+        UserDTO user = databaseConnector.getUserByEmail(email);
         return user;
     }
 
-    public boolean addNewUser(User user) {
+    public boolean addNewUser(UserDTO user) {
         try {
             if (user.getAddress() == null || user.getAddress().length() < 1)
                 user.setAddress("");

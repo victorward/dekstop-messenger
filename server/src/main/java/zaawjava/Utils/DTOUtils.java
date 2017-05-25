@@ -19,7 +19,7 @@ import java.util.stream.Collectors;
 /**
  * Created by Yuriy
  */
-public class UtilsDTO implements Serializable {
+public class DTOUtils implements Serializable {
     public static User convertDTOtoUser(UserDTO userDTO) {
         User user = null;
         if (userDTO != null) {
@@ -36,10 +36,26 @@ public class UtilsDTO implements Serializable {
         return userDTO;
     }
 
+    public static List<UserDTO> convertUserToDTO(List<User> users) {
+        List<UserDTO> userDTOs = users
+                .stream()
+                .map((DTOUtils::convertUserToDTO))
+                .collect(Collectors.toList());
+        return userDTOs;
+    }
+
     public static UserDTO convertUserToDTOwithOnlyMainData(User user) {
         UserDTO userDTO = null;
         if (user != null) {
-            userDTO = new UserDTO(user.getId(), user.getEmail(), user.getPassword(), user.getFirstName(), user.getLastName(), user.getBirthDate(), user.getGender(), user.getPhoto());
+            userDTO = new UserDTO(
+                    user.getId(),
+                    user.getEmail(),
+                    user.getPassword(),
+                    user.getFirstName(),
+                    user.getLastName(),
+                    user.getBirthDate(),
+                    user.getGender(),
+                    user.getPhoto());
         }
         return userDTO;
     }
@@ -61,6 +77,14 @@ public class UtilsDTO implements Serializable {
             BeanUtils.copyProperties(country, countryDTO);
         }
         return countryDTO;
+    }
+
+    public static List<CountryDTO> convertCountryToDTO(List<Country> countries) {
+        List<CountryDTO> countryDTOS = countries.stream()
+                .map(DTOUtils::convertCountryToDTO)
+                .collect(Collectors.toList());
+
+        return countryDTOS;
     }
 
     public static Set<Language> convertDTOtoLanguageSET(Set<LanguageDTO> languageDTO) {
@@ -89,6 +113,13 @@ public class UtilsDTO implements Serializable {
         return languageSet;
     }
 
+    public static List<LanguageDTO> convertLanguageToDTO(List<Language> languages) {
+        List<LanguageDTO> languageDTOS = languages.stream()
+                .map(DTOUtils::convertLanguageToDTO)
+                .collect(Collectors.toList());
+        return languageDTOS;
+    }
+
     public static Language convertDTOtoLanguage(LanguageDTO languageDTO) {
         Language language = null;
         if (languageDTO != null) {
@@ -110,20 +141,20 @@ public class UtilsDTO implements Serializable {
     public static ChatMessageDTO convertChatMessageToDTO(ChatMessage chatMessage) {
         ChatMessageDTO converted = new ChatMessageDTO();
         BeanUtils.copyProperties(chatMessage, converted);
-        converted.setSender(UtilsDTO.convertUserToDTO(chatMessage.getSender()));
+        converted.setSender(DTOUtils.convertUserToDTO(chatMessage.getSender()));
         return converted;
     }
 
     public static ChatMessage convertDTOToChatMessage(ChatMessageDTO chatMessageDTO) {
         ChatMessage converted = new ChatMessage();
         BeanUtils.copyProperties(chatMessageDTO, converted);
-        converted.setSender(UtilsDTO.convertDTOtoUser(chatMessageDTO.getSender()));
+        converted.setSender(DTOUtils.convertDTOtoUser(chatMessageDTO.getSender()));
         return converted;
     }
 
     public static List<ChatMessageDTO> convertChatMessageToDTO(List<ChatMessage> chatMessages) {
         return chatMessages.stream()
-                .map(UtilsDTO::convertChatMessageToDTO)
+                .map(DTOUtils::convertChatMessageToDTO)
                 .collect(Collectors.toList());
     }
 

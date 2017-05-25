@@ -1,9 +1,14 @@
 package zaawjava.services;
 
+import DTO.ChatMessageDTO;
+import DTO.CountryDTO;
+import DTO.LanguageDTO;
+import DTO.UserDTO;
 import org.hibernate.Hibernate;
 import org.hibernate.Session;
 import org.springframework.stereotype.Service;
 import zaawjava.Main;
+import zaawjava.Utils.DTOUtils;
 import zaawjava.model.*;
 
 import javax.persistence.NoResultException;
@@ -17,41 +22,41 @@ public class DatabaseConnector {
     private Session session;
 
     // TEST METHODS
-    public User getUser(String narazieNieWazne) {
-        session = Main.factory.getCurrentSession();
-        session.beginTransaction();
-        User currentUser = session.get(User.class, 1);
-        Hibernate.initialize(currentUser.getLanguages());
-        session.getTransaction().commit();
-        return currentUser;
-    }
-
-    public Language getLanguage(String narazieNieWazne) {
-        session = Main.factory.getCurrentSession();
-        session.beginTransaction();
-        Language currentLanguage = session.get(Language.class, 1);
-        session.getTransaction().commit();
-        return currentLanguage;
-    }
-
-    public Country getCountry(int countryID) {
-        session = Main.factory.getCurrentSession();
-        session.beginTransaction();
-        Country currentCountry = session.get(Country.class, countryID);
-        session.getTransaction().commit();
-        return currentCountry;
-    }
-
-    public Country getCountryObjectByID(String countryName) {
-        session = Main.factory.getCurrentSession();
-        session.beginTransaction();
-        Country currentCountry = session.get(Country.class, countryName);
-        session.getTransaction().commit();
-        return currentCountry;
-    }
+//    public User getUser(String narazieNieWazne) {
+//        session = Main.factory.getCurrentSession();
+//        session.beginTransaction();
+//        User currentUser = session.get(User.class, 1);
+//        Hibernate.initialize(currentUser.getLanguages());
+//        session.getTransaction().commit();
+//        return currentUser;
+//    }
+//
+//    public Language getLanguage(String narazieNieWazne) {
+//        session = Main.factory.getCurrentSession();
+//        session.beginTransaction();
+//        Language currentLanguage = session.get(Language.class, 1);
+//        session.getTransaction().commit();
+//        return currentLanguage;
+//    }
+//
+//    public Country getCountry(int countryID) {
+//        session = Main.factory.getCurrentSession();
+//        session.beginTransaction();
+//        Country currentCountry = session.get(Country.class, countryID);
+//        session.getTransaction().commit();
+//        return currentCountry;
+//    }
+//
+//    public Country getCountryObjectByID(String countryName) {
+//        session = Main.factory.getCurrentSession();
+//        session.beginTransaction();
+//        Country currentCountry = session.get(Country.class, countryName);
+//        session.getTransaction().commit();
+//        return currentCountry;
+//    }
     // FINISH HERE
 
-    public User getByEmail(String email) {
+    public UserDTO getUserByEmail(String email) {
         User currentUser;
         session = Main.factory.getCurrentSession();
         session.beginTransaction();
@@ -68,52 +73,52 @@ public class DatabaseConnector {
         }
         Hibernate.initialize(currentUser.getLanguages());
         session.getTransaction().commit();
-        return currentUser;
+        return DTOUtils.convertUserToDTO(currentUser);
     }
 
-    public void insertUser(User user) {
+    public void insertUser(UserDTO user) {
         session = Main.factory.getCurrentSession();
         session.beginTransaction();
-        session.save(user);
+        session.save(DTOUtils.convertDTOtoUser(user));
         session.getTransaction().commit();
     }
 
-    public void updateUser(User user) {
+    public void updateUser(UserDTO user) {
         session = Main.factory.getCurrentSession();
         session.beginTransaction();
-        session.update(user);
+        session.update(DTOUtils.convertDTOtoUser(user));
         session.getTransaction().commit();
         session.close();
     }
 
-    public List<User> getAllUsers() {
+    public List<UserDTO> getAllUsers() {
         session = Main.factory.getCurrentSession();
         session.beginTransaction();
         CriteriaQuery<User> criteriaQuery = session.getCriteriaBuilder().createQuery(User.class);
         criteriaQuery.from(User.class);
         List<User> listOfUsers = session.createQuery(criteriaQuery).getResultList();
         session.getTransaction().commit();
-        return listOfUsers;
+        return DTOUtils.convertUserToDTO(listOfUsers);
     }
 
-    public List<Language> getLanguages() {
+    public List<LanguageDTO> getLanguages() {
         session = Main.factory.getCurrentSession();
         session.beginTransaction();
         CriteriaQuery<Language> criteriaQuery = session.getCriteriaBuilder().createQuery(Language.class);
         criteriaQuery.from(Language.class);
         List<Language> listOfLanguages = session.createQuery(criteriaQuery).getResultList();
         session.getTransaction().commit();
-        return listOfLanguages;
+        return DTOUtils.convertLanguageToDTO(listOfLanguages);
     }
 
-    public List<Country> getCountries() {
+    public List<CountryDTO> getCountries() {
         session = Main.factory.getCurrentSession();
         session.beginTransaction();
         CriteriaQuery<Country> criteriaQuery = session.getCriteriaBuilder().createQuery(Country.class);
         criteriaQuery.from(Country.class);
         List<Country> listOfCountries = session.createQuery(criteriaQuery).getResultList();
         session.getTransaction().commit();
-        return listOfCountries;
+        return DTOUtils.convertCountryToDTO(listOfCountries);
     }
 
     public Conversation getConversation(int conversationId) {
@@ -139,7 +144,7 @@ public class DatabaseConnector {
         session.getTransaction().commit();
     }
 
-    public Conversation getConversation(User user1, User user2) {
+    public Conversation getConversation(UserDTO user1, UserDTO user2) {
         if (user1 == null || user2 == null) throw new NullPointerException("User cannot be null");
         Conversation selectedConversation = null;
         session = Main.factory.getCurrentSession();
@@ -163,7 +168,7 @@ public class DatabaseConnector {
         return selectedConversation;
     }
 
-    public Conversation getConversationByUsers(User user1, User user2) {
+    public Conversation getConversationByUsers(UserDTO user1, UserDTO user2) {
         Conversation conversation = getConversation(user1, user2);
         if (conversation != null) {
             return conversation;
@@ -172,26 +177,28 @@ public class DatabaseConnector {
             if (conversation != null) {
                 return conversation;
             } else {
-                Conversation newConversation = new Conversation(user1, user2);
+                Conversation newConversation = new Conversation(DTOUtils.convertDTOtoUser(user1), DTOUtils.convertDTOtoUser(user2));
                 saveConversation(newConversation);
                 return newConversation;
             }
         }
     }
 
-    public List<ChatMessage> getMessageListByUsers(User user1, User user2) {
+    public List<ChatMessageDTO> getMessageListByUsers(UserDTO user1, UserDTO user2) {
         Conversation conversation = getConversation(user1, user2);
+        List<ChatMessage> messages;
         if (conversation != null) {
-            return conversation.getPrivateMessages();
+            messages = conversation.getPrivateMessages();
         } else {
             conversation = getConversation(user2, user1);
             if (conversation != null) {
-                return conversation.getPrivateMessages();
+                messages = conversation.getPrivateMessages();
             } else {
-                Conversation newConversation = new Conversation(user1, user2);
+                Conversation newConversation = new Conversation(DTOUtils.convertDTOtoUser(user1), DTOUtils.convertDTOtoUser(user2));
                 saveConversation(newConversation);
-                return newConversation.getPrivateMessages();
+                messages = newConversation.getPrivateMessages();
             }
         }
+        return DTOUtils.convertChatMessageToDTO(messages);
     }
 }

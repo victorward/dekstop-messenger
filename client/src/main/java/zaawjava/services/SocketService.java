@@ -92,7 +92,6 @@ public class SocketService {
 
         CompletableFuture<Object> completableFuture = new CompletableFuture<>();
 
-
         messageService.sendMessage(event, message, new MessageHandler() {
             @Override
             public void handle(Object msg, Channel channel, ChannelFuture future) {

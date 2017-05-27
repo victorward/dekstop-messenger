@@ -73,6 +73,7 @@ public class DatabaseConnector {
         }
         Hibernate.initialize(currentUser.getLanguages());
         session.getTransaction().commit();
+        session.close();
         return DTOUtils.convertUserToDTO(currentUser);
     }
 
@@ -81,6 +82,8 @@ public class DatabaseConnector {
         session.beginTransaction();
         session.save(DTOUtils.convertDTOtoUser(user));
         session.getTransaction().commit();
+        session.close();
+
     }
 
     public void updateUser(UserDTO user) {
@@ -98,6 +101,8 @@ public class DatabaseConnector {
         criteriaQuery.from(User.class);
         List<User> listOfUsers = session.createQuery(criteriaQuery).getResultList();
         session.getTransaction().commit();
+        session.close();
+
         return DTOUtils.convertUserToDTO(listOfUsers);
     }
 
@@ -108,6 +113,8 @@ public class DatabaseConnector {
         criteriaQuery.from(Language.class);
         List<Language> listOfLanguages = session.createQuery(criteriaQuery).getResultList();
         session.getTransaction().commit();
+        session.close();
+
         return DTOUtils.convertLanguageToDTO(listOfLanguages);
     }
 
@@ -118,6 +125,8 @@ public class DatabaseConnector {
         criteriaQuery.from(Country.class);
         List<Country> listOfCountries = session.createQuery(criteriaQuery).getResultList();
         session.getTransaction().commit();
+        session.close();
+
         return DTOUtils.convertCountryToDTO(listOfCountries);
     }
 
@@ -127,6 +136,8 @@ public class DatabaseConnector {
         Conversation currentConversation = session.get(Conversation.class, conversationId);
         Hibernate.initialize(currentConversation.getPrivateMessages());
         session.getTransaction().commit();
+        session.close();
+
         return currentConversation;
     }
 
@@ -135,6 +146,8 @@ public class DatabaseConnector {
         session.beginTransaction();
         session.saveOrUpdate(conversation);
         session.getTransaction().commit();
+        session.close();
+
     }
 
     public void insertPrivateMessage(ChatMessage privateMessage) {
@@ -142,6 +155,8 @@ public class DatabaseConnector {
         session.beginTransaction();
         session.save(privateMessage);
         session.getTransaction().commit();
+        session.close();
+
     }
 
     public Conversation getConversation(UserDTO user1, UserDTO user2) {
@@ -165,6 +180,8 @@ public class DatabaseConnector {
         }
         Hibernate.initialize(selectedConversation.getPrivateMessages());
         session.getTransaction().commit();
+        session.close();
+
         return selectedConversation;
     }
 

@@ -64,4 +64,15 @@ public class ChatMessageDTO implements Serializable {
     public void setDate(Date date) {
         this.date = date;
     }
+
+    @Override
+    public String toString() {
+        return "ChatMessageDTO{" +
+                "id=" + id +
+                ", sender=" + sender +
+                ", recipient=" + recipient +
+                ", content='" + content + '\'' +
+                ", date=" + date +
+                '}';
+    }
 }

@@ -8,6 +8,9 @@ import io.netty.channel.socket.nio.NioSocketChannel;
 import io.netty.handler.codec.serialization.ClassResolvers;
 import io.netty.handler.codec.serialization.ObjectDecoder;
 import io.netty.handler.codec.serialization.ObjectEncoder;
+import io.netty.handler.ssl.SslContext;
+import io.netty.handler.ssl.SslContextBuilder;
+import io.netty.handler.ssl.util.InsecureTrustManagerFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +19,7 @@ import utils.MessageHandler;
 import utils.MessageService;
 import zaawjava.handlers.ClientHandler;
 
+import javax.net.ssl.SSLException;
 import java.io.Serializable;
 import java.util.concurrent.CompletableFuture;
 
@@ -23,10 +27,11 @@ import java.util.concurrent.CompletableFuture;
 public class SocketService {
     private static final Logger log = LoggerFactory.getLogger(SocketService.class);
 
-//    static final String HOST = "localhost";
-    static final String HOST = "privatehost.ddns.net";
+    static final String HOST = "localhost";
+//    static final String HOST = "privatehost.ddns.net";
 
     static final int PORT = 8080;
+    public static final boolean SSL = true;
 
     private EventLoopGroup group;
     private Channel channel;
@@ -47,6 +52,20 @@ public class SocketService {
 
     public ChannelFuture connect() {
         if (connected) throw new RuntimeException("Already connected");
+
+        final SslContext sslCtx;
+        if (SSL) {
+            try {
+                sslCtx = SslContextBuilder.forClient()
+                        .trustManager(InsecureTrustManagerFactory.INSTANCE).build();
+            } catch (SSLException e) {
+                log.error("SSL exception: " + e.getMessage());
+                throw new RuntimeException("SSL Exception");
+            }
+        } else {
+            sslCtx = null;
+        }
+
         group = new NioEventLoopGroup();
 
         Bootstrap b = new Bootstrap();
@@ -56,7 +75,9 @@ public class SocketService {
                     @Override
                     public void initChannel(SocketChannel ch) throws Exception {
                         ChannelPipeline p = ch.pipeline();
-
+                        if (sslCtx != null) {
+                            p.addLast(sslCtx.newHandler(ch.alloc(), HOST, PORT));
+                        }
                         p.addLast(
                                 new ObjectEncoder(),
                                 new ObjectDecoder(ClassResolvers.cacheDisabled(null)),

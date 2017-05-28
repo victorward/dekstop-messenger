@@ -2,7 +2,7 @@ package utils;
 
 import java.io.Serializable;
 
-public class Message implements Serializable{
+public class Message implements Serializable {
     private String kind;
     private Object content;
 
@@ -25,5 +25,13 @@ public class Message implements Serializable{
 
     public void setContent(Object content) {
         this.content = content;
+    }
+
+    @Override
+    public String toString() {
+        return "Message{" +
+                "kind='" + kind + '\'' +
+                ", content=" + (content != null ? content.toString() : null) +
+                '}';
     }
 }

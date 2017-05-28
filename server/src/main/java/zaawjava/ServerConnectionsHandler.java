@@ -285,7 +285,7 @@ public class ServerConnectionsHandler extends ChannelInboundHandlerAdapter {
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) {
         try {
-            log.debug("message received: " + msg);
+            log.debug("message received: " + (msg != null ? msg.toString() : null));
             messageService.setChannel(ctx.channel());
             messageService.handleMessage((Message) msg);
 

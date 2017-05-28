@@ -4,7 +4,6 @@ import DTO.UserDTO;
 import io.netty.channel.Channel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import zaawjava.model.User;
 
 import java.util.*;
 
@@ -28,6 +27,10 @@ public class UserService {
 
     public void deleteUserFromLoggedList(UserDTO user) {
         listOfLoggedUsers.remove(user.getId());
+    }
+
+    public void deleteUserFromLoggedList(Channel channel) {
+        listOfLoggedUsers.values().removeIf((val) -> val.getChannel().equals(channel));
     }
 
     public int getNumberOfLoggedUsers() {

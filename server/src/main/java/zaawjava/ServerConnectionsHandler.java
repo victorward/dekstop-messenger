@@ -231,7 +231,7 @@ public class ServerConnectionsHandler extends ChannelInboundHandlerAdapter {
             databaseConnector.updateUser(user);
             return true;
         } catch (Exception ex) {
-            ex.printStackTrace();
+            log.warn("User update failed", ex);
             return false;
         }
     }
@@ -270,7 +270,7 @@ public class ServerConnectionsHandler extends ChannelInboundHandlerAdapter {
             databaseConnector.insertUser(user);
             return true;
         } catch (Exception ex) {
-            ex.printStackTrace();
+            log.warn("Adding user failed", ex);
             return false;
         }
     }
@@ -305,12 +305,14 @@ public class ServerConnectionsHandler extends ChannelInboundHandlerAdapter {
     public void channelInactive(ChannelHandlerContext ctx) throws Exception {
         //disconnected
         log.debug("channel inactive");
+        userService.deleteUserFromLoggedList(ctx.channel());
 
     }
 
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
-        cause.printStackTrace();
+        log.warn("Netty connection exception", cause);
+        userService.deleteUserFromLoggedList(ctx.channel());
         ctx.close();
     }
 

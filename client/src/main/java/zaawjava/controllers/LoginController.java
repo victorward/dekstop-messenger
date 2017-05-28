@@ -137,8 +137,6 @@ public class LoginController {
                 } else {
                     log.debug("Connection error. Please check server configuration");
                     Platform.runLater(() -> getMessageLabel().setText("Connection error. Please check server configuration"));
-                    Platform.runLater(() -> getLogin().setDisable(true));
-                    Platform.runLater(() -> getRegistration().setDisable(true));
                 }
             });
         }

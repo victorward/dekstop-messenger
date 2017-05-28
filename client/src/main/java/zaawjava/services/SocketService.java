@@ -27,8 +27,8 @@ import java.util.concurrent.CompletableFuture;
 public class SocketService {
     private static final Logger log = LoggerFactory.getLogger(SocketService.class);
 
-    static final String HOST = "localhost";
-//    static final String HOST = "privatehost.ddns.net";
+//    static final String HOST = "localhost";
+    static final String HOST = "privatehost.ddns.net";
 
     static final int PORT = 8080;
     public static final boolean SSL = true;

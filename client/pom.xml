@@ -27,7 +27,7 @@
                 <version>8.1.5</version>
                 <configuration>
 
-                    <mainClass>zaawjava.MainApp</mainClass>
+                    <mainClass>zaawjava.client.MainApp</mainClass>
 
                 </configuration>
             </plugin>
@@ -41,7 +41,7 @@
                     <archive>
                         <manifest>
                             <addClasspath>true</addClasspath>
-                            <mainClass>zaawjava.MainApp</mainClass>
+                            <mainClass>zaawjava.client.MainApp</mainClass>
                             <classpathPrefix>dependencies/</classpathPrefix>
                         </manifest>
                     </archive>

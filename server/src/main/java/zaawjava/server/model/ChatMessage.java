@@ -6,102 +6,85 @@ import java.util.Date;
 
 @Entity
 @Table(name = "private_messages")
-public class ChatMessage implements Serializable
-{
+public class ChatMessage implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "message_id")
     private int id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn (name="conversation_id",referencedColumnName="conversation_id",nullable=false,unique=false)
-	private Conversation conversation;
+    @JoinColumn(name = "conversation_id", referencedColumnName = "conversation_id", nullable = false, unique = false)
+    private Conversation conversation;
 
-	@Column(name = "content")
-	private String content;
+    @Column(name = "content")
+    private String content;
 
-	@Column(name="send_date")
-	private Date date;
+    @Column(name = "send_date")
+    private Date date;
 
     @ManyToOne()
-    @JoinColumn(name="sender", nullable=false)
+    @JoinColumn(name = "sender", nullable = false)
     private User sender;
 
-	public ChatMessage()
-	{
-		super();
-	}
+    public ChatMessage() {
+        super();
+    }
 
 
-
-	public ChatMessage(Conversation conversation, String content, User sender)
-	{
-		super();
-		this.conversation = conversation;
-		this.content = content;
-		this.date =  new Date();
-		this.sender = sender;
-	}
+    public ChatMessage(Conversation conversation, String content, User sender) {
+        super();
+        this.conversation = conversation;
+        this.content = content;
+        this.date = new Date();
+        this.sender = sender;
+    }
 
 
+    public User getSender() {
+        return sender;
+    }
 
-	public User getSender()
-	{
-		return sender;
-	}
+    public void setSender(User sender) {
+        this.sender = sender;
+    }
 
-	public void setSender(User sender)
-	{
-		this.sender = sender;
-	}
+    public int getId() {
+        return id;
+    }
 
-	public int getId()
-	{
-		return id;
-	}
+    public void setId(int id) {
+        this.id = id;
+    }
 
-	public void setId(int id)
-	{
-		this.id = id;
-	}
+    public Conversation getConversation() {
+        return conversation;
+    }
 
-	public Conversation getConversation()
-	{
-		return conversation;
-	}
+    public void setConversation(Conversation conversation) {
+        this.conversation = conversation;
+    }
 
-	public void setConversation(Conversation conversation)
-	{
-		this.conversation = conversation;
-	}
+    public String getContent() {
+        return content;
+    }
 
-	public String getContent()
-	{
-		return content;
-	}
+    public void setContent(String content) {
+        this.content = content;
+    }
 
-	public void setContent(String content)
-	{
-		this.content = content;
-	}
+    public Date getDate() {
+        return date;
+    }
 
-	public Date getDate()
-	{
-		return date;
-	}
+    public void setDate(Date date) {
+        this.date = date;
+    }
 
-	public void setDate(Date date)
-	{
-		this.date = date;
-	}
-
-	@Override
-	public String toString()
-	{
-		return "PrivateMessage [id=" + id + ", conversation=" + conversation.getId() + ", content=" + content + ", date=" + date
-				+ ", sender=" + sender.getId() + "]";
-	}
-
+    @Override
+    public String toString() {
+        return "PrivateMessage [id=" + id + ", conversation=" + conversation.getId() + ", content=" + content + ", date=" + date
+                + ", sender=" + sender.getId() + "]";
+    }
 
 
 }

@@ -2,20 +2,12 @@ package zaawjava.services;
 
 import DTO.UserDTO;
 import io.netty.channel.Channel;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
 
 @Service
 public class UserService {
-    private final DatabaseConnector databaseConnector;
-
-    @Autowired
-    public UserService(DatabaseConnector databaseConnector) {
-        this.databaseConnector = databaseConnector;
-    }
-
     private HashMap<Integer, UserChannelPair> listOfLoggedUsers = new HashMap<>();
 
     public void addUserToLoggedList(UserDTO user, Channel channel) {

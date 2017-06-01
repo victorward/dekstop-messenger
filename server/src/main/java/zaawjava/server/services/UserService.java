@@ -11,6 +11,9 @@ public class UserService {
     private HashMap<Integer, UserChannelPair> listOfLoggedUsers = new HashMap<>();
 
     public void addUserToLoggedList(UserDTO user, Channel channel) {
+        if(listOfLoggedUsers.containsKey(user.getId())){
+            throw new IllegalArgumentException("User already logged");
+        }
         channel.closeFuture().addListener(future -> {
             deleteUserFromLoggedList(user);
         });

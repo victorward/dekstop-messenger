@@ -13,7 +13,7 @@
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane id="rootPane" minHeight="560.0" minWidth="760.0" style="-fx-background-color: linen;" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="zaawjava.controllers.MainViewController">
+<AnchorPane id="rootPane" minHeight="560.0" minWidth="760.0" style="-fx-background-color: linen;" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="zaawjava.client.controllers.MainViewController">
    <children>
       <BorderPane layoutX="321.0" layoutY="178.0" minHeight="560.0" minWidth="760.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <top>

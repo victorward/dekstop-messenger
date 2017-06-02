@@ -2,6 +2,7 @@ package zaawjava.client.controllers;
 
 import zaawjava.commons.DTO.ChatMessageDTO;
 import zaawjava.commons.DTO.UserDTO;
+
 import com.jfoenix.controls.JFXListView;
 import com.jfoenix.controls.JFXTextArea;
 import io.netty.channel.Channel;
@@ -18,6 +19,9 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.media.Media;
+import javafx.scene.media.MediaPlayer;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import zaawjava.commons.utils.MessageHandler;
@@ -26,6 +30,7 @@ import zaawjava.client.services.SocketService;
 import zaawjava.client.services.UserService;
 import zaawjava.client.utils.ChatMessageCellFactory;
 
+import java.io.File;
 import java.net.URL;
 import java.util.Date;
 import java.util.List;
@@ -103,7 +108,15 @@ public class PrivateMessageController implements Initializable {
                 @Override
                 public void handle(Object msg, Channel channel, ChannelFuture future) {
                     Platform.runLater(() -> {
-                        ChatMessageDTO newChatMessage = (ChatMessageDTO) msg;
+                    	ClassLoader classLoader = getClass().getClassLoader();
+                    	File file = new File(classLoader.getResource("sounds/tuturu.mp3").getFile());
+                    	ChatMessageDTO newChatMessage = (ChatMessageDTO) msg;
+                    	if (newChatMessage.getSender().getId() != userDTO.getId())
+                    			{
+                    		Media hit = new Media(file.toURI().toString());
+                    		MediaPlayer mediaPlayer = new MediaPlayer(hit);
+                    		mediaPlayer.play();
+                    			}
                         if (newChatMessage.getSender().getId() == userDTO.getId()
                                 || newChatMessage.getSender().getId() == userService.getUser().getId()) {
                             chatMessageDTOS.add(newChatMessage);

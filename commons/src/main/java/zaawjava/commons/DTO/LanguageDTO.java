@@ -27,6 +27,11 @@ public class LanguageDTO implements Serializable {
         this.languageName = languageName;
     }
 
+    public LanguageDTO(int id, String languageName) {
+        this.id = id;
+        this.languageName = languageName;
+    }
+
     public LanguageDTO() {
         super();
     }

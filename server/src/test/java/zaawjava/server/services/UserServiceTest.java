@@ -2,8 +2,10 @@ package zaawjava.server.services;
 
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
+import io.netty.util.concurrent.GenericFutureListener;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.ArgumentCaptor;
 import zaawjava.commons.DTO.UserDTO;
 
 import java.util.List;
@@ -48,6 +50,28 @@ public class UserServiceTest {
         userService.addUserToLoggedList(user, channel);
 
         userService.deleteUserFromLoggedList(user);
+
+        assertThat(userService.getNumberOfLoggedUsers()).isEqualTo(0);
+
+    }
+
+    @Test
+    public void deleteUserFromLoggedListByChannelClose() throws Exception {
+
+
+        UserDTO user = new UserDTO();
+        user.setId(123);
+
+        Channel channel = mock(Channel.class);
+        ChannelFuture cf = mock(ChannelFuture.class);
+        ArgumentCaptor<GenericFutureListener> captor = ArgumentCaptor.forClass(GenericFutureListener.class);
+        when(cf.addListener(captor.capture())).thenReturn(cf);
+        when(channel.closeFuture()).thenReturn(cf);
+
+        userService.addUserToLoggedList(user, channel);
+        assertThat(userService.getNumberOfLoggedUsers()).isEqualTo(1);
+
+        captor.getValue().operationComplete(cf);
 
         assertThat(userService.getNumberOfLoggedUsers()).isEqualTo(0);
 

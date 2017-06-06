@@ -1,8 +1,6 @@
 package zaawjava.server;
 
 import io.netty.channel.*;
-import io.netty.channel.group.DefaultChannelGroup;
-import io.netty.util.concurrent.GlobalEventExecutor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,11 +13,10 @@ import zaawjava.commons.utils.CryptoUtils;
 import zaawjava.commons.utils.Message;
 import zaawjava.commons.utils.MessageHandler;
 import zaawjava.commons.utils.MessageService;
-import zaawjava.server.Utils.DTOUtils;
+import zaawjava.server.handlers.NewPrivateMessageHandler;
 import zaawjava.server.handlers.RegistrationHandler;
+import zaawjava.server.handlers.UpdateUserHandler;
 import zaawjava.server.handlers.UserLoggedOutHandler;
-import zaawjava.server.model.ChatMessage;
-import zaawjava.server.model.Conversation;
 import zaawjava.server.services.DatabaseConnector;
 import zaawjava.server.services.UserService;
 
@@ -45,7 +42,8 @@ public class ServerConnectionsHandler extends ChannelInboundHandlerAdapter {
     //handlers
     private RegistrationHandler registrationHandler;
     private UserLoggedOutHandler userLoggedOutHandler;
-
+    private UpdateUserHandler updateUserHandler;
+    private NewPrivateMessageHandler newPrivateMessageHandler;
 
     @Autowired
     public void setRegistrationHandler(RegistrationHandler registrationHandler) {
@@ -55,6 +53,16 @@ public class ServerConnectionsHandler extends ChannelInboundHandlerAdapter {
     @Autowired
     public void setUserLoggedOutHandler(UserLoggedOutHandler userLoggedOutHandler) {
         this.userLoggedOutHandler = userLoggedOutHandler;
+    }
+
+    @Autowired
+    public void setUpdateUserHandler(UpdateUserHandler updateUserHandler) {
+        this.updateUserHandler = updateUserHandler;
+    }
+
+    @Autowired
+    public void setNewPrivateMessageHandler(NewPrivateMessageHandler newPrivateMessageHandler) {
+        this.newPrivateMessageHandler = newPrivateMessageHandler;
     }
 
     @Autowired
@@ -107,22 +115,7 @@ public class ServerConnectionsHandler extends ChannelInboundHandlerAdapter {
 
         this.messageService.registerHandler("loggedOutUser", userLoggedOutHandler);
 
-        this.messageService.registerHandler("updateUser", new MessageHandler() {
-            @Override
-            public void handle(Object msg, Channel channel, ChannelFuture future) {
-                UserDTO userDTO = (UserDTO) msg;
-                userDTO.setPassword(CryptoUtils.encryptPassword(userDTO.getPassword()));
-                log.debug("|Przy update " + userDTO);
-                if (userDTO != null) {
-                    if (updateUser(userDTO)) {
-                        messageService.sendMessage("updateUser", "updated");
-                    } else {
-                        message += "Ups. Updating failed";
-                        messageService.sendMessage("updateUser", message);
-                    }
-                }
-            }
-        });
+        this.messageService.registerHandler("updateUser", updateUserHandler);
 
         this.messageService.registerHandler("getCountryList", new MessageHandler() {
             @Override
@@ -174,47 +167,13 @@ public class ServerConnectionsHandler extends ChannelInboundHandlerAdapter {
                 messageService.sendMessage("getConversation", messageList);
             }
         });
-        this.messageService.registerHandler("newPrivateMessage", new MessageHandler() {
-            @Override
-            public void handle(Object msg, Channel channel, ChannelFuture future) {
-                ChatMessageDTO chatMessageDTO = (ChatMessageDTO) msg;
-                UserDTO sender = userService.getUserByChannel(channel);
-                UserDTO recipient = chatMessageDTO.getRecipient();
-
-                Conversation conversation = databaseConnector.getConversationByUsers(sender, recipient);
-                ChatMessage newChatMessage = DTOUtils.convertDTOToChatMessage(chatMessageDTO);
-                newChatMessage.setConversation(conversation);
-
-                databaseConnector.insertPrivateMessage(newChatMessage);
-
-                if (userService.checkIfLogged(recipient)) {
-                    DefaultChannelGroup users = new DefaultChannelGroup(GlobalEventExecutor.INSTANCE);
-                    users.add(channel);
-                    users.add(userService.getUserChannel(recipient));
-
-                    messageService.sendMessageToGroup(users, "privateMessage", msg);
-                } else {
-                    messageService.sendMessage("privateMessage", msg);
-                }
-            }
-        });
+        this.messageService.registerHandler("newPrivateMessage", newPrivateMessageHandler);
 
     }
-
 
     private List<UserDTO> getAllUserList() {
         List<UserDTO> allUsers = databaseConnector.getAllUsers();
         return allUsers;
-    }
-
-    private boolean updateUser(UserDTO user) {
-        try {
-            databaseConnector.updateUser(user);
-            return true;
-        } catch (Exception ex) {
-            log.warn("User update failed", ex);
-            return false;
-        }
     }
 
     public boolean checkPassword(UserDTO user) {

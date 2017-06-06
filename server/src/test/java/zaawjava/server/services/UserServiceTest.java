@@ -32,7 +32,7 @@ public class UserServiceTest {
     }
 
     @Test
-    public void addUserToLoggedList() throws Exception {
+    public void addUserToLoggedListTest() throws Exception {
         UserDTO user = new UserDTO();
 
         ChannelFuture cf = mock(ChannelFuture.class);
@@ -46,7 +46,7 @@ public class UserServiceTest {
     }
 
     @Test
-    public void deleteUserFromLoggedListByUser() throws Exception {
+    public void deleteUserFromLoggedListByUserTest() throws Exception {
 
         UserDTO user = new UserDTO();
         user.setId(123);
@@ -63,7 +63,7 @@ public class UserServiceTest {
     }
 
     @Test
-    public void deleteUserFromLoggedListByChannelClose() throws Exception {
+    public void deleteUserFromLoggedListByChannelCloseTest() throws Exception {
 
         UserDTO user = new UserDTO();
         user.setId(123);
@@ -83,7 +83,7 @@ public class UserServiceTest {
     }
 
     @Test
-    public void deleteUserFromLoggedListByChannel() throws Exception {
+    public void deleteUserFromLoggedListByChannelTest() throws Exception {
         UserDTO user = new UserDTO();
         ChannelFuture cf = mock(ChannelFuture.class);
 
@@ -97,7 +97,7 @@ public class UserServiceTest {
     }
 
     @Test
-    public void checkIfLogged1() throws Exception {
+    public void checkIfLogged1Test() throws Exception {
         UserDTO user = new UserDTO();
         user.setId(123);
         ChannelFuture cf = mock(ChannelFuture.class);
@@ -110,14 +110,14 @@ public class UserServiceTest {
     }
 
     @Test
-    public void checkIfLogged2() throws Exception {
+    public void checkIfLogged2Test() throws Exception {
         UserDTO user = new UserDTO();
         user.setId(123);
         assertThat(userService.checkIfLogged(user)).isFalse();
     }
 
     @Test
-    public void getListOfLoggedUsers() throws Exception {
+    public void getListOfLoggedUsersTest() throws Exception {
         UserDTO user1 = new UserDTO();
         user1.setId(1);
         UserDTO user2 = new UserDTO();
@@ -148,7 +148,7 @@ public class UserServiceTest {
     }
 
     @Test
-    public void getUserChannel() throws Exception {
+    public void getUserChannelTest() throws Exception {
         UserDTO user1 = new UserDTO();
         user1.setId(1);
         UserDTO user2 = new UserDTO();
@@ -174,7 +174,7 @@ public class UserServiceTest {
     }
 
     @Test
-    public void getUserByChannel() throws Exception {
+    public void getUserByChannelTest() throws Exception {
 
         UserDTO user1 = new UserDTO();
         user1.setId(1);

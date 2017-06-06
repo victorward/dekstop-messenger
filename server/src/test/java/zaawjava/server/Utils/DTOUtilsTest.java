@@ -59,7 +59,7 @@ public class DTOUtilsTest {
     }
 
     @Test
-    public void convertDTOtoUser() throws Exception {
+    public void convertDTOtoUserTest() throws Exception {
         //dto definition
         Set<LanguageDTO> languageDTOS = new HashSet<>();
         languageDTOS.add(new LanguageDTO(1, "Poland"));

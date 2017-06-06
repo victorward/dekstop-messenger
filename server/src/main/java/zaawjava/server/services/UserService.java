@@ -1,19 +1,31 @@
 package zaawjava.server.services;
 
-import zaawjava.commons.DTO.UserDTO;
 import io.netty.channel.Channel;
+import io.netty.channel.group.DefaultChannelGroup;
+import io.netty.util.concurrent.GlobalEventExecutor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import zaawjava.commons.DTO.UserDTO;
 
 import java.util.*;
 
 @Service
 public class UserService {
+    private DefaultChannelGroup allChannels = new DefaultChannelGroup(GlobalEventExecutor.INSTANCE);
+
     private HashMap<Integer, UserChannelPair> listOfLoggedUsers = new HashMap<>();
+    private DatabaseConnector databaseConnector;
+
+    @Autowired
+    public void setDatabaseConnector(DatabaseConnector databaseConnector) {
+        this.databaseConnector = databaseConnector;
+    }
 
     public void addUserToLoggedList(UserDTO user, Channel channel) {
-        if(listOfLoggedUsers.containsKey(user.getId())){
+        if (listOfLoggedUsers.containsKey(user.getId())) {
             throw new IllegalArgumentException("User already logged");
         }
+        allChannels.add(channel);
         channel.closeFuture().addListener(future -> {
             deleteUserFromLoggedList(user);
         });
@@ -70,7 +82,24 @@ public class UserService {
         return optional.map(UserChannelPair::getUser).orElse(null);
     }
 
-//    public List<UserDTO> getListOfLoggedUsers() {
+    public HashMap<UserDTO, Boolean> getMapOfUsersWithStatus() {
+        HashMap<UserDTO, Boolean> userList = new HashMap<>();
+        List<UserDTO> activeUsers = getListOfLoggedUsers();
+        List<UserDTO> allUsers = databaseConnector.getAllUsers();
+        for (UserDTO user : allUsers) {
+            Boolean status = false;
+            for (UserDTO userAct : activeUsers) {
+                if (userAct.getId() == user.getId()) status = true;
+            }
+            userList.put(user, status);
+        }
+        return userList;
+    }
+
+    public DefaultChannelGroup getAllChannels() {
+        return allChannels;
+    }
+    //    public List<UserDTO> getListOfLoggedUsers() {
 //        List<UserDTO> userList = new ArrayList<UserDTO>();
 //        for (Map.Entry<Integer, UserChannelPair> entry : listOfLoggedUsers.entrySet()) {
 //            userList.add(DTOUtils.convertUserToDTO(entry.getValue().getUser()));

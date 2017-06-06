@@ -2,31 +2,39 @@ package zaawjava.server.services;
 
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
+import io.netty.channel.ChannelId;
 import io.netty.util.concurrent.GenericFutureListener;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 import zaawjava.commons.DTO.UserDTO;
 
 import java.util.List;
 
-import static org.assertj.core.api.Assertions.*;
-import static org.mockito.Mockito.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 public class UserServiceTest {
 
     private UserService userService;
 
+    @Mock
+    Channel channel;
+
     @Before
-    public void before(){
+    public void before() {
+        MockitoAnnotations.initMocks(this);
+        when(channel.id()).thenReturn(mock(ChannelId.class));
         userService = new UserService();
     }
 
     @Test
-    public void addUserToLoggedList() throws Exception {
+    public void addUserToLoggedListTest() throws Exception {
         UserDTO user = new UserDTO();
 
-        Channel channel = mock(Channel.class);
         ChannelFuture cf = mock(ChannelFuture.class);
 
         when(channel.closeFuture()).thenReturn(cf);
@@ -38,12 +46,11 @@ public class UserServiceTest {
     }
 
     @Test
-    public void deleteUserFromLoggedListByUser() throws Exception {
+    public void deleteUserFromLoggedListByUserTest() throws Exception {
 
         UserDTO user = new UserDTO();
         user.setId(123);
 
-        Channel channel = mock(Channel.class);
         ChannelFuture cf = mock(ChannelFuture.class);
 
         when(channel.closeFuture()).thenReturn(cf);
@@ -56,13 +63,11 @@ public class UserServiceTest {
     }
 
     @Test
-    public void deleteUserFromLoggedListByChannelClose() throws Exception {
-
+    public void deleteUserFromLoggedListByChannelCloseTest() throws Exception {
 
         UserDTO user = new UserDTO();
         user.setId(123);
 
-        Channel channel = mock(Channel.class);
         ChannelFuture cf = mock(ChannelFuture.class);
         ArgumentCaptor<GenericFutureListener> captor = ArgumentCaptor.forClass(GenericFutureListener.class);
         when(cf.addListener(captor.capture())).thenReturn(cf);
@@ -78,9 +83,8 @@ public class UserServiceTest {
     }
 
     @Test
-    public void deleteUserFromLoggedListByChannel() throws Exception {
+    public void deleteUserFromLoggedListByChannelTest() throws Exception {
         UserDTO user = new UserDTO();
-        Channel channel = mock(Channel.class);
         ChannelFuture cf = mock(ChannelFuture.class);
 
         when(channel.closeFuture()).thenReturn(cf);
@@ -93,10 +97,9 @@ public class UserServiceTest {
     }
 
     @Test
-    public void checkIfLogged1() throws Exception {
+    public void checkIfLogged1Test() throws Exception {
         UserDTO user = new UserDTO();
         user.setId(123);
-        Channel channel = mock(Channel.class);
         ChannelFuture cf = mock(ChannelFuture.class);
 
         when(channel.closeFuture()).thenReturn(cf);
@@ -105,15 +108,16 @@ public class UserServiceTest {
         assertThat(userService.checkIfLogged(user)).isTrue();
 
     }
+
     @Test
-    public void checkIfLogged2() throws Exception {
+    public void checkIfLogged2Test() throws Exception {
         UserDTO user = new UserDTO();
         user.setId(123);
         assertThat(userService.checkIfLogged(user)).isFalse();
     }
 
     @Test
-    public void getListOfLoggedUsers() throws Exception {
+    public void getListOfLoggedUsersTest() throws Exception {
         UserDTO user1 = new UserDTO();
         user1.setId(1);
         UserDTO user2 = new UserDTO();
@@ -122,7 +126,11 @@ public class UserServiceTest {
         ChannelFuture cf = mock(ChannelFuture.class);
 
         Channel channel1 = mock(Channel.class);
+        when(channel1.id()).thenReturn(mock(ChannelId.class));
+
         Channel channel2 = mock(Channel.class);
+        when(channel2.id()).thenReturn(mock(ChannelId.class));
+
 
         when(channel1.closeFuture()).thenReturn(cf);
         when(channel2.closeFuture()).thenReturn(cf);
@@ -140,7 +148,7 @@ public class UserServiceTest {
     }
 
     @Test
-    public void getUserChannel() throws Exception {
+    public void getUserChannelTest() throws Exception {
         UserDTO user1 = new UserDTO();
         user1.setId(1);
         UserDTO user2 = new UserDTO();
@@ -149,7 +157,11 @@ public class UserServiceTest {
         ChannelFuture cf = mock(ChannelFuture.class);
 
         Channel channel1 = mock(Channel.class);
+        when(channel1.id()).thenReturn(mock(ChannelId.class));
+
         Channel channel2 = mock(Channel.class);
+        when(channel2.id()).thenReturn(mock(ChannelId.class));
+
 
         when(channel1.closeFuture()).thenReturn(cf);
         when(channel2.closeFuture()).thenReturn(cf);
@@ -162,7 +174,7 @@ public class UserServiceTest {
     }
 
     @Test
-    public void getUserByChannel() throws Exception {
+    public void getUserByChannelTest() throws Exception {
 
         UserDTO user1 = new UserDTO();
         user1.setId(1);
@@ -172,7 +184,10 @@ public class UserServiceTest {
         ChannelFuture cf = mock(ChannelFuture.class);
 
         Channel channel1 = mock(Channel.class);
+        when(channel1.id()).thenReturn(mock(ChannelId.class));
+
         Channel channel2 = mock(Channel.class);
+        when(channel2.id()).thenReturn(mock(ChannelId.class));
 
         when(channel1.closeFuture()).thenReturn(cf);
         when(channel2.closeFuture()).thenReturn(cf);

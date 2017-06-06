@@ -102,7 +102,7 @@ public class MessageServiceTest {
     }
 
     @Test
-    public void registerHandlerWithExistingEventName() throws Exception {
+    public void registerHandlerWithExistingEventNameTest() throws Exception {
         Message message = new Message("eventName", "content");
 
         MessageHandler handler1 = spy(new MessageHandler() {

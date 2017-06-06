@@ -101,4 +101,36 @@ public class MessageServiceTest {
 
     }
 
+    @Test
+    public void registerHandlerWithExistingEventName() throws Exception {
+        Message message = new Message("eventName", "content");
+
+        MessageHandler handler1 = spy(new MessageHandler() {
+            @Override
+            public void handle(Object msg, Channel ch, ChannelFuture future) {
+                fail();
+            }
+        });
+
+        MessageHandler handler2 = spy(new MessageHandler() {
+            @Override
+            public void handle(Object msg, Channel ch, ChannelFuture future) {
+                assertThat((String) msg).isEqualTo("content");
+                assertThat(ch).isEqualTo(channel);
+                assertThat(future).isNull();
+            }
+        });
+
+        messageService.registerHandler("eventName", handler1);
+        messageService.registerHandler("eventName", handler2);
+
+        messageService.setChannel(channel);
+        messageService.handleMessage(message);
+
+        verify(handler1, times(0)).handle(any(), any(), any());
+        verify(handler2, times(1)).handle(any(), any(), any());
+
+    }
+
+
 }

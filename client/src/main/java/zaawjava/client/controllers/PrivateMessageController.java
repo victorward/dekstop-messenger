@@ -128,6 +128,11 @@ public class PrivateMessageController implements Initializable {
                                         .text(newChatMessage.getSender().getFirstName() + " "
                                                 + newChatMessage.getSender().getLastName() + ": \n"
                                                 + newChatMessage.getContent())
+										.onAction(new EventHandler<ActionEvent>() {
+								            @Override public void handle(ActionEvent arg0) {
+								            	screensManager.getMainViewController().setPrivateMessageController(newChatMessage.getSender());
+								            }
+								        })
                                         .show();
                             }
                         }

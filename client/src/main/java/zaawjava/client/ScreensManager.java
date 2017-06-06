@@ -125,4 +125,9 @@ public class ScreensManager {
         stage.setTitle("Facebook autorization");
         stage.setScene(scene);
     }
+
+	public MainViewController getMainViewController() {
+		return mainViewController;
+	}
+
 }

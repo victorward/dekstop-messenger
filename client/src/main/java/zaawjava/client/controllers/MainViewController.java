@@ -195,4 +195,8 @@ public class MainViewController implements Initializable {
     public void setContentPane(Pane contentPane) {
         this.contentPane = contentPane;
     }
+    public void setPrivateMessageController(UserDTO userDTO)
+    {
+    	screensManager.setPrivateMessageController(userDTO);
+    }
 }

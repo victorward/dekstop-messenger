@@ -1,13 +1,17 @@
 package zaawjava.server.services;
 
+import org.hibernate.Hibernate;
+import org.hibernate.Session;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Service;
 import zaawjava.commons.DTO.ChatMessageDTO;
 import zaawjava.commons.DTO.CountryDTO;
 import zaawjava.commons.DTO.LanguageDTO;
 import zaawjava.commons.DTO.UserDTO;
-import org.hibernate.Hibernate;
-import org.hibernate.Session;
-import org.springframework.stereotype.Service;
+import zaawjava.commons.utils.CryptoUtils;
 import zaawjava.server.Main;
+import zaawjava.server.ServerConnectionsHandler;
 import zaawjava.server.Utils.DTOUtils;
 import zaawjava.server.model.*;
 
@@ -19,6 +23,8 @@ import java.util.List;
 
 @Service
 public class DatabaseConnector {
+    private static final Logger log = LoggerFactory.getLogger(DatabaseConnector.class);
+
     private Session session;
 
     // TEST METHODS
@@ -217,5 +223,21 @@ public class DatabaseConnector {
             }
         }
         return DTOUtils.convertChatMessageToDTO(messages);
+    }
+
+    public boolean addNewUser(UserDTO user) {
+        try {
+            if (user.getAddress() == null || user.getAddress().length() < 1)
+                user.setAddress("");
+            if (user.getPhoto() == null || user.getPhoto().length() < 1)
+                user.setPhoto("");
+            user.setPassword(CryptoUtils.encryptPassword(user.getPassword()));
+            log.debug("Trying add to database" + user);
+            insertUser(user);
+            return true;
+        } catch (Exception ex) {
+            log.warn("Adding user failed", ex);
+            return false;
+        }
     }
 }

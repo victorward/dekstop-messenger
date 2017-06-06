@@ -1,17 +1,24 @@
 package zaawjava.server.services;
 
-import zaawjava.commons.DTO.UserDTO;
 import io.netty.channel.Channel;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import zaawjava.commons.DTO.UserDTO;
 
 import java.util.*;
 
 @Service
 public class UserService {
     private HashMap<Integer, UserChannelPair> listOfLoggedUsers = new HashMap<>();
+    private DatabaseConnector databaseConnector;
+
+    @Autowired
+    public void setDatabaseConnector(DatabaseConnector databaseConnector) {
+        this.databaseConnector = databaseConnector;
+    }
 
     public void addUserToLoggedList(UserDTO user, Channel channel) {
-        if(listOfLoggedUsers.containsKey(user.getId())){
+        if (listOfLoggedUsers.containsKey(user.getId())) {
             throw new IllegalArgumentException("User already logged");
         }
         channel.closeFuture().addListener(future -> {
@@ -68,6 +75,20 @@ public class UserService {
                 .findFirst();
 
         return optional.map(UserChannelPair::getUser).orElse(null);
+    }
+
+    public HashMap<UserDTO, Boolean> getMapOfUsersWithStatus() {
+        HashMap<UserDTO, Boolean> userList = new HashMap<>();
+        List<UserDTO> activeUsers = getListOfLoggedUsers();
+        List<UserDTO> allUsers = databaseConnector.getAllUsers();
+        for (UserDTO user : allUsers) {
+            Boolean status = false;
+            for (UserDTO userAct : activeUsers) {
+                if (userAct.getId() == user.getId()) status = true;
+            }
+            userList.put(user, status);
+        }
+        return userList;
     }
 
 //    public List<UserDTO> getListOfLoggedUsers() {

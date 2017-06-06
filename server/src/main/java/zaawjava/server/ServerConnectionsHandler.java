@@ -81,7 +81,7 @@ public class ServerConnectionsHandler extends ChannelInboundHandlerAdapter {
                 log.debug("Registration" + msg);
                 UserDTO userDTO = (UserDTO) msg;
                 if (!Optional.ofNullable(checkUserInDatabase(userDTO.getEmail())).isPresent()) {
-                    if (addNewUser(userDTO)) {
+                    if (databaseConnector.addNewUser(userDTO)) {
                         messageService.sendMessage("onRegistration", "registered");
                     } else {
                         messageService.sendMessage("onRegistration", message);
@@ -99,7 +99,7 @@ public class ServerConnectionsHandler extends ChannelInboundHandlerAdapter {
                 ServerConnectionsHandler.this.messageService.sendMessage("getLoggedUser", tmpUser);
                 userService.addUserToLoggedList(tmpUser, channel);
                 messageService.sendMessageToGroup(allChannels, "numberOfUsersChanged", userService.getNumberOfLoggedUsers());
-                messageService.sendMessageToGroup(allChannels, "listOfUsersChanged", getMapOfUsersWithStatus());
+                messageService.sendMessageToGroup(allChannels, "listOfUsersChanged", userService.getMapOfUsersWithStatus());
             }
         });
 
@@ -110,7 +110,7 @@ public class ServerConnectionsHandler extends ChannelInboundHandlerAdapter {
                 messageService.sendMessage("loggedOutUser", "loggedOutUser");
                 userService.deleteUserFromLoggedList(user);
                 messageService.sendMessageToGroup(allChannels, "numberOfUsersChanged", userService.getNumberOfLoggedUsers());
-                messageService.sendMessageToGroup(allChannels, "listOfUsersChanged", getMapOfUsersWithStatus());
+                messageService.sendMessageToGroup(allChannels, "listOfUsersChanged", userService.getMapOfUsersWithStatus());
             }
         });
 
@@ -161,7 +161,7 @@ public class ServerConnectionsHandler extends ChannelInboundHandlerAdapter {
         this.messageService.registerHandler("getUsersStatus", new MessageHandler() {
             @Override
             public void handle(Object msg, Channel channel, ChannelFuture future) {
-                messageService.sendMessage("getUsersStatus", getMapOfUsersWithStatus());
+                messageService.sendMessage("getUsersStatus", userService.getMapOfUsersWithStatus());
             }
         });
 
@@ -212,20 +212,6 @@ public class ServerConnectionsHandler extends ChannelInboundHandlerAdapter {
         return allUsers;
     }
 
-    private HashMap<UserDTO, Boolean> getMapOfUsersWithStatus() {
-        HashMap<UserDTO, Boolean> userList = new HashMap<>();
-        List<UserDTO> activeUsers = userService.getListOfLoggedUsers();
-        List<UserDTO> allUsers = databaseConnector.getAllUsers();
-        for (UserDTO user : allUsers) {
-            Boolean status = false;
-            for (UserDTO userAct : activeUsers) {
-                if (userAct.getId() == user.getId()) status = true;
-            }
-            userList.put(user, status);
-        }
-        return userList;
-    }
-
     private boolean updateUser(UserDTO user) {
         try {
             databaseConnector.updateUser(user);
@@ -257,22 +243,6 @@ public class ServerConnectionsHandler extends ChannelInboundHandlerAdapter {
     public UserDTO checkUserInDatabase(String email) {
         UserDTO user = databaseConnector.getUserByEmail(email);
         return user;
-    }
-
-    public boolean addNewUser(UserDTO user) {
-        try {
-            if (user.getAddress() == null || user.getAddress().length() < 1)
-                user.setAddress("");
-            if (user.getPhoto() == null || user.getPhoto().length() < 1)
-                user.setPhoto("");
-            user.setPassword(CryptoUtils.encryptPassword(user.getPassword()));
-            log.debug("Trying add to database" + user);
-            databaseConnector.insertUser(user);
-            return true;
-        } catch (Exception ex) {
-            log.warn("Adding user failed", ex);
-            return false;
-        }
     }
 
     @Override

@@ -6,8 +6,8 @@ public class Message implements Serializable {
     private String kind;
     private Object content;
 
-    public Message(String id, Object content) {
-        this.kind = id;
+    public Message(String kind, Object content) {
+        this.kind = kind;
         this.content = content;
     }
 

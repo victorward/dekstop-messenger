@@ -14,6 +14,7 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.geometry.Pos;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -22,6 +23,7 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 
+import org.controlsfx.control.Notifications;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import zaawjava.commons.utils.MessageHandler;
@@ -42,118 +44,121 @@ import java.util.concurrent.CompletableFuture;
  */
 @Component
 public class PrivateMessageController implements Initializable {
-    private ScreensManager screensManager;
-    private UserService userService;
-    private final SocketService socketService;
+	private ScreensManager screensManager;
+	private UserService userService;
+	private final SocketService socketService;
 
-    private UserDTO userDTO;
+	private UserDTO userDTO;
 
-    @Autowired
-    public void setUserService(UserService userService) {
-        this.userService = userService;
-    }
+	@Autowired
+	public void setUserService(UserService userService) {
+		this.userService = userService;
+	}
 
-    @Autowired
-    public void setScreensManager(ScreensManager screensManager) {
-        this.screensManager = screensManager;
-    }
+	@Autowired
+	public void setScreensManager(ScreensManager screensManager) {
+		this.screensManager = screensManager;
+	}
 
-    @Autowired
-    PrivateMessageController(SocketService socketService) {
-        this.socketService = socketService;
-    }
+	@Autowired
+	PrivateMessageController(SocketService socketService) {
+		this.socketService = socketService;
+	}
 
-    @FXML
-    private JFXListView<ChatMessageDTO> messagesListView;
+	@FXML
+	private JFXListView<ChatMessageDTO> messagesListView;
 
-    @FXML
-    private Label userName;
+	@FXML
+	private Label userName;
 
-    @FXML
-    private JFXTextArea sendMessageArea;
+	@FXML
+	private JFXTextArea sendMessageArea;
 
-    @FXML
-    private ImageView userAvatar;
+	@FXML
+	private ImageView userAvatar;
 
-    private ObservableList<ChatMessageDTO> chatMessageDTOS = FXCollections.observableArrayList();
-    private CompletableFuture<Image> prevImageFuture;
+	private ObservableList<ChatMessageDTO> chatMessageDTOS = FXCollections.observableArrayList();
+	private CompletableFuture<Image> prevImageFuture;
 
+	@FXML
+	void sendMessageBtn(ActionEvent event) {
+		sendChatMessage();
+	}
 
-    @FXML
-    void sendMessageBtn(ActionEvent event) {
-        sendChatMessage();
-    }
+	@Override
+	public void initialize(URL url, ResourceBundle rb) {
+		chatMessageDTOS.clear();
+		messagesListView.setItems(chatMessageDTOS);
+		messagesListView.setCellFactory(new ChatMessageCellFactory());
+		sendMessageArea.setOnKeyPressed(new EventHandler<KeyEvent>() {
+			@Override
+			public void handle(KeyEvent event) {
+				if (event.getCode() == KeyCode.ENTER) {
+					sendChatMessage();
+				}
+			}
+		});
+	}
 
-    @Override
-    public void initialize(URL url, ResourceBundle rb) {
-        chatMessageDTOS.clear();
-        messagesListView.setItems(chatMessageDTOS);
-        messagesListView.setCellFactory(new ChatMessageCellFactory());
-        sendMessageArea.setOnKeyPressed(new EventHandler<KeyEvent>() {
-            @Override
-            public void handle(KeyEvent event) {
-                if (event.getCode() == KeyCode.ENTER) {
-                    sendChatMessage();
-                }
-            }
-        });
-    }
+	public void setUserDTO(UserDTO userDTO) {
+		this.userDTO = userDTO;
+		socketService.emit("getConversation", userDTO).whenComplete((msg, ex) -> {
+			Platform.runLater(() -> chatMessageDTOS.addAll((List<ChatMessageDTO>) msg));
+			socketService.on("privateMessage", new MessageHandler() {
+				@Override
+				public void handle(Object msg, Channel channel, ChannelFuture future) {
+					Platform.runLater(() -> {
+						ClassLoader classLoader = getClass().getClassLoader();
+						File file = new File(classLoader.getResource("sounds/tuturu.mp3").getFile());
+						ChatMessageDTO newChatMessage = (ChatMessageDTO) msg;
+						if (newChatMessage.getSender().getId() != userDTO.getId()) {
+							if (newChatMessage.getRecipient().getId() == userService.getUser().getId()) {
+								Media hit = new Media(file.toURI().toString());
+								MediaPlayer mediaPlayer = new MediaPlayer(hit);
+								mediaPlayer.play();
+								Notifications.create().position(Pos.BOTTOM_RIGHT)
+										.text(newChatMessage.getSender().getFirstName() + " "
+												+ newChatMessage.getSender().getLastName() + ": \n"
+												+ newChatMessage.getContent())
+										.show();
+							}
+						}
+						if (newChatMessage.getSender().getId() == userDTO.getId()
+								|| newChatMessage.getSender().getId() == userService.getUser().getId()) {
+							chatMessageDTOS.add(newChatMessage);
+						}
+					});
+				}
+			});
+		});
 
+		if (userDTO != null) {
+			userName.setText("");
+			userName.setText(userDTO.getFirstName() + " " + userDTO.getLastName());
+			Platform.runLater(() -> setProfileAvatar(userDTO));
+		}
 
-    public void setUserDTO(UserDTO userDTO) {
-        this.userDTO = userDTO;
-        socketService.emit("getConversation", userDTO).whenComplete((msg, ex) -> {
-            Platform.runLater(() -> chatMessageDTOS.addAll((List<ChatMessageDTO>) msg));
-            socketService.on("privateMessage", new MessageHandler() {
-                @Override
-                public void handle(Object msg, Channel channel, ChannelFuture future) {
-                    Platform.runLater(() -> {
-                    	ClassLoader classLoader = getClass().getClassLoader();
-                    	File file = new File(classLoader.getResource("sounds/tuturu.mp3").getFile());
-                    	ChatMessageDTO newChatMessage = (ChatMessageDTO) msg;
-                    	if (newChatMessage.getSender().getId() != userDTO.getId())
-                    			{
-                    		Media hit = new Media(file.toURI().toString());
-                    		MediaPlayer mediaPlayer = new MediaPlayer(hit);
-                    		mediaPlayer.play();
-                    			}
-                        if (newChatMessage.getSender().getId() == userDTO.getId()
-                                || newChatMessage.getSender().getId() == userService.getUser().getId()) {
-                            chatMessageDTOS.add(newChatMessage);
-                        }
-                    });
-                }
-            });
-        });
+	}
 
-        if (userDTO != null) {
-            userName.setText("");
-            userName.setText(userDTO.getFirstName() + " " + userDTO.getLastName());
-            Platform.runLater(() -> setProfileAvatar(userDTO));
-        }
+	void setProfileAvatar(UserDTO userDTO) {
+		String imageSource = userDTO.getPhoto();
+		if (imageSource != null && !imageSource.equals("")) {
+			if (prevImageFuture != null && !prevImageFuture.isDone()) {
+				prevImageFuture.cancel(false);
+			}
+			prevImageFuture = CompletableFuture.supplyAsync(() -> new Image(imageSource)).whenComplete((img, ex) -> {
+				Platform.runLater(() -> userAvatar.setImage(img));
+			});
+		}
+	}
 
-    }
-
-    void setProfileAvatar(UserDTO userDTO) {
-        String imageSource = userDTO.getPhoto();
-        if (imageSource != null && !imageSource.equals("")) {
-            if (prevImageFuture != null && !prevImageFuture.isDone()) {
-                prevImageFuture.cancel(false);
-            }
-            prevImageFuture = CompletableFuture
-                    .supplyAsync(() -> new Image(imageSource))
-                    .whenComplete((img, ex) -> {
-                        Platform.runLater(() -> userAvatar.setImage(img));
-                    });
-        }
-    }
-
-    private void sendChatMessage() {
-        if (sendMessageArea.getText().trim().length() == 0) return;
-        ChatMessageDTO message = new ChatMessageDTO(userService.getUser(), sendMessageArea.getText().trim());
-        message.setRecipient(userDTO);
-        message.setDate(new Date());
-        sendMessageArea.setText("");
-        socketService.emit("newPrivateMessage", message);
-    }
+	private void sendChatMessage() {
+		if (sendMessageArea.getText().trim().length() == 0)
+			return;
+		ChatMessageDTO message = new ChatMessageDTO(userService.getUser(), sendMessageArea.getText().trim());
+		message.setRecipient(userDTO);
+		message.setDate(new Date());
+		sendMessageArea.setText("");
+		socketService.emit("newPrivateMessage", message);
+	}
 }

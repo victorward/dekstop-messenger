@@ -1,9 +1,5 @@
 package zaawjava.server;
 
-import zaawjava.commons.DTO.ChatMessageDTO;
-import zaawjava.commons.DTO.CountryDTO;
-import zaawjava.commons.DTO.LanguageDTO;
-import zaawjava.commons.DTO.UserDTO;
 import io.netty.channel.*;
 import io.netty.channel.group.DefaultChannelGroup;
 import io.netty.util.concurrent.GlobalEventExecutor;
@@ -11,17 +7,23 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import zaawjava.commons.DTO.ChatMessageDTO;
+import zaawjava.commons.DTO.CountryDTO;
+import zaawjava.commons.DTO.LanguageDTO;
+import zaawjava.commons.DTO.UserDTO;
 import zaawjava.commons.utils.CryptoUtils;
 import zaawjava.commons.utils.Message;
 import zaawjava.commons.utils.MessageHandler;
 import zaawjava.commons.utils.MessageService;
 import zaawjava.server.Utils.DTOUtils;
+import zaawjava.server.handlers.RegistrationHandler;
+import zaawjava.server.handlers.UserLoggedOutHandler;
 import zaawjava.server.model.ChatMessage;
 import zaawjava.server.model.Conversation;
 import zaawjava.server.services.DatabaseConnector;
 import zaawjava.server.services.UserService;
 
-import java.util.HashMap;
+import javax.annotation.PostConstruct;
 import java.util.List;
 import java.util.Optional;
 
@@ -29,8 +31,6 @@ import java.util.Optional;
 @ChannelHandler.Sharable
 public class ServerConnectionsHandler extends ChannelInboundHandlerAdapter {
     private static final Logger log = LoggerFactory.getLogger(ServerConnectionsHandler.class);
-
-    private DefaultChannelGroup allChannels = new DefaultChannelGroup(GlobalEventExecutor.INSTANCE);
 
     private final MessageService messageService;
 
@@ -41,6 +41,21 @@ public class ServerConnectionsHandler extends ChannelInboundHandlerAdapter {
     private UserDTO tmpUser;
 
     private UserService userService;
+
+    //handlers
+    private RegistrationHandler registrationHandler;
+    private UserLoggedOutHandler userLoggedOutHandler;
+
+
+    @Autowired
+    public void setRegistrationHandler(RegistrationHandler registrationHandler) {
+        this.registrationHandler = registrationHandler;
+    }
+
+    @Autowired
+    public void setUserLoggedOutHandler(UserLoggedOutHandler userLoggedOutHandler) {
+        this.userLoggedOutHandler = userLoggedOutHandler;
+    }
 
     @Autowired
     public void setDatabaseConnector(DatabaseConnector databaseConnector) {
@@ -54,6 +69,10 @@ public class ServerConnectionsHandler extends ChannelInboundHandlerAdapter {
 
     public ServerConnectionsHandler(MessageService messageService) {
         this.messageService = messageService;
+    }
+
+    @PostConstruct
+    private void init() {
         this.messageService.registerHandler("onLogin", new MessageHandler() {
             @Override
             public void handle(Object msg, Channel channel, ChannelFuture future) {
@@ -74,45 +93,19 @@ public class ServerConnectionsHandler extends ChannelInboundHandlerAdapter {
             }
         });
 
-        this.messageService.registerHandler("onRegistration", new MessageHandler() {
-            @Override
-            public void handle(Object msg, Channel channel, ChannelFuture future) {
-                message = "";
-                log.debug("Registration" + msg);
-                UserDTO userDTO = (UserDTO) msg;
-                if (!Optional.ofNullable(checkUserInDatabase(userDTO.getEmail())).isPresent()) {
-                    if (databaseConnector.addNewUser(userDTO)) {
-                        messageService.sendMessage("onRegistration", "registered");
-                    } else {
-                        messageService.sendMessage("onRegistration", message);
-                    }
-                } else {
-                    message += "Already registered";
-                    messageService.sendMessage("onRegistration", message);
-                }
-            }
-        });
+        this.messageService.registerHandler("onRegistration", registrationHandler);
 
         this.messageService.registerHandler("getLoggedUser", new MessageHandler() {
             @Override
             public void handle(Object msg, Channel channel, ChannelFuture future) {
                 ServerConnectionsHandler.this.messageService.sendMessage("getLoggedUser", tmpUser);
                 userService.addUserToLoggedList(tmpUser, channel);
-                messageService.sendMessageToGroup(allChannels, "numberOfUsersChanged", userService.getNumberOfLoggedUsers());
-                messageService.sendMessageToGroup(allChannels, "listOfUsersChanged", userService.getMapOfUsersWithStatus());
+                messageService.sendMessageToGroup(userService.getAllChannels(), "numberOfUsersChanged", userService.getNumberOfLoggedUsers());
+                messageService.sendMessageToGroup(userService.getAllChannels(), "listOfUsersChanged", userService.getMapOfUsersWithStatus());
             }
         });
 
-        this.messageService.registerHandler("loggedOutUser", new MessageHandler() {
-            @Override
-            public void handle(Object msg, Channel channel, ChannelFuture future) {
-                UserDTO user = (UserDTO) msg;
-                messageService.sendMessage("loggedOutUser", "loggedOutUser");
-                userService.deleteUserFromLoggedList(user);
-                messageService.sendMessageToGroup(allChannels, "numberOfUsersChanged", userService.getNumberOfLoggedUsers());
-                messageService.sendMessageToGroup(allChannels, "listOfUsersChanged", userService.getMapOfUsersWithStatus());
-            }
-        });
+        this.messageService.registerHandler("loggedOutUser", userLoggedOutHandler);
 
         this.messageService.registerHandler("updateUser", new MessageHandler() {
             @Override
@@ -168,7 +161,7 @@ public class ServerConnectionsHandler extends ChannelInboundHandlerAdapter {
         this.messageService.registerHandler("newGlobalChatMessage", new MessageHandler() {
             @Override
             public void handle(Object msg, Channel channel, ChannelFuture future) {
-                messageService.sendMessageToGroup(allChannels, "onGlobalChatMessage", msg);
+                messageService.sendMessageToGroup(userService.getAllChannels(), "onGlobalChatMessage", msg);
             }
         });
 
@@ -205,7 +198,9 @@ public class ServerConnectionsHandler extends ChannelInboundHandlerAdapter {
                 }
             }
         });
+
     }
+
 
     private List<UserDTO> getAllUserList() {
         List<UserDTO> allUsers = databaseConnector.getAllUsers();
@@ -247,7 +242,6 @@ public class ServerConnectionsHandler extends ChannelInboundHandlerAdapter {
 
     @Override
     public void channelActive(ChannelHandlerContext ctx) throws Exception {
-        allChannels.add(ctx.channel());
         log.debug("Channel Active");
 
     }

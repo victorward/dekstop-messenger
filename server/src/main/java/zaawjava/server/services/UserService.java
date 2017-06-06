@@ -1,6 +1,8 @@
 package zaawjava.server.services;
 
 import io.netty.channel.Channel;
+import io.netty.channel.group.DefaultChannelGroup;
+import io.netty.util.concurrent.GlobalEventExecutor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import zaawjava.commons.DTO.UserDTO;
@@ -9,6 +11,8 @@ import java.util.*;
 
 @Service
 public class UserService {
+    private DefaultChannelGroup allChannels = new DefaultChannelGroup(GlobalEventExecutor.INSTANCE);
+
     private HashMap<Integer, UserChannelPair> listOfLoggedUsers = new HashMap<>();
     private DatabaseConnector databaseConnector;
 
@@ -24,6 +28,7 @@ public class UserService {
         channel.closeFuture().addListener(future -> {
             deleteUserFromLoggedList(user);
         });
+        allChannels.add(channel);
         listOfLoggedUsers.put(user.getId(), new UserChannelPair(user, channel));
     }
 
@@ -91,7 +96,10 @@ public class UserService {
         return userList;
     }
 
-//    public List<UserDTO> getListOfLoggedUsers() {
+    public DefaultChannelGroup getAllChannels() {
+        return allChannels;
+    }
+    //    public List<UserDTO> getListOfLoggedUsers() {
 //        List<UserDTO> userList = new ArrayList<UserDTO>();
 //        for (Map.Entry<Integer, UserChannelPair> entry : listOfLoggedUsers.entrySet()) {
 //            userList.add(DTOUtils.convertUserToDTO(entry.getValue().getUser()));

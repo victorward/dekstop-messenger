@@ -25,10 +25,10 @@ public class UserService {
         if (listOfLoggedUsers.containsKey(user.getId())) {
             throw new IllegalArgumentException("User already logged");
         }
+        allChannels.add(channel);
         channel.closeFuture().addListener(future -> {
             deleteUserFromLoggedList(user);
         });
-        allChannels.add(channel);
         listOfLoggedUsers.put(user.getId(), new UserChannelPair(user, channel));
     }
 
